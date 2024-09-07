@@ -1,7 +1,6 @@
 import User from '../models/user.model.js';
 import bcryptjs from 'bcryptjs';
 import { errorHandler } from '../utils/error.js';
-// import jwt from 'jsonwebtoken';
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -15,6 +14,11 @@ export const signup = async (req, res, next) => {
     password === ''
   ) {
     next(errorHandler(400, 'All fields are required'));
+  }
+
+  const userAlreadyExists = await User.findOne({email}) || await User.findOne({username});
+  if (userAlreadyExists) {
+    next(errorHandler(400, 'User already exists'))
   }
 
   const hashedPassword = bcryptjs.hashSync(password, 10);
