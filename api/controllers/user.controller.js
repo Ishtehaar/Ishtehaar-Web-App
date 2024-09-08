@@ -2,10 +2,14 @@ import { errorHandler } from "../utils/error.js";
 import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 
+
+//TEST
 export const test = async (req, res, next) => {
   res.send("Hello from test");
 };
 
+
+//SIGNOUT USER
 export const signout = async (req, res, next) => {
   try {
     res
@@ -17,6 +21,8 @@ export const signout = async (req, res, next) => {
   }
 };
 
+
+//UPDATE USER 
 export const updateUser = async (req, res, next) => {
   console.log(req.user);
   console.log(req.body.username);
@@ -88,3 +94,18 @@ export const updateUser = async (req, res, next) => {
     next(error);
   }
 };
+
+
+//DELETE USER
+
+export const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.userId) {
+    return next(errorHandler(403, "You are not allowed to delete this user"));
+  }
+  try {
+    await User.findByIdAndDelete(req.params.userId);
+    res.status(200).json("User has been deleted");
+  } catch (error) {
+    next(error);
+  }
+}
