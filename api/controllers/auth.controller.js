@@ -16,7 +16,23 @@ export const signup = async (req, res, next) => {
   ) {
     next(errorHandler(400, "All fields are required"));
   }
-
+  if (password.length < 8) {
+    return next(errorHandler(400, "Password must be at least 8 characters"));
+  }
+  if (username.includes(" ")) {
+    return next(errorHandler(400, "Username cannot contain spaces"));
+  }
+  if (username !== req.body.username.toLowerCase()) {
+    return next(errorHandler(400, "Username must be lowercase"));
+  }
+  if (!username.match(/^[a-zA-Z0-9]+$/)) {
+    return next(                            
+      errorHandler(400, "Username can only contain letters and numbers")
+    );
+  }
+  if(email.includes(" ")){
+    return next(errorHandler(400, "Email cannot contain spaces"));
+  }
   const userAlreadyExists =
     (await User.findOne({ email })) || (await User.findOne({ username }));
   if (userAlreadyExists) {
@@ -75,14 +91,11 @@ export const google = async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
     if (user) {
-      const token = jwt.sign(
-        { id: user._id },
-        process.env.JWT_SECRET
-      );
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
       const { password, ...rest } = user._doc;
       res
         .status(200)
-        .cookie('access_token', token, {
+        .cookie("access_token", token, {
           httpOnly: true,
         })
         .json(rest);
@@ -93,21 +106,18 @@ export const google = async (req, res, next) => {
       const hashedPassword = bcryptjs.hashSync(generatedPassword, 10);
       const newUser = new User({
         username:
-          name.toLowerCase().split(' ').join('') +
+          name.toLowerCase().split(" ").join("") +
           Math.random().toString(9).slice(-4),
         email,
         password: hashedPassword,
         profilePicture: googlePhotoUrl,
       });
       await newUser.save();
-      const token = jwt.sign(
-        { id: newUser._id },
-        process.env.JWT_SECRET
-      );
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET);
       const { password, ...rest } = newUser._doc;
       res
         .status(200)
-        .cookie('access_token', token, {
+        .cookie("access_token", token, {
           httpOnly: true,
         })
         .json(rest);
