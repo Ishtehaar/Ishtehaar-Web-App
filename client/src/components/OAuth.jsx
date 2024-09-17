@@ -27,7 +27,7 @@ export default function OAuth() {
             const data = await res.json()
             if (res.ok){
                 dispatch(signInSuccess(data))
-                navigate('/')
+                navigate('/dashboard')
             }
         } catch (error) {
             console.log(error);
