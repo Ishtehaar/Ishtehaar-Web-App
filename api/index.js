@@ -4,11 +4,6 @@ import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import cookieParser from "cookie-parser";
 
-
-//flkadfldflflflfnklfnklfbnklfnfknfk
-
-///swd[;sd;sd;sd;]
-
 import dotenv from "dotenv";
 dotenv.config();
 
