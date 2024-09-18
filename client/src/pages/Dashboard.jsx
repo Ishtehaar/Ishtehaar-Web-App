@@ -16,7 +16,6 @@ function Dashboard() {
   }, [location.search]);
   return (
     <>
-      <div>Dashboard</div>
       <div className="min-h-screen flex flex-col md:flex-row">
         <div className="md:w-56">
           {/*Sidebar */}
