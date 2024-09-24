@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
+import imageRoutes from "./routes/image.route.js";
 import cookieParser from "cookie-parser";
 
 import dotenv from "dotenv";
@@ -30,6 +31,7 @@ app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes)
+app.use('/api/image', imageRoutes)
 
 
 
