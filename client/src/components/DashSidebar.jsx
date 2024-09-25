@@ -73,13 +73,17 @@ export default function DashSidebar() {
             </>
           ) : (
             <>
-              <Sidebar.Item
-                icon={HiArrowSmRight}
-                className="cursor-pointer"
-                onClick={handleSignout}
-              >
-                Image Ad
-              </Sidebar.Item>
+              <Link to="/dashboard?tab=image-ad">
+                <Sidebar.Item
+                  icon={HiArrowSmRight}
+                  className="cursor-pointer"
+                  active={tab === "image-ad"}
+                  as="div"
+                >
+                  Image Ad
+                </Sidebar.Item>
+              </Link>
+
               <Sidebar.Item
                 icon={HiArrowSmRight}
                 className="cursor-pointer"

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DashSidebar from "../components/DashSidebar";
+import DashImageAd from "../components/DashImageAd";
 // import DashProfile from "../compnents/DashProfile";
 
 function Dashboard() {
@@ -21,8 +22,8 @@ function Dashboard() {
           {/*Sidebar */}
           <DashSidebar />
         </div>
-        {/* Profile...
-        {tab === "profile" && <DashProfile />} */}
+        {/* ImageAd... */}
+        {tab === "image-ad" && <DashImageAd/>}
       </div>
     </>
   );
