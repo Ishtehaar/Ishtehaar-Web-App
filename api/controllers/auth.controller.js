@@ -56,7 +56,7 @@ export const signup = async (req, res, next) => {
 
     await user.save();
 
-    generateTokenAndSetCookie(res, user._id);
+    generateTokenAndSetCookie(res, user._id, user.isAdmin);
     await sendVerificationEmail(user.email, verificationToken);
 
     const { password: pass, ...rest } = user._doc;
@@ -98,10 +98,10 @@ export const verifyEmail = async (req, res) => {
     });
   } catch (error) {
     console.log("Error in verifying email", error);
-    
-    errorHandler(500, "Server Error")
+
+    errorHandler(500, "Server Error");
   }
-}; 
+};
 
 //SIGNIN
 export const signin = async (req, res, next) => {
@@ -112,28 +112,28 @@ export const signin = async (req, res, next) => {
   }
 
   try {
-    const validUser = await User.findOne({ email });
-    if (!validUser) {
+    const user = await User.findOne({ email });
+    if (!user) {
       return next(errorHandler(404, "User not found"));
     }
-    const validPassword = bcryptjs.compareSync(password, validUser.password);
+    const validPassword = bcryptjs.compareSync(password, user.password);
     if (!validPassword) {
       return next(errorHandler(400, "Invalid password"));
     }
-    const token = jwt.sign(
-      { id: validUser._id, isAdmin: validUser.isAdmin },
-      process.env.JWT_SECRET
-    );
 
-    const { password: pass, ...rest } = validUser._doc;
+    generateTokenAndSetCookie(res, user._id);
 
-    res
-      .status(200)
-      .cookie("access_token", token, {
-        httpOnly: true,
-      })
-      .json(rest);
+    user.lastLogin = new Date();
+
+    const { password: pass, ...rest } = user._doc;
+
+    res.status(200).json({
+      success: true,
+      message: "Logged in successfully",
+      user: rest,
+    });
   } catch (error) {
+    console.log("Error in signin", error);
     next(error);
   }
 };
