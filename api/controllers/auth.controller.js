@@ -136,11 +136,7 @@ export const signin = async (req, res, next) => {
 
     const { password: pass, ...rest } = user._doc;
 
-    res.status(200).json({
-      success: true,
-      message: "Logged in successfully",
-      user: rest,
-    });
+    res.status(200).json(rest);
   } catch (error) {
     console.log("Error in signin", error);
     errorHandler(400, "Error in signin")

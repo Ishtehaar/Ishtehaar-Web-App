@@ -1,22 +1,22 @@
-import { errorHandler } from "../utils/error.js";
-import User from "../models/user.model.js";
 import bcryptjs from "bcryptjs";
 
+import { errorHandler } from "../utils/error.js";
+import User from "../models/user.model.js";
 
 //TEST
 export const test = async (req, res, next) => {
   res.send("Hello from test");
 };
 
-//UPDATE USER 
+//UPDATE USER
 export const updateUser = async (req, res, next) => {
-  console.log(req.user);
-  console.log(req.body.username);
-
+  
   const { username, email, password } = req.body;
 
-  if (req.user.id !== req.params.userId) {
-    return next(errorHandler(403, "You are not allowed to update this user"));
+  console.log(req.user.userId)
+
+  if(req.user.userId!==req.params.userId){
+    errorHandler(403, "You are not allowed to update this user");
   }
 
   if (username === "") {
@@ -56,7 +56,7 @@ export const updateUser = async (req, res, next) => {
       );
     }
   }
-  if(req.body.email){
+  if (req.body.email) {
     if (req.body.email.includes(" ")) {
       return next(errorHandler(400, "Email cannot contain spaces"));
     }
@@ -81,11 +81,12 @@ export const updateUser = async (req, res, next) => {
   }
 };
 
-
 //DELETE USER
-
 export const deleteUser = async (req, res, next) => {
-  if (req.user.id !== req.params.userId) {
+  console.log(req.user.userId)
+  console.log(req.params.userId)
+
+  if (req.user.userId!== req.params.userId) {
     return next(errorHandler(403, "You are not allowed to delete this user"));
   }
   try {
@@ -94,4 +95,4 @@ export const deleteUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}
+};

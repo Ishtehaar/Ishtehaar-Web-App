@@ -13,7 +13,6 @@ export default function SignUpPage() {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
   const handleSubmit = async (e) => {
-    console.log(formData);
 
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {

@@ -23,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { Link } from "react-router-dom";
 
+
 export default function DashProfile() {
   const { currentUser, error, loading } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
@@ -32,8 +33,13 @@ export default function DashProfile() {
   const [imageFileUploading, setImageFileUploading] = useState(false);
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
+  console.log(currentUser._id);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({});
+  
+
+  console.log(currentUser._id)
+
   const filePickerRef = useRef();
   const dispatch = useDispatch();
   
@@ -50,6 +56,7 @@ export default function DashProfile() {
     }
   }, [imageFile]);
 
+  
   const uploadImage = async () => {
     setImageFileUploading(true);
     setImageFileUploadError(null);
@@ -145,7 +152,7 @@ export default function DashProfile() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch("/api/user/signout", {
+      const res = await fetch("/api/auth/signout", {
         method: "POST",
       });
       const data = await res.json();
