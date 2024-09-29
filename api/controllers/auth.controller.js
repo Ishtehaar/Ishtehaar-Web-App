@@ -6,6 +6,7 @@ import { generateVerificationToken } from "../utils/generateVerificationToken.js
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
 import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/email.js";
 
+//SIGNUP
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
   try {
@@ -67,6 +68,7 @@ export const signup = async (req, res, next) => {
   }
 };
 
+//VERIFY EMAIL
 export const verifyEmail = async (req, res) => {
   const { code } = req.body;
 
@@ -95,10 +97,13 @@ export const verifyEmail = async (req, res) => {
       user: rest,
     });
   } catch (error) {
-    console.error(error)
+    console.log("Error in verifying email", error);
+    
+    errorHandler(500, "Server Error")
   }
-};
+}; 
 
+//SIGNIN
 export const signin = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -133,6 +138,7 @@ export const signin = async (req, res, next) => {
   }
 };
 
+//GOOGLE SIGNIN
 export const google = async (req, res, next) => {
   const { email, name, googlePhotoUrl } = req.body;
   try {
@@ -175,6 +181,18 @@ export const google = async (req, res, next) => {
         })
         .json(rest);
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+//SIGNOUT USER
+export const signout = async (req, res, next) => {
+  try {
+    res
+      .clearCookie("access_token")
+      .status(200)
+      .json({ message: "Signout successful" });
   } catch (error) {
     next(error);
   }
