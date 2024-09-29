@@ -44,7 +44,6 @@ export const signup = async (req, res, next) => {
 
     const hashedPassword = bcryptjs.hashSync(password, 10);
     const verificationToken = generateVerificationToken();
-    
 
     const user = new User({
       username,
@@ -57,20 +56,37 @@ export const signup = async (req, res, next) => {
     await user.save();
 
     generateTokenAndSetCookie(res, user._id);
-    await sendVerificationEmail(user.email, verificationToken)
+    await sendVerificationEmail(user.email, verificationToken);
 
-    const { password: pass, ...rest} = user._doc;
+    const { password: pass, ...rest } = user._doc;
     res
       .status(201)
-      .json({ success: true, 
-              message: "SignUp Successfull",
-              user: rest
-            })
-
-
+      .json({ success: true, message: "SignUp Successfull", user: rest });
   } catch (error) {
     next(error);
   }
+};
+
+export const verifyEmail = async (req, res) => {
+  const { code } = req.body;
+
+  try {
+    const user = await User.findOne({
+      verificationToken: code,
+      verificationTokenExpiresAt: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      errorHandler(400, "Invalid or expired verification code");
+    }
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    user.verificationTokenExpiresAt = undefined;
+
+    await user.save();
+
+    await sendWelcomeEmail(user.email, user.name);
+  } catch (error) {}
 };
 
 export const signin = async (req, res, next) => {
