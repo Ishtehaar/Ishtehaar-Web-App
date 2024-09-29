@@ -4,6 +4,7 @@ import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 import { generateVerificationToken } from "../utils/generateVerificationToken.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
+import { sendVerificationEmail } from "../mailtrap/email.js";
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -43,24 +44,27 @@ export const signup = async (req, res, next) => {
 
     const hashedPassword = bcryptjs.hashSync(password, 10);
     const verificationToken = generateVerificationToken();
+    
 
-    const newUser = new User({
+    const user = new User({
       username,
       email,
       password: hashedPassword,
-      verificationToken,
+      verificationToken: verificationToken,
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24hrs
     });
 
-    await newUser.save();
+    await user.save();
 
-    generateTokenAndSetCookie(res, newUser._id);
-    const { password: pass, ...rest} = newUser._doc;
+    generateTokenAndSetCookie(res, user._id);
+    await sendVerificationEmail(user.email, verificationToken)
+
+    const { password: pass, ...rest} = user._doc;
     res
       .status(201)
       .json({ success: true, 
               message: "SignUp Successfull",
-              rest
+              user: rest
             })
 
 
