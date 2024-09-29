@@ -4,7 +4,7 @@ import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
 import { generateVerificationToken } from "../utils/generateVerificationToken.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-import { sendVerificationEmail } from "../mailtrap/email.js";
+import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/email.js";
 
 export const signup = async (req, res, next) => {
   const { username, email, password } = req.body;
@@ -46,8 +46,8 @@ export const signup = async (req, res, next) => {
     const verificationToken = generateVerificationToken();
 
     const user = new User({
-      username,
-      email,
+      username: username,
+      email: email,
       password: hashedPassword,
       verificationToken: verificationToken,
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 60 * 1000, // 24hrs
@@ -85,8 +85,18 @@ export const verifyEmail = async (req, res) => {
 
     await user.save();
 
-    await sendWelcomeEmail(user.email, user.name);
-  } catch (error) {}
+    await sendWelcomeEmail(user.email, user.username);
+
+    const { password: pass, ...rest } = user._doc;
+
+    res.status(200).json({
+      success: true,
+      message: "Email verified successfully",
+      user: rest,
+    });
+  } catch (error) {
+    console.error(error)
+  }
 };
 
 export const signin = async (req, res, next) => {
