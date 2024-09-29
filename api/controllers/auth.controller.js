@@ -1,10 +1,16 @@
-import User from "../models/user.model.js";
-import bcryptjs from "bcryptjs";
-import { errorHandler } from "../utils/error.js";
 import jwt from "jsonwebtoken";
+import bcryptjs from "bcryptjs";
+import crypto from "crypto";
+
+import User from "../models/user.model.js";
+import { errorHandler } from "../utils/error.js";
 import { generateVerificationToken } from "../utils/generateVerificationToken.js";
 import { generateTokenAndSetCookie } from "../utils/generateTokenAndSetCookie.js";
-import { sendVerificationEmail, sendWelcomeEmail } from "../mailtrap/email.js";
+import {
+  sendVerificationEmail,
+  sendWelcomeEmail,
+  sendPasswordResetEmail,
+} from "../mailtrap/email.js";
 
 //SIGNUP
 export const signup = async (req, res, next) => {
@@ -64,6 +70,7 @@ export const signup = async (req, res, next) => {
       .status(201)
       .json({ success: true, message: "SignUp Successfull", user: rest });
   } catch (error) {
+    errorHandler(400, "Error in signup")
     next(error);
   }
 };
@@ -99,7 +106,7 @@ export const verifyEmail = async (req, res) => {
   } catch (error) {
     console.log("Error in verifying email", error);
 
-    errorHandler(500, "Server Error");
+    errorHandler(400, "Error in verify email");
   }
 };
 
@@ -134,6 +141,7 @@ export const signin = async (req, res, next) => {
     });
   } catch (error) {
     console.log("Error in signin", error);
+    errorHandler(400, "Error in signin")
     next(error);
   }
 };
@@ -182,6 +190,7 @@ export const google = async (req, res, next) => {
         .json(rest);
     }
   } catch (error) {
+    errorHandler(400, "Error in google signin")
     next(error);
   }
 };
@@ -194,6 +203,45 @@ export const signout = async (req, res, next) => {
       .status(200)
       .json({ message: "Signout successful" });
   } catch (error) {
+    errorHandler(400, "Error in signout")
+    next(error);
+  }
+};
+
+//FORGOT PASSWORD
+export const forgotPassword = async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      errorHandler(404, "User not found");
+    }
+
+    //generate reset token
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpiresAt = resetTokenExpiresAt;
+
+    await user.save();
+
+    //send email
+    await sendPasswordResetEmail(
+      user.email,
+      `${process.env.CLIENT_URL}/reset-password/${resetToken}`
+    );
+
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Password reset link send to your email",
+      });
+  } catch (error) {
+    errorHandler(400, "Error in forgotPassword")
     next(error);
   }
 };
