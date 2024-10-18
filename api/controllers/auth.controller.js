@@ -12,7 +12,6 @@ import {
   sendPasswordResetEmail,
   sendResetSuccessEmail
 } from "../mailtrap/email.js";
-import { log } from "console";
 
 //SIGNUP
 export const signup = async (req, res, next) => {
@@ -88,8 +87,12 @@ export const verifyEmail = async (req, res) => {
     });
 
     if (!user) {
-      errorHandler(400, "Invalid or expired verification code");
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired verification code",
+      });
     }
+
     user.isVerified = true;
     user.verificationToken = undefined;
     user.verificationTokenExpiresAt = undefined;
@@ -106,9 +109,11 @@ export const verifyEmail = async (req, res) => {
       user: rest,
     });
   } catch (error) {
-    console.log("Error in verifying email", error);
-
-    errorHandler(400, "Error in verify email");
+    console.error("Error in verifying email:", error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred during email verification",
+    });
   }
 };
 
@@ -128,6 +133,9 @@ export const signin = async (req, res, next) => {
     const validPassword = bcryptjs.compareSync(password, user.password);
     if (!validPassword) {
       return next(errorHandler(400, "Invalid password"));
+    }
+    if(user && user.isVerified == false){
+      return next(errorHandler(400, "Email not verified"));
     }
 
     generateTokenAndSetCookie(res, user._id);

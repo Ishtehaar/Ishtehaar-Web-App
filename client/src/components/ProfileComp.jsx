@@ -23,7 +23,6 @@ import { useDispatch } from "react-redux";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import { Link } from "react-router-dom";
 
-
 export default function DashProfile() {
   const { currentUser, error, loading } = useSelector((state) => state.user);
   const [imageFile, setImageFile] = useState(null);
@@ -36,13 +35,12 @@ export default function DashProfile() {
   console.log(currentUser._id);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({});
-  
 
-  console.log(currentUser._id)
+  console.log(currentUser._id);
 
   const filePickerRef = useRef();
   const dispatch = useDispatch();
-  
+
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -56,7 +54,6 @@ export default function DashProfile() {
     }
   }, [imageFile]);
 
-  
   const uploadImage = async () => {
     setImageFileUploading(true);
     setImageFileUploadError(null);
@@ -95,7 +92,6 @@ export default function DashProfile() {
     setFormData({ ...formData, [e.target.id]: e.target.value });
   };
 
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdateUserError(null);
@@ -120,17 +116,14 @@ export default function DashProfile() {
       const data = await res.json();
       if (!res.ok) {
         dispatch(updateFailure(data.message));
-        
       } else {
         dispatch(updateSuccess(data));
         setUpdateUserSuccess("User's profile updated successfully");
       }
     } catch (error) {
       dispatch(updateFailure(error.message));
-      
     }
   };
-
 
   const handleDeleteUser = async () => {
     setShowModal(false);
@@ -187,7 +180,7 @@ export default function DashProfile() {
               strokeWidth={5}
               styles={{
                 root: {
-                  color : "black",
+                  color: "black",
                   width: "100%",
                   height: "100%",
                   position: "absolute",
@@ -243,17 +236,6 @@ export default function DashProfile() {
         >
           {loading ? "Loading..." : "Update"}
         </Button>
-        {currentUser.isAdmin && (
-          <Link to={"/create-post"}>
-            <Button
-              type="button"
-              gradientDuoTone="purpleToPink"
-              className="w-full"
-            >
-              Create a post
-            </Button>
-          </Link>
-        )}
       </form>
       <div className="text-red-500 flex justify-between mt-5">
         <span onClick={() => setShowModal(true)} className="cursor-pointer">

@@ -33,7 +33,7 @@ export default function SignUpPage() {
       }
       setLoading(false);
       if (res.ok) {
-        navigate("/sign-in");
+        navigate("/verify-email");
       }
     } catch (error) {
       setErrorMessage(error.message);
