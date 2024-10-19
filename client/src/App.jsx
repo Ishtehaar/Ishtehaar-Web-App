@@ -6,11 +6,12 @@ import Home from "./pages/Home";
 import Pricing from "./pages/Pricing";
 import SignInPage from "./pages/SignInPage";
 import SignUpPage from "./pages/SignUpPage";
-import ProfileComp from "./components/ProfileComp";
 import PrivateRoute from "./components/PrivateRoute";
 import Dashboard from "./pages/Dashboard";
 import ProfilePage from "./pages/ProfilePage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
+import PublicRoute from "./components/PublicRoute";
+import ForgotPassword from "./pages/ForgotPasswordPage";
 
 export default function App() {
   return (
@@ -20,13 +21,17 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/pricing" element={<Pricing />} />
-          <Route path="/sign-in" element={<SignInPage />} />
-          <Route path="/sign-up" element={<SignUpPage />} />
-          <Route path="/verify-email" element={<EmailVerificationPage />} />
+
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile-page" element={<ProfilePage />} />
-            {/* <Route path="/profile-comp" element={<ProfileComp />} /> */}
+          </Route>
+
+          <Route element={<PublicRoute />}>
+            <Route path="/sign-in" element={<SignInPage />} />
+            <Route path="/sign-up" element={<SignUpPage />} />
+            <Route path="/verify-email" element={<EmailVerificationPage />} />;
+            <Route path="/forgot-password" element={<ForgotPassword/>} />;
           </Route>
         </Routes>
         <Footer />

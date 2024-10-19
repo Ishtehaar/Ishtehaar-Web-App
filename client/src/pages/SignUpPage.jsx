@@ -13,7 +13,6 @@ export default function SignUpPage() {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
   const handleSubmit = async (e) => {
-
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {
       return setErrorMessage("Please fill out all fields.");
@@ -32,6 +31,7 @@ export default function SignUpPage() {
         return setErrorMessage(data.message);
       }
       setLoading(false);
+      setErrorMessage(null);
       if (res.ok) {
         navigate("/verify-email");
       }
@@ -101,10 +101,16 @@ export default function SignUpPage() {
             </Button>
             <OAuth />
           </form>
-          <div className="flex gap-2 text-sm mt-5">
-            <span>Have an account?</span>
-            <Link to="/sign-in" className="text-blue-500">
-              Sign In
+          <div className="flex text-sm mt-5 justify-between">
+            <div className="flex gap-2">
+              <span>Have an account?</span>
+              <Link to="/sign-in" className="text-blue-500">
+                Sign In
+              </Link>
+            </div>
+
+            <Link to="/forgot-password" className="text-red-500">
+              Forgot Password?
             </Link>
           </div>
           {errorMessage && (
