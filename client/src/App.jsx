@@ -12,6 +12,7 @@ import ProfilePage from "./pages/ProfilePage";
 import EmailVerificationPage from "./pages/EmailVerificationPage";
 import PublicRoute from "./components/PublicRoute";
 import ForgotPassword from "./pages/ForgotPasswordPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 export default function App() {
   return (
@@ -32,6 +33,7 @@ export default function App() {
             <Route path="/sign-up" element={<SignUpPage />} />
             <Route path="/verify-email" element={<EmailVerificationPage />} />;
             <Route path="/forgot-password" element={<ForgotPassword/>} />;
+            <Route path="/reset-password/:token" element={<ResetPasswordPage/>} />;
           </Route>
         </Routes>
         <Footer />

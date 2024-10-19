@@ -256,38 +256,42 @@ export const forgotPassword = async (req, res, next) => {
 };
 
 //RESET PASSWORD
-export const resetPassword = async(req, res, next) => {
-  try {
-    const { token } = req.params;
-    const { password } = req.body;
+  export const resetPassword = async(req, res, next) => {
+    try {
+      const { token } = req.params;
+      const { password } = req.body;
 
-    const user = await User.findOne({
-      resetPasswordToken: token,
-      resetPasswordExpiresAt: { $gt: Date.now() },
-    });
-  
-    if(!user){
-      errorHandler(404, "Invalid token or expired token");
+      if (password.length < 8) {
+        return next(errorHandler(400, "Password must be at least 8 characters"));
+      }
+
+      const user = await User.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpiresAt: { $gt: Date.now() },
+      });
+    
+      if(!user){
+        errorHandler(404, "Invalid token or expired token");
+      }
+
+      //update password
+      const hashedPassword = bcryptjs.hashSync(password, 10);
+      user.password = hashedPassword;
+
+      user.resetPasswordToken = undefined;
+      user.resetPasswordExpiresAt = undefined;
+
+      await user.save();
+
+      sendResetSuccessEmail(user.email);
+
+      res.status(200).json({
+        success: true,
+        message: "Password reset successfully",
+      });
+
+    } catch (error) {
+      errorHandler(400, "Error in resetPassword")
+      next(error)
     }
-
-    //update password
-    const hashedPassword = bcryptjs.hashSync(password, 10);
-    user.password = hashedPassword;
-
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpiresAt = undefined;
-
-    await user.save();
-
-    sendResetSuccessEmail(user.email);
-
-    res.status(200).json({
-      success: true,
-      message: "Password reset successfully",
-    });
-
-  } catch (error) {
-    errorHandler(400, "Error in resetPassword")
-    next(error)
   }
-}
