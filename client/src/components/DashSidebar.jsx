@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Sidebar, SidebarItem } from "flowbite-react";
-import {
-  HiAnnotation,
-  HiArrowSmRight,
-  HiChartPie,
-  HiDocumentText,
-  HiOutlineUserGroup,
-  HiUser,
-} from "react-icons/hi";
+import { FaUsersCog } from "react-icons/fa";
+import { IoPricetagsOutline } from "react-icons/io5";
+import { MdOutlineFeedback } from "react-icons/md";
+import { CiImageOn, CiSaveDown2, CiLogout } from "react-icons/ci";
+import { MdHistory } from "react-icons/md";
 import { Link, useLocation } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -50,67 +47,64 @@ export default function DashSidebar() {
           {currentUser && currentUser.isAdmin ? (
             <>
               <Sidebar.Item
-                icon={HiArrowSmRight}
+                icon={FaUsersCog}
                 className="cursor-pointer"
-                onClick={handleSignout}
+                active={tab === "image-ad"}
+                as="div"
               >
-                Manage Users
+                User Management
               </Sidebar.Item>
               <Sidebar.Item
-                icon={HiArrowSmRight}
+                icon={IoPricetagsOutline}
                 className="cursor-pointer"
-                onClick={handleSignout}
+                active={tab === "image-ad"}
+                as="div"
               >
-                Manage Subscriptions
+                Subscription Control
               </Sidebar.Item>
               <Sidebar.Item
-                icon={HiArrowSmRight}
+                icon={MdOutlineFeedback}
                 className="cursor-pointer"
-                onClick={handleSignout}
+                active={tab === "image-ad"}
+                as="div"
               >
-                Manage Complaints
+                Complaint Resolution
               </Sidebar.Item>
             </>
           ) : (
             <>
               <Link to="/dashboard?tab=image-ad">
                 <Sidebar.Item
-                  icon={HiArrowSmRight}
+                  icon={CiImageOn}
                   className="cursor-pointer"
                   active={tab === "image-ad"}
                   as="div"
                 >
-                  Image Ad
+                  Visual Ad Creation
                 </Sidebar.Item>
               </Link>
-
               <Sidebar.Item
-                icon={HiArrowSmRight}
+                icon={CiSaveDown2}
                 className="cursor-pointer"
-                onClick={handleSignout}
+                active={tab === "drafts"}
+                as="div"
               >
-                Video Ad
+                Saved Ads
               </Sidebar.Item>
               <Sidebar.Item
-                icon={HiArrowSmRight}
+                icon={MdHistory}
                 className="cursor-pointer"
-                onClick={handleSignout}
-              >
-                Drafts
-              </Sidebar.Item>
-              <Sidebar.Item
-                icon={HiArrowSmRight}
-                className="cursor-pointer"
-                onClick={handleSignout}
+                active={tab === "history"}
+                as="div"
               >
                 History
               </Sidebar.Item>
               <Sidebar.Item
-                icon={HiArrowSmRight}
+                icon={CiLogout}
                 className="cursor-pointer"
                 onClick={handleSignout}
               >
-                Sign Out
+                Log Out
               </Sidebar.Item>
             </>
           )}
