@@ -1,39 +1,35 @@
-import axios from "axios";
-import { errorHandler } from "../utils/error.js";
+  import axios from "axios";
+  import { errorHandler } from "../utils/error.js";
 
-export const generateImg = async (prompt) => {
-  const options = {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer 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`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ inputs: prompt }),
+  async function query(data) {
+
+    try {
+      const res = await fetch(
+        "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0",
+        {
+          headers: {
+            Authorization: "Bearer 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",
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          body: JSON.stringify(data)
+        }
+      );
+      if (!res.ok) {
+        errorHandler(201, "Error generating image");
+      }
+      const data = await res.blob();
+      return data;
+    } catch (error) {
+      errorHandler(201, error.data);
+    }
   };
 
-  try {
-    const res = await fetch(
-      "https://api-inference.huggingface.co/models/CompVis/stable-diffusion-v1-4",
-      options
-    );
-    if (!res.ok) {
-      errorHandler(201, "Error generating image");
-    }
-    const data = await res.json();
-    return data;
-  } catch (error) {
-    errorHandler(201, error.data);
-  }
-};
+  export const generateImage = async (req, res, next) => {
+    const { prompt } = req.body;
 
-export const generateImage = async (req, res, next) => {
-  const { prompt } = req.body;
+    const image = await query(prompt);
 
-  const image = await generateImg(prompt);
-
-  if (image) {
-    res.status(200).send({ image });
-  } else {
-    errorHandler(500, "Failed to Generate Image");
-  }
-};
+    res.set('Content-Type', 'image/png'); // or appropriate type
+        image.stream().pipe(res); // Stream the image back to the client
+  };

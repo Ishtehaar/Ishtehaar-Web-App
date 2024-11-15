@@ -10,7 +10,7 @@ const TOKEN = process.env.MAILTRAP_TOKEN;
 });
 
 export const sender = {
-  email: "hello@demomailtrap.com",
+  email: "hello@ishtehaar.online",
   name: "Ishtehaar",
 };
 

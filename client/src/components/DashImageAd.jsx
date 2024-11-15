@@ -1,80 +1,77 @@
-import { useState } from "react";
-import { Button, TextInput, Label, Card, Spinner } from "flowbite-react";
+import React, { useState } from 'react';
+import { Button, TextInput, Spinner, Alert } from 'flowbite-react';
 
 const DashImageAd = () => {
-  const [imagePrompt, setImagePrompt] = useState("");
-  const [taglinePrompt, setTaglinePrompt] = useState("");
-  const [generatedAd, setGeneratedAd] = useState(null);
+  const [prompt, setPrompt] = useState('');
+  const [image, setImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const handleGenerateAd = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true); // Show loading spinner
+    setError('');  // Clear any previous errors
+    setLoading(true);  // Show loading spinner
+
     try {
-      const response = await fetch("/create-ad", {
-        method: "POST",
+      const response = await fetch('/api/image/generate-image', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ imagePrompt, taglinePrompt }),
+        body: JSON.stringify({ prompt }),
       });
-      const data = await response.json();
-      if (data.image) {
-        setGeneratedAd(data.image); // Assuming image is a URL or base64
+
+      if (!response.ok) {
+        throw new Error('Failed to generate image');
       }
-    } catch (error) {
-      console.error("Error generating ad:", error);
+
+      const data = await response.json();
+      setImage(data.image);
+    } catch (err) {
+      setError('Failed to generate image. Please try again.');
     } finally {
-      setLoading(false); // Hide loading spinner
+      setLoading(false);  // Hide loading spinner
     }
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-3/4 lg:w-1/2 bg-white shadow-md">
-        <h2 className="text-2xl font-bold text-center mb-4">
-          Generate Your Ad
-        </h2>
-        <form onSubmit={handleGenerateAd} className="space-y-4">
-          <div>
-            <Label htmlFor="imagePrompt" value="Image Prompt" />
-            <TextInput
-              id="imagePrompt"
-              type="text"
-              placeholder="Enter image prompt"
-              value={imagePrompt}
-              onChange={(e) => setImagePrompt(e.target.value)}
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="taglinePrompt" value="Tagline Prompt" />
-            <TextInput
-              id="taglinePrompt"
-              type="text"
-              placeholder="Enter tagline prompt"
-              value={taglinePrompt}
-              onChange={(e) => setTaglinePrompt(e.target.value)}
-              required
-            />
-          </div>
-          <Button type="submit" className="w-full">
-            {loading ? <Spinner size="sm" light={true} /> : "Generate Ad"}
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
+      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
+        <h2 className="text-2xl font-bold text-white mb-4 text-center">Generate Image</h2>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <TextInput
+            id="prompt"
+            type="text"
+            placeholder="Enter prompt"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            required
+            className="bg-gray-700 text-white"
+          />
+
+          <Button type="submit" gradientDuoTone="purpleToBlue" disabled={loading} fullSized>
+            {loading ? <Spinner aria-label="Loading spinner" /> : 'Generate'}
           </Button>
         </form>
-        {generatedAd && (
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold text-center">
-              Your Generated Ad
-            </h3>
+
+        {error && (
+          <Alert color="failure" className="mt-4">
+            <span>{error}</span>
+          </Alert>
+        )}
+
+        {image && (
+          <div className="mt-6">
+            <h3 className="text-white text-lg mb-2">Generated Image:</h3>
             <img
-              src={generatedAd}
-              alt="Generated Ad"
-              className="mt-4 w-full h-auto rounded-lg shadow-lg"
+              src={`data:image/png;base64,${image}`}
+              alt="Generated result"
+              className="w-full h-auto rounded-lg"
             />
           </div>
         )}
-      </Card>
+      </div>
     </div>
   );
 };

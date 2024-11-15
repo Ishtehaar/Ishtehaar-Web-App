@@ -13,6 +13,9 @@ import EmailVerificationPage from "./pages/EmailVerificationPage";
 import PublicRoute from "./components/PublicRoute";
 import ForgotPassword from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
+import DashImageAd from "./components/DashImageAd";
+import DashSidebar from "./components/DashSidebar";
+import ProfileComp from "./components/ProfileComp";
 
 export default function App() {
   return (
@@ -25,6 +28,9 @@ export default function App() {
 
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/image-ad" element={<DashImageAd />} />
+            <Route path="/dash-sidebar" element={<DashSidebar />} />
+            <Route path="/profile-comp" element={<ProfileComp />} />
             <Route path="/profile-page" element={<ProfilePage />} />
           </Route>
 
