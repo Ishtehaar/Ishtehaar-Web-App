@@ -13,7 +13,7 @@ const DashImageAd = () => {
     setLoading(true);  // Show loading spinner
 
     try {
-      const response = await fetch('/api/image/generate-image', {
+      const response = await fetch('https://5d7a-34-125-223-183.ngrok-free.app/generate-image', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ const DashImageAd = () => {
       }
 
       const data = await response.json();
-      setImage(data.image);
+      setImage(`data:image/png;base64,${data.image}`);
     } catch (err) {
       setError('Failed to generate image. Please try again.');
     } finally {
@@ -38,7 +38,7 @@ const DashImageAd = () => {
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
       <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
         <h2 className="text-2xl font-bold text-white mb-4 text-center">Generate Image</h2>
-        
+
         <form onSubmit={handleSubmit} className="space-y-4">
           <TextInput
             id="prompt"
@@ -65,7 +65,7 @@ const DashImageAd = () => {
           <div className="mt-6">
             <h3 className="text-white text-lg mb-2">Generated Image:</h3>
             <img
-              src={`data:image/png;base64,${image}`}
+              src={image}
               alt="Generated result"
               className="w-full h-auto rounded-lg"
             />

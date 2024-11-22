@@ -1,13 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Sidebar, SidebarItem } from "flowbite-react";
 import {
-  HiAnnotation,
-  HiArrowSmRight,
-  HiChartPie,
-  HiDocumentText,
-  HiOutlineUserGroup,
   HiUser,
 } from "react-icons/hi";
+import { CiLogout } from "react-icons/ci";
 import { Link, useLocation } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -28,7 +24,7 @@ export default function ProfileSidebar() {
 
   const handleSignout = async () => {
     try {
-      const res = await fetch("/api/user/signout", {
+      const res = await fetch("/api/auth/signout", {
         method: "POST",
       });
       const data = await res.json();
@@ -59,7 +55,7 @@ export default function ProfileSidebar() {
                 </Sidebar.Item>
               </Link>
               <Sidebar.Item
-                icon={HiArrowSmRight}
+                icon={CiLogout}
                 className="cursor-pointer"
                 onClick={handleSignout}
               >

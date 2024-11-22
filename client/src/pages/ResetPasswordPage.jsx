@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useNavigate, useParams } from "react-router-dom";
 import Input from "../components/Input";
 import { Lock } from "lucide-react";
-import toast from "react-hot-toast";
 import { Alert } from "flowbite-react";
 
 const ResetPasswordPage = () => {

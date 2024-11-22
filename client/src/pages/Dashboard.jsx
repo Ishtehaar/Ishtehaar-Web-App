@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DashSidebar from "../components/DashSidebar";
@@ -7,7 +6,7 @@ import DashImageAd from "../components/DashImageAd";
 
 function Dashboard() {
   const location = useLocation();
-  const [tab, setTab ] = useState('');
+  const [tab, setTab] = useState("");
   useEffect(() => {
     const urlPrams = new URLSearchParams(location.search);
     const tabFromUrl = urlPrams.get("tab");
@@ -16,16 +15,17 @@ function Dashboard() {
     }
   }, [location.search]);
   return (
-    <>
-      <div className="min-h-screen flex flex-col md:flex-row">
-        <div className="md:w-56">
-          {/*Sidebar */}
-          <DashSidebar />
-        </div>
-        {/* ImageAd... */}
-        {tab === "image-ad" && <DashImageAd/>}
-      </div>
-    </>
+    <div className="min-h-screen flex flex-col md:flex-row">
+  <div className="md:w-56">
+    {/* Sidebar */}
+    <DashSidebar />
+  </div>
+  <div className="flex-1 flex justify-center items-center">
+    {/* ImageAd */}
+    {tab === "image-ad" && <DashImageAd />}
+  </div>
+</div>
+
   );
 }
 
