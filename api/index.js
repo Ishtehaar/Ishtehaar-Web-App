@@ -3,20 +3,20 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import imageRoutes from "./routes/image.route.js";
+import openAiRoutes from "./routes/openai.route.js";
+import advertismentRoutes from "./routes/advertisment.route.js";
+
 import cookieParser from "cookie-parser";
 
 import dotenv from "dotenv";
 dotenv.config();
 
-
-
 mongoose
-  .connect(
-    process.env.MONGO_URL
-  )
+  .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("Connected to MongoDB");
-  }).catch((err) => {
+  })
+  .catch((err) => {
     console.log("MongoDB not connected");
   });
 
@@ -30,15 +30,15 @@ app.listen(PORT, () => {
 app.use(express.json());
 app.use(cookieParser());
 
-app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes)
-app.use('/api/image', imageRoutes)
-
-
+app.use("/api/auth", authRoutes);
+app.use("/api/user", userRoutes);
+app.use("/api/image", imageRoutes);
+app.use("/api/openai", openAiRoutes);
+app.use("/api/advertisment", advertismentRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
+  const message = err.message || "Internal Server Error";
   res.status(statusCode).json({
     success: false,
     statusCode,

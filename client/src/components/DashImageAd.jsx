@@ -13,7 +13,7 @@ const DashImageAd = () => {
     setLoading(true);  // Show loading spinner
 
     try {
-      const response = await fetch('https://5d7a-34-125-223-183.ngrok-free.app/generate-image', {
+      const response = await fetch('https://ee7c-34-125-184-229.ngrok-free.app/generate-image', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
