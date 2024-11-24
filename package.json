@@ -22,6 +22,7 @@
     "mailtrap": "^3.4.0",
     "mongoose": "^8.6.1",
     "nodemon": "^3.1.4",
-    "openai": "^4.73.0"
+    "openai": "^4.73.0",
+    "sharp": "^0.33.5"
   }
 }
