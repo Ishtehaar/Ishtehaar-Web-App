@@ -1,6 +1,8 @@
 import cloudinary from "cloudinary";
 import * as dotenv from "dotenv";
-
+import OpenAI from "openai";
+import { errorHandler } from "../utils/error.js";
+import Advertisment  from "../models/advertisment.model.js";
 dotenv.config();
 
 cloudinary.v2.config({
@@ -9,125 +11,65 @@ cloudinary.v2.config({
   api_secret: process.env.CLOUD_API_SECRET,
 });
 
-// export const createAd = async (req, res, next) => {
-//   const __dirname = path.resolve();
-//   const { textPrompt, imagePrompt } = req.body;
-//   const backgroundImagePath = path.join(__dirname, "api", "assets", "lab.png");
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
-//   const outputImagePath = path.join(__dirname, "output.jpg");
+export const generateContent = async (req, res, next) => {
+  const { prompt } = req.body;
 
-//   try {
-//     // Step 1: Generate text content
-//     const textResponse = await fetch(
-//       "http://localhost:5000/api/openai/generate-content",
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ prompt: textPrompt }),
-//       }
-//     );
-//     if (!textResponse.ok) throw new Error("Failed to fetch text content");
-//     const textData = await textResponse.json();
-//     const generatedText = textData.data;
+  if (!prompt) {
+    return res.status(400).json({
+      success: false,
+      message: "Prompt is required",
+    });
+  }
 
-//     console.log("Generated text:", generatedText);
+  try {
+    const gptResponse = await openai.chat.completions.create({
+      model: "gpt-4o", // Ensure the model name is correct
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a skilled content writer specializing in creating engaging social media posts. Based on the details I provide, craft concise  and captivating content suitable for overlaying on a background image. The content should work effectively for both Instagram and LinkedIn, maintaining a balance between creativity and professionalism. Ensure it grabs attention, aligns with the provided details, and is optimized for visual impact. Don't include hashtags here. Include a tag line as well",
+        },
+        { role: "user", content: prompt },
+      ],
+    });
 
-//     // // Step 2: Generate background image
-//     // const imageResponse = await fetch(
-//     //   "https://ee7c-34-125-184-229.ngrok-free.app/generate-image",
-//     //   {
-//     //     method: "POST",
-//     //     headers: {
-//     //       "Content-Type": "application/json",
-//     //     },
-//     //     body: JSON.stringify({ prompt: imagePrompt }),
-//     //   }
-//     // );
+    const generatedContent = gptResponse.choices[0]?.message?.content;
 
-//     // if (!imageResponse.ok) throw new Error("Failed to fetch background image");
-//     // const imageData = await imageResponse.json();
-//     // const imageUrl = imageData.image;
-
-//     // const base64Image = `data:image/png;base64,${imageUrl}`;
-
-//     const svgText = (text) => {
-//       const words = text.split(" ");
-//       const lines = [];
-//       let currentLine = words[0];
-
-//       for (let i = 1; i < words.length; i++) {
-//         const word = words[i];
-//         if ((currentLine + " " + word).length > 30) {
-//           // Adjust the length as needed
-//           lines.push(currentLine);
-//           currentLine = word;
-//         } else {
-//           currentLine += " " + word;
-//         }
-//       }
-//       lines.push(currentLine);
-
-//       const svgLines = lines
-//         .map(
-//           (line, index) =>
-//             `<text x="400" y="${150 + index * 50}" class="title">${line}</text>`
-//         )
-//         .join("");
-
-//       return `
-//           <svg width="800" height="400">
-//             <style>
-//               .title { fill: black; font-size: 40px; font-weight: bold; text-anchor: middle; }
-//             </style>
-//             ${svgLines}
-//           </svg>
-//         `;
-//     };
-
-//     const svgContent = svgText(generatedText);
-
-//     await sharp(backgroundImagePath)
-//       .composite([{ input: Buffer.from(svgContent), gravity: "center" }])
-//       .toFile(outputImagePath);
-
-//     const uploadResult = cloudinary.uploader.upload(outputImagePath, {
-//       resource_type: "image",
-//       public_id: "ad_image",
-//     });
-
-//     // const imageWithTextUrl = cloudinary.v2.url(uploadResult.public_id, {
-//     //     transformation: [
-//     //       {
-//     //         overlay: `text:Arial_${generatedText}`, // Add the text as overlay
-//     //         gravity: "south",
-//     //         y: 30,
-//     //         color: "white",
-//     //         font_size: 50,
-//     //         font_weight: "bold",
-//     //       },
-//     //     ],
-//     //   });
-
-//     // Step 5: Respond with the final URL of the uploaded image
-//     res.status(200).json({
-//       success: true,
-//       finalAdUrl: uploadResult.secure_url,
-//     });
-//   } catch (error) {
-//     console.error("Error in createAd:", error);
-//     next(error);
-//   }
-// };
+    res.status(200).json({
+      success: true,
+      data: generatedContent,
+    });
+  } catch (error) {
+    errorHandler(400, "Error generating content");
+    next(error); // Pass error to the error-handling middleware
+  }
+};
 
 export const uploadAd = async (req, res, next) => {
-  const { base64Image } = req.body;
+  //to upload on cloudinary and then saving in DB
+  const { base64Image, title, imagePrompt, textPrompt, overlayText, userId } = req.body;
 
   try {
     const uploadResult = await cloudinary.v2.uploader.upload(base64Image, {
       folder: "ads",
     });
+
+    const newAd = new Advertisment({
+      title,
+      userId,
+      textPrompt,
+      imagePrompt,
+      backgroundImage: uploadResult.secure_url,
+      overlayText
+      });
+
+      await newAd.save();
+
 
     res.status(200).json({
       success: true,

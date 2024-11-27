@@ -66,6 +66,9 @@ export default function SignUpPage() {
                 id="username"
                 onChange={handleChange}
               />
+              <p className="mt-2 text-xs text-red-400 font-small">
+                Username must only contain letters, numbers, and no spaces.{" "}
+              </p>
             </div>
             <div>
               <Label value="Your email" />
@@ -84,6 +87,20 @@ export default function SignUpPage() {
                 id="password"
                 onChange={handleChange}
               />
+              <p className="mt-2 text-xs text-red-400  font-small">
+                Password must be at least 8 characters.{" "}
+              </p>
+              <p className="mt-2 text-xs text-red-400  font-small">
+                Must include at least one upper case letter.{" "}
+              </p>
+              <p className="mt-2 text-xs text-red-400  font-small">
+                Must contain at least one number.{" "}
+              </p>
+              <p className="mt-2 text-xs text-red-400  font-small">
+                Must have at least one symbol.{" "}
+              </p>
+              
+            
             </div>
             <Button
               gradientDuoTone="purpleToPink"

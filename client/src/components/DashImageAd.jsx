@@ -1,26 +1,50 @@
 import React, { useState, useRef } from "react";
-import { Button, TextInput, Spinner, Alert } from "flowbite-react";
+import {
+  Button,
+  TextInput,
+  Spinner,
+  Alert,
+  Select,
+  FileInput,
+  Label,
+} from "flowbite-react";
 import html2canvas from "html2canvas";
-import spiderman from "../assets/mountains.jpg";
+import { useSelector } from "react-redux";
 
 const DashImageAd = () => {
-  const [prompt, setPrompt] = useState("");
+  const { currentUser } = useSelector((state) => state.user);
+  const [title, setTitle] = useState("");
   const [textPrompt, setTextPrompt] = useState("");
+  const [imagePrompt, setImagePrompt] = useState("");
   const [overlayText, setOverlayText] = useState("");
   const [image, setImage] = useState("");
+  const [backgroundImage, setBackgroundImage] = useState("");
+  const [finalImageReady, setFinalImageReady] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const adRef = useRef(null); // Ref to the component for rendering
+  const [ratio, setRatio] = useState("1:1");
+  const [fontSize, setFontSize] = useState(24);
+  const [textColor, setTextColor] = useState("#FFFFFF");
+  const [fontStyle, setFontStyle] = useState("normal");
+  const [fontWeight, setFontWeight] = useState("normal");
+  const [fontFamily, setFontFamily] = useState("Arial");
+
+  const adRef = useRef(null);
+
+  const ratioSizes = {
+    "1:1": { width: 400, height: 400 },
+    "16:9": { width: 640, height: 360 },
+    "4:3": { width: 600, height: 450 },
+  };
 
   const handleGenerate = async (e) => {
     e.preventDefault();
     setError("");
     setLoading(true);
-    setImage(spiderman);
+    setFinalImageReady(false);
 
     try {
-      // Fetch text from OpenAI API
-      const textResponse = await fetch("/api/openai/generate-content", {
+      const textResponse = await fetch("/api/advertisment/generate-content", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,107 +52,201 @@ const DashImageAd = () => {
         body: JSON.stringify({ prompt: textPrompt }),
       });
 
-      if (!textResponse.ok) {
-        throw new Error("Failed to generate text");
-      }
-
+      if (!textResponse.ok) throw new Error("Failed to generate text");
       const textData = await textResponse.json();
       setOverlayText(textData.data);
+
+      const imageResponse = await fetch(
+        "https://b1ac-34-82-102-175.ngrok-free.app/generate-image",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt: imagePrompt }),
+        }
+      );
+
+      if (!imageResponse.ok) throw new Error("Failed to generate image");
+      const imageData = await imageResponse.json();
+      setImage(`data:image/png;base64,${imageData.image}`);
+      setBackgroundImage("");
+
+      setFinalImageReady(true);
     } catch (err) {
-      setError("Failed to generate text. Please try again.");
+      setError(
+        err.message || "Failed to generate advertisement. Please try again."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  const handleUpload = async () => {
+  const handleUploadBackground = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => setBackgroundImage(event.target.result);
+      reader.readAsDataURL(file);
+      setImage("");
+    }
+  };
+
+  const handleUploadFinalAd = async () => {
     if (!adRef.current) return;
 
     try {
-      // Render the ad component to a canvas
       const canvas = await html2canvas(adRef.current, { useCORS: true });
       const base64Image = canvas.toDataURL("image/png");
 
-      // Send the base64 image to the backend
       const response = await fetch("/api/advertisment/upload-ad", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ base64Image }),
+        body: JSON.stringify({ base64Image, title, imagePrompt, textPrompt, overlayText, userId: currentUser._id }),
       });
 
       const result = await response.json();
       if (result.success) {
-        alert("Ad successfully uploaded!");
-        console.log("Cloudinary URL:", result.imageUrl);
+        alert(result.message);
       } else {
         throw new Error(result.message);
       }
-    } catch (error) {
-      console.error("Failed to upload advertisement:", error);
+    } catch (err) {
+      console.error(err);
       setError("Failed to upload advertisement. Please try again.");
     }
   };
 
+  const { width, height } = ratioSizes[ratio];
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900">
-      <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-2xl font-bold text-white mb-4 text-center">
-          Generate Advertisement
-        </h2>
+    <div className="p-3 max-w-3xl mx-auto min-h-screen">
+      <h1 className="text-center text-3xl my-7 font-semibold">
+        Create an Advertisement
+      </h1>
+      <form className="flex flex-col gap-4" onSubmit={handleGenerate}>
+      <TextInput
+          type="text"
+          placeholder="Enter title for advertisment"
+          required
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+        />
+        <TextInput
+          type="text"
+          placeholder="Enter text prompt for ad content"
+          required
+          value={textPrompt}
+          onChange={(e) => setTextPrompt(e.target.value)}
+        />
 
-        <form onSubmit={handleGenerate} className="space-y-4">
-          <TextInput
-            id="textPrompt"
-            type="text"
-            placeholder="Enter text prompt"
-            value={textPrompt}
-            onChange={(e) => setTextPrompt(e.target.value)}
-            required
-            className="bg-gray-700 text-white"
-          />
+        <TextInput
+          type="text"
+          placeholder="Enter image prompt for background"
+          value={imagePrompt}
+          onChange={(e) => setImagePrompt(e.target.value)}
+        />
 
-          <Button
-            type="submit"
-            gradientDuoTone="purpleToBlue"
-            disabled={loading}
-            fullSized
-          >
-            {loading ? <Spinner aria-label="Loading spinner" /> : "Generate"}
-          </Button>
-        </form>
-
-        {error && (
-          <Alert color="failure" className="mt-4">
-            <span>{error}</span>
-          </Alert>
-        )}
-
-        <div className="mt-6 relative w-full h-auto" ref={adRef}>
-          <img
-            src={image}
-            alt="Generated Ad Background"
-            className="w-full h-auto rounded-lg"
-          />
-          <div
-            className="absolute inset-0 flex items-center justify-center text-white font-bold text-2xl p-4"
-            style={{
-              textShadow: "2px 2px 4px rgba(0, 0, 0, 0.7)",
-            }}
-          >
-            {overlayText}
-          </div>
+        <div>
+          <Label>Upload Background Image (optional)</Label>
+          <FileInput onChange={handleUploadBackground} accept="image/*" />
         </div>
 
-        <Button
-          className="mt-4"
-          gradientDuoTone="greenToBlue"
-          onClick={handleUpload}
+        <div>
+          <Label>Select Size Ratio</Label>
+          <Select value={ratio} onChange={(e) => setRatio(e.target.value)}>
+            <option value="1:1">1:1</option>
+            <option value="16:9">16:9</option>
+            <option value="4:3">4:3</option>
+          </Select>
+        </div>
+
+        {loading && (
+          <div className="flex justify-center">
+            <Spinner aria-label="Loading spinner" />
+          </div>
+        )}
+
+        {error && <Alert color="failure">{error}</Alert>}
+
+        <Button type="submit" gradientDuoTone="purpleToBlue">
+          Generate Advertisement
+        </Button>
+      </form>
+
+      {finalImageReady && (
+        <div ref={adRef} className="mt-5" style={{ width, height }}>
+          <div
+            className="relative w-full h-full"
+            style={{ width, height, position: "relative" }}
+          >
+            <img
+              src={backgroundImage || image}
+              alt="Generated Background"
+              className="w-full h-full object-cover rounded-lg"
+            />
+            <div
+              className="absolute inset-0 flex items-center justify-center"
+              style={{
+                color: textColor,
+                fontSize: `${fontSize}px`,
+                fontWeight,
+                fontStyle,
+                fontFamily,
+                textAlign: "center",
+              }}
+            >
+              {overlayText}
+            </div>
+          </div>
+        </div>
+      )}
+
+      <div className="flex gap-4 mt-4">
+        <Select
+          value={fontFamily}
+          onChange={(e) => setFontFamily(e.target.value)}
         >
+          {["Arial", "Verdana", "Tahoma", "Georgia", "Times New Roman", "Courier New", "Lucida Console", "Impact", "Comic Sans MS", "Trebuchet MS"].map(
+            (font) => (
+              <option key={font} value={font}>
+                {font}
+              </option>
+            )
+          )}
+        </Select>
+
+        <Button onClick={() => setFontWeight(fontWeight === "normal" ? "bold" : "normal")}>
+          Bold
+        </Button>
+
+        <Button onClick={() => setFontStyle(fontStyle === "normal" ? "italic" : "normal")}>
+          Italic
+        </Button>
+
+        <TextInput
+          type="number"
+          min="12"
+          max="72"
+          value={fontSize}
+          onChange={(e) => setFontSize(Number(e.target.value))}
+          placeholder="Font Size"
+        />
+
+        <input
+          type="color"
+          value={textColor}
+          onChange={(e) => setTextColor(e.target.value)}
+        />
+      </div>
+
+      {finalImageReady && (
+        <Button gradientDuoTone="greenToBlue" onClick={handleUploadFinalAd}>
           Upload Advertisement
         </Button>
-      </div>
+      )}
     </div>
   );
 };

@@ -1,9 +1,10 @@
 import express from "express";
-import { createAd, uploadAd } from "../controllers/advertisment.controller.js";
+import { generateContent, uploadAd } from "../controllers/advertisment.controller.js";
+import { verifyToken } from "../utils/verifyUser.js";
 
 const router = express.Router();
 
-router.post("/create-ad", createAd);
-router.post("/upload-ad", uploadAd);
+router.post("/generate-content", verifyToken, generateContent);
+router.post("/upload-ad", verifyToken, uploadAd); //to upload on cloudinary and then saving in DB
 
 export default router;

@@ -98,7 +98,7 @@ export default function SignInPage() {
           </form>
           <div className="flex justify-between text-sm mt-5">
             <div className="flex gap-2">
-              <span>Dont Have an account?</span>
+              <span>Don't Have an account?</span>
               <Link to="/sign-up" className="text-blue-500">
                 Sign Up
               </Link>

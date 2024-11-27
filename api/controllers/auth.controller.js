@@ -10,7 +10,7 @@ import {
   sendVerificationEmail,
   sendWelcomeEmail,
   sendPasswordResetEmail,
-  sendResetSuccessEmail
+  sendResetSuccessEmail,
 } from "../mailtrap/email.js";
 
 //SIGNUP
@@ -27,8 +27,15 @@ export const signup = async (req, res, next) => {
     ) {
       next(errorHandler(400, "All fields are required"));
     }
-    if (password.length < 8) {
-      return next(errorHandler(400, "Password must be at least 8 characters"));
+    // Validate password strength
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return next(
+        errorHandler(
+          400,
+          "Password must be at least 8 characters long, include one uppercase letter, one number, and one symbol."
+        )
+      );
     }
     if (username.includes(" ")) {
       return next(errorHandler(400, "Username cannot contain spaces"));
@@ -71,7 +78,7 @@ export const signup = async (req, res, next) => {
       .status(201)
       .json({ success: true, message: "SignUp Successfull", user: rest });
   } catch (error) {
-    errorHandler(400, "Error in signup")
+    errorHandler(400, "Error in signup");
     next(error);
   }
 };
@@ -134,7 +141,7 @@ export const signin = async (req, res, next) => {
     if (!validPassword) {
       return next(errorHandler(400, "Invalid password"));
     }
-    if(user && user.isVerified == false){
+    if (user && user.isVerified == false) {
       return next(errorHandler(400, "Email not verified"));
     }
 
@@ -147,7 +154,7 @@ export const signin = async (req, res, next) => {
     res.status(200).json(rest);
   } catch (error) {
     console.log("Error in signin", error);
-    errorHandler(400, "Error in signin")
+    errorHandler(400, "Error in signin");
     next(error);
   }
 };
@@ -196,7 +203,7 @@ export const google = async (req, res, next) => {
         .json(rest);
     }
   } catch (error) {
-    errorHandler(400, "Error in google signin")
+    errorHandler(400, "Error in google signin");
     next(error);
   }
 };
@@ -209,7 +216,7 @@ export const signout = async (req, res, next) => {
       .status(200)
       .json({ message: "Signout successful" });
   } catch (error) {
-    errorHandler(400, "Error in signout")
+    errorHandler(400, "Error in signout");
     next(error);
   }
 };
@@ -243,55 +250,58 @@ export const forgotPassword = async (req, res, next) => {
       `${process.env.CLIENT_URL}/reset-password/${resetToken}`
     );
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Password reset link send to your email",
-      });
+    res.status(200).json({
+      success: true,
+      message: "Password reset link send to your email",
+    });
   } catch (error) {
-    errorHandler(400, "Error in forgotPassword")
+    errorHandler(400, "Error in forgotPassword");
     next(error);
   }
 };
 
 //RESET PASSWORD
-  export const resetPassword = async(req, res, next) => {
-    try {
-      const { token } = req.params;
-      const { password } = req.body;
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
 
-      if (password.length < 8) {
-        return next(errorHandler(400, "Password must be at least 8 characters"));
-      }
-
-      const user = await User.findOne({
-        resetPasswordToken: token,
-        resetPasswordExpiresAt: { $gt: Date.now() },
-      });
-    
-      if(!user){
-        errorHandler(404, "Invalid token or expired token");
-      }
-
-      //update password
-      const hashedPassword = bcryptjs.hashSync(password, 10);
-      user.password = hashedPassword;
-
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpiresAt = undefined;
-
-      await user.save();
-
-      sendResetSuccessEmail(user.email);
-
-      res.status(200).json({
-        success: true,
-        message: "Password reset successfully",
-      });
-
-    } catch (error) {
-      errorHandler(400, "Error in resetPassword")
-      next(error)
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return next(
+        errorHandler(
+          400,
+          "Password must be at least 8 characters long, include one uppercase letter, one number, and one symbol."
+        )
+      );
     }
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpiresAt: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      errorHandler(404, "Invalid token or expired token");
+    }
+
+    //update password
+    const hashedPassword = bcryptjs.hashSync(password, 10);
+    user.password = hashedPassword;
+
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpiresAt = undefined;
+
+    await user.save();
+
+    sendResetSuccessEmail(user.email);
+
+    res.status(200).json({
+      success: true,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    errorHandler(400, "Error in resetPassword");
+    next(error);
   }
+};
