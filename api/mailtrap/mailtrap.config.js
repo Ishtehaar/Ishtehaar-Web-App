@@ -11,6 +11,6 @@ const TOKEN = process.env.MAILTRAP_TOKEN;
 
 export const sender = {
   email: "hello@ishtehaar.online",
-  name: "Ishtehaar",
+  name: "Ishtehaar Support",
 };
 

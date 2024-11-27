@@ -28,15 +28,16 @@ const DashImageAd = () => {
   const [fontStyle, setFontStyle] = useState("normal");
   const [fontWeight, setFontWeight] = useState("normal");
   const [fontFamily, setFontFamily] = useState("Arial");
-
   const adRef = useRef(null);
 
   const ratioSizes = {
-    "1:1": { width: 400, height: 400 },
+    "1:1": { width: 400, height: 600 },
     "16:9": { width: 640, height: 360 },
     "4:3": { width: 600, height: 450 },
   };
+  const { width, height } = ratioSizes[ratio];
 
+  // Function to generate advertisement 
   const handleGenerate = async (e) => {
     e.preventDefault();
     setError("");
@@ -57,7 +58,7 @@ const DashImageAd = () => {
       setOverlayText(textData.data);
 
       const imageResponse = await fetch(
-        "https://b1ac-34-82-102-175.ngrok-free.app/generate-image",
+        "https://a37c-35-224-16-129.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {
@@ -82,6 +83,7 @@ const DashImageAd = () => {
     }
   };
 
+  // Function to upload background image from your local machine
   const handleUploadBackground = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -91,7 +93,8 @@ const DashImageAd = () => {
       setImage("");
     }
   };
-
+   
+  // Function to upload final advertisement to cloudinary and then save the relevant details in the database
   const handleUploadFinalAd = async () => {
     if (!adRef.current) return;
 
@@ -104,7 +107,14 @@ const DashImageAd = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ base64Image, title, imagePrompt, textPrompt, overlayText, userId: currentUser._id }),
+        body: JSON.stringify({
+          base64Image,
+          title,
+          imagePrompt,
+          textPrompt,
+          overlayText,
+          userId: currentUser._id,
+        }),
       });
 
       const result = await response.json();
@@ -119,7 +129,7 @@ const DashImageAd = () => {
     }
   };
 
-  const { width, height } = ratioSizes[ratio];
+
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
@@ -127,7 +137,7 @@ const DashImageAd = () => {
         Create an Advertisement
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleGenerate}>
-      <TextInput
+        <TextInput
           type="text"
           placeholder="Enter title for advertisment"
           required
@@ -209,20 +219,37 @@ const DashImageAd = () => {
           value={fontFamily}
           onChange={(e) => setFontFamily(e.target.value)}
         >
-          {["Arial", "Verdana", "Tahoma", "Georgia", "Times New Roman", "Courier New", "Lucida Console", "Impact", "Comic Sans MS", "Trebuchet MS"].map(
-            (font) => (
-              <option key={font} value={font}>
-                {font}
-              </option>
-            )
-          )}
+          {[
+            "Arial",
+            "Verdana",
+            "Tahoma",
+            "Georgia",
+            "Times New Roman",
+            "Courier New",
+            "Lucida Console",
+            "Impact",
+            "Comic Sans MS",
+            "Trebuchet MS",
+          ].map((font) => (
+            <option key={font} value={font}>
+              {font}
+            </option>
+          ))}
         </Select>
 
-        <Button onClick={() => setFontWeight(fontWeight === "normal" ? "bold" : "normal")}>
+        <Button
+          onClick={() =>
+            setFontWeight(fontWeight === "normal" ? "bold" : "normal")
+          }
+        >
           Bold
         </Button>
 
-        <Button onClick={() => setFontStyle(fontStyle === "normal" ? "italic" : "normal")}>
+        <Button
+          onClick={() =>
+            setFontStyle(fontStyle === "normal" ? "italic" : "normal")
+          }
+        >
           Italic
         </Button>
 

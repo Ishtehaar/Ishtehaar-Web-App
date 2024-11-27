@@ -10,12 +10,12 @@ export const test = async (req, res, next) => {
 
 //UPDATE USER
 export const updateUser = async (req, res, next) => {
-  
   const { username, email, password } = req.body;
 
-  console.log(req.user.userId)
+  console.log("req "+req.user.userId);
+  console.log("params "+req.params.userId);
 
-  if(req.user.userId!==req.params.userId){
+  if (req.user.userId !== req.params.userId) {
     errorHandler(403, "You are not allowed to update this user");
   }
 
@@ -30,8 +30,14 @@ export const updateUser = async (req, res, next) => {
   }
 
   if (req.body.password) {
-    if (req.body.password.length < 8) {
-      return next(errorHandler(400, "Password must be at least 8 characters"));
+    const passwordRegex = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    if (!passwordRegex.test(req.body.password)) {
+      return next(
+        errorHandler(
+          400,
+          "Password must be at least 8 characters long, include one uppercase letter, one number, and one symbol."
+        )
+      );
     }
     req.body.password = bcryptjs.hashSync(req.body.password, 10);
   }
@@ -83,10 +89,10 @@ export const updateUser = async (req, res, next) => {
 
 //DELETE USER
 export const deleteUser = async (req, res, next) => {
-  console.log(req.user.userId)
-  console.log(req.params.userId)
+  console.log("req "+req.user.userId);
+  console.log("params "+req.params.userId);
 
-  if (req.user.userId!== req.params.userId) {
+  if (req.user.userId !== req.params.userId) {
     return next(errorHandler(403, "You are not allowed to delete this user"));
   }
   try {

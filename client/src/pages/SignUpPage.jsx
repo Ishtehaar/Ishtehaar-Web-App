@@ -69,6 +69,9 @@ export default function SignUpPage() {
               <p className="mt-2 text-xs text-red-400 font-small">
                 Username must only contain letters, numbers, and no spaces.{" "}
               </p>
+              <p className="mt-2 text-xs text-red-400 font-small">
+                Username must be between 7 and 20 characters.{" "}
+              </p>
             </div>
             <div>
               <Label value="Your email" />

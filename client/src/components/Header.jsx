@@ -123,7 +123,7 @@ export default function Header() {
         </Navbar.Link>
         {currentUser && 
         <Navbar.Link active={path === '/dashboard'} as={'div'}>
-        <Link to='/dashboard?tab=image-ad'>Dashboard</Link>
+        <Link to='/dashboard'>Dashboard</Link>
       </Navbar.Link>
       }
       </Navbar.Collapse>

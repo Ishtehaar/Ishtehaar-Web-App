@@ -32,11 +32,8 @@ export default function DashProfile() {
   const [imageFileUploading, setImageFileUploading] = useState(false);
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
-  console.log(currentUser._id);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({});
-
-  console.log(currentUser._id);
 
   const filePickerRef = useRef();
   const dispatch = useDispatch();

@@ -48,6 +48,11 @@ export const signup = async (req, res, next) => {
         errorHandler(400, "Username can only contain letters and numbers")
       );
     }
+    if (username.length < 7 || username.length > 20) {
+      return next(
+        errorHandler(400, "Username must be between 7 and 20 characters")
+      );
+    }
     if (email.includes(" ")) {
       return next(errorHandler(400, "Email cannot contain spaces"));
     }
@@ -165,13 +170,15 @@ export const google = async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
     if (user) {
-      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-      const { password, ...rest } = user._doc;
+      // const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
+      // const { password, ...rest } = user._doc;
+      generateTokenAndSetCookie(res, user._id);
+
+      user.lastLogin = new Date();
+
+      const { password: pass, ...rest } = user._doc;
       res
         .status(200)
-        .cookie("access_token", token, {
-          httpOnly: true,
-        })
         .json(rest);
     } else {
       const generatedPassword =
@@ -186,24 +193,22 @@ export const google = async (req, res, next) => {
         email,
         password: hashedPassword,
         profilePicture: googlePhotoUrl,
+        isVerified: true,
       });
       await newUser.save();
-      const token = jwt.sign(
-        { id: newUser._id, isAdmin: newUser.isAdmin },
-        process.env.JWT_SECRET
-      );
+      generateTokenAndSetCookie(res, user._id, user.isAdmin);
+      // const token = jwt.sign(
+      //   { id: newUser._id, isAdmin: newUser.isAdmin },
+      //   process.env.JWT_SECRET
+      // );
       const { password, ...rest } = newUser._doc;
-      const expiryDate = new Date(Date.now() + 3600000);
+      // const expiryDate = new Date(Date.now() + 3600000);
       res
-        .status(200)
-        .cookie("access_token", token, {
-          httpOnly: true,
-          expires: expiryDate,
-        })
-        .json(rest);
+      .status(201)
+      .json({ success: true, message: "SignUp Successfull", user: rest });
     }
   } catch (error) {
-    errorHandler(400, "Error in google signin");
+    errorHandler(400, "Error in google signin/signup");
     next(error);
   }
 };
