@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import DashSidebar from "../components/DashSidebar";
 import DashImageAd from "../components/DashImageAd";
+import DashSaveAd from "../components/DashSaveAd";
 // import DashProfile from "../compnents/DashProfile";
 
 function Dashboard() {
@@ -23,6 +24,8 @@ function Dashboard() {
   <div className="flex-1 flex justify-center items-center">
     {/* ImageAd */}
     {tab === "image-ad" && <DashImageAd />}
+    {tab === "saved-ads" && <DashSaveAd />}
+
   </div>
 </div>
 

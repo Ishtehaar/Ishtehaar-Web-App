@@ -82,14 +82,17 @@ export default function DashSidebar() {
                   Visual Ad Creation
                 </Sidebar.Item>
               </Link>
-              <Sidebar.Item
-                icon={CiSaveDown2}
-                className="cursor-pointer"
-                active={tab === "drafts"}
-                as="div"
-              >
-                Saved Ads
-              </Sidebar.Item>
+              <Link to="/dashboard?tab=saved-ads">
+                <Sidebar.Item
+                  icon={CiSaveDown2}
+                  className="cursor-pointer"
+                  active={tab === "saved-ads"}
+                  as="div"
+                >
+                  Saved Ads
+                </Sidebar.Item>
+              </Link>
+
               <Sidebar.Item
                 icon={MdHistory}
                 className="cursor-pointer"

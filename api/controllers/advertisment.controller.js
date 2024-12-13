@@ -2,7 +2,7 @@ import cloudinary from "cloudinary";
 import * as dotenv from "dotenv";
 import OpenAI from "openai";
 import { errorHandler } from "../utils/error.js";
-import Advertisment  from "../models/advertisment.model.js";
+import Advertisment from "../models/advertisment.model.js";
 dotenv.config();
 
 cloudinary.v2.config({
@@ -32,7 +32,7 @@ export const generateContent = async (req, res, next) => {
         {
           role: "system",
           content:
-            "You are a skilled content writer specializing in creating engaging social media posts. Based on the details I provide, craft concise  and captivating content suitable for overlaying on a background image. The content should work effectively for both Instagram and LinkedIn, maintaining a balance between creativity and professionalism. Ensure it grabs attention, aligns with the provided details, and is optimized for visual impact. Don't include hashtags here. Include a tag line as well",
+            "You are a skilled content writer specializing in creating engaging social media posts. Based on the details I provide, craft concise  and captivating content suitable for overlaying on a background image. The content should work effectively for both Instagram and LinkedIn, maintaining a balance between creativity and professionalism. Ensure it grabs attention, aligns with the provided details, and is optimized for visual impact. Don't include hashtags here.",
         },
         { role: "user", content: prompt },
       ],
@@ -52,12 +52,19 @@ export const generateContent = async (req, res, next) => {
 
 export const uploadAd = async (req, res, next) => {
   //to upload on cloudinary and then saving in DB
-  const { base64Image, title, imagePrompt, textPrompt, overlayText, userId } = req.body;
+  const { base64Image, title, imagePrompt, textPrompt, overlayText, userId } =
+    req.body;
 
   try {
     const uploadResult = await cloudinary.v2.uploader.upload(base64Image, {
       folder: "ads",
     });
+
+    const slug = title
+    .split(" ")
+    .join("-")
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9]/g, "-", " ");
 
     const newAd = new Advertisment({
       title,
@@ -65,11 +72,11 @@ export const uploadAd = async (req, res, next) => {
       textPrompt,
       imagePrompt,
       backgroundImage: uploadResult.secure_url,
-      overlayText
-      });
+      overlayText,
+      slug,
+    });
 
-      await newAd.save();
-
+    await newAd.save();
 
     res.status(200).json({
       success: true,
@@ -81,6 +88,47 @@ export const uploadAd = async (req, res, next) => {
     res.status(500).json({
       success: false,
       message: "Failed to upload advertisement",
+      error: error.message,
+    });
+  }
+};
+
+// Controller to fetch all saved advertisements for the signed-in user
+export const getAds = async (req, res) => {
+  try {
+    // Extract userId from the authenticated user (e.g., from req.user provided by middleware)
+    const userId = req.user?.userId;
+    // console.log(userId);
+
+    // Ensure userId is present (security check)
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: User not signed in.",
+      });
+    }
+
+    // Fetch advertisements for the specific user, sorted by save time (earliest saved first)
+    const savedAds = await Advertisment.find({ userId }).sort({ createdAt: -1 });
+
+    if(!savedAds) {
+      return res.status(404).json({
+        success: false,
+        message: "No advertisements found for the signed-in user.",
+      });
+    }
+
+    // Respond with the fetched advertisements
+    res.status(200).json({
+      success: true,
+      message: "Advertisements fetched successfully.",
+      savedAds,
+    });
+  } catch (error) {
+    // Handle errors and send a response
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch advertisements.",
       error: error.message,
     });
   }
