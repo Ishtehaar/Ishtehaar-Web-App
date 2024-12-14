@@ -17,6 +17,7 @@ import DashImageAd from "./components/DashImageAd";
 import DashSidebar from "./components/DashSidebar";
 import ProfileComp from "./components/ProfileComp";
 import DashSaveAd from "./components/DashSaveAd";
+import AdvertismentPage from "./pages/AdvertismentPage";
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
             <Route path="/dash-sidebar" element={<DashSidebar />} />
             <Route path="/profile-comp" element={<ProfileComp />} />
             <Route path="/profile-page" element={<ProfilePage />} />
+            <Route path="/ad/:adSlug" element={<AdvertismentPage />} />
           </Route>
 
           <Route element={<PublicRoute />}>

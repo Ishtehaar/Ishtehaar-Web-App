@@ -45,7 +45,6 @@ const DashImageAd = () => {
   const [includeDateTime, setIncludeDateTime] = useState(false);
   const [logo, setLogo] = useState("");
   const [imageOpacity, setImageOpacity] = useState(1);
-
   const adRef = useRef(null);
 
   const ratioSizes = {
@@ -75,7 +74,7 @@ const DashImageAd = () => {
       setOverlayText(textData.data);
 
       const imageResponse = await fetch(
-        "https://9f09-34-171-254-108.ngrok-free.app/generate-image",
+        "https://e03c-34-29-158-158.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {

@@ -32,7 +32,7 @@ export const generateContent = async (req, res, next) => {
         {
           role: "system",
           content:
-            "You are a skilled content writer specializing in creating engaging social media posts. Based on the details I provide, craft concise  and captivating content suitable for overlaying on a background image. The content should work effectively for both Instagram and LinkedIn, maintaining a balance between creativity and professionalism. Ensure it grabs attention, aligns with the provided details, and is optimized for visual impact. Don't include hashtags here.",
+            "You are a skilled content writer specializing in creating engaging social media posts. Based on the details I provide, craft concise  and captivating content suitable for overlaying on a background image. The content should work effectively for both Instagram and LinkedIn, maintaining a balance between creativity and professionalism. Ensure it grabs attention, aligns with the provided details, and is optimized for visual impact. Don't include hashtags here as well as dont generate text in double quotes.",
         },
         { role: "user", content: prompt },
       ],
@@ -61,10 +61,10 @@ export const uploadAd = async (req, res, next) => {
     });
 
     const slug = title
-    .split(" ")
-    .join("-")
-    .toLowerCase()
-    .replace(/[^a-zA-Z0-9]/g, "-", " ");
+      .split(" ")
+      .join("-")
+      .toLowerCase()
+      .replace(/[^a-zA-Z0-9]/g, "-", " ");
 
     const newAd = new Advertisment({
       title,
@@ -109,9 +109,11 @@ export const getAds = async (req, res) => {
     }
 
     // Fetch advertisements for the specific user, sorted by save time (earliest saved first)
-    const savedAds = await Advertisment.find({ userId }).sort({ createdAt: -1 });
+    const savedAds = await Advertisment.find({ userId }).sort({
+      createdAt: -1,
+    });
 
-    if(!savedAds) {
+    if (!savedAds) {
       return res.status(404).json({
         success: false,
         message: "No advertisements found for the signed-in user.",
@@ -129,6 +131,34 @@ export const getAds = async (req, res) => {
     res.status(500).json({
       success: false,
       message: "Failed to fetch advertisements.",
+      error: error.message,
+    });
+  }
+};
+
+// Controller to fetch a single advertisement
+export const getAd = async (req, res) => {
+  try {
+    const { adSlug } = req.params; // Get `adSlug` from route parameters
+    const ad = await Advertisment.findOne({ slug: adSlug }); // Find the ad by slug
+    console.log(adSlug);
+    if (!ad) {
+      return res.status(404).json({
+        success: false,
+        message: "Advertisement not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Advertisement fetched successfully.",
+      ad,
+    });
+  } catch (error) {
+    console.error("Error fetching advertisement:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch advertisement.",
       error: error.message,
     });
   }
