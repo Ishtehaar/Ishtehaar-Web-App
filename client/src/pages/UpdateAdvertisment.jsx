@@ -18,7 +18,17 @@ import {
   ImagePlus,
   Calendar,
   Image as LogoIcon,
+  MapPinIcon,
+  ClockIcon,
+  CalendarIcon,
+  Globe2Icon,
 } from "lucide-react";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaLinkedinIn,
+} from "react-icons/fa";
 import { useParams } from "react-router-dom";
 
 const UpdateAdvertisment = () => {
@@ -44,9 +54,14 @@ const UpdateAdvertisment = () => {
   const [fontFamily, setFontFamily] = useState("Arial");
   // console.log("Error", error);
 
-  const [includeDate, setIncludeDate] = useState(false);
-  const [includeDateTime, setIncludeDateTime] = useState(false);
   const [logo, setLogo] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [location, setLocation] = useState("");
+  const [website, setWebsite] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [linkedin, setLinkedin] = useState("");
   const [imageOpacity, setImageOpacity] = useState(1);
   const adRef = useRef(null);
 
@@ -54,7 +69,7 @@ const UpdateAdvertisment = () => {
   console.log(adId);
 
   const ratioSizes = {
-    "1:1": { width: 400, height: 600 },
+    "1:1": { width: 600, height: 600 },
     "16:9": { width: 640, height: 360 },
     "4:3": { width: 600, height: 450 },
   };
@@ -80,10 +95,18 @@ const UpdateAdvertisment = () => {
           setBackgroundImage(data.ad.backgroundImage);
           setImage(data.ad.finalAd);
           setFinalImageReady(true);
+          setLogo(data.ad.logo);
+          setDate(data.ad.date);
+          setTime(data.ad.time);
+          setLocation(data.ad.location);
+          setWebsite(data.ad.website);
+          setFacebook(data.ad.facebook);
+          setInstagram(data.ad.instagram);
+          setLinkedin(data.ad.linkedin);
+
           setLoading(false);
           setError(false);
 
-          
           setLoading(false);
           setError(false);
         }
@@ -115,7 +138,7 @@ const UpdateAdvertisment = () => {
       setOverlayText(textData.data);
 
       const imageResponse = await fetch(
-        "https://e03c-34-29-158-158.ngrok-free.app/generate-image",
+        "https://8368-34-173-54-47.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {
@@ -168,7 +191,7 @@ const UpdateAdvertisment = () => {
       const finalBase64Image = finalCanvas.toDataURL("image/png");
 
       // Capture the raw image (without text overlay)
-      const rawImageElement = adRef.current.querySelector('img');
+      const rawImageElement = adRef.current.querySelector("img");
       const rawCanvas = await html2canvas(rawImageElement, { useCORS: true });
       const rawBase64Image = rawCanvas.toDataURL("image/png");
 
@@ -186,8 +209,14 @@ const UpdateAdvertisment = () => {
           textPrompt,
           overlayText,
           userId: currentUser._id,
-          // includeDate,
-          // includeDateTime,
+          logo,
+          date,
+          time,
+          location,
+          website,
+          facebook,
+          instagram,
+          linkedin,
         }),
       });
 
@@ -205,8 +234,8 @@ const UpdateAdvertisment = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="rounded-lg p-6 flex flex-col items-center justify-center">
+      <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+        <div className="rounded-lg p-6 flex flex-col items-center ">
           {!finalImageReady ? (
             <div className="flex flex-col items-center justify-center text-gray-500">
               <ImageIcon size={64} className="mb-4" />
@@ -229,7 +258,17 @@ const UpdateAdvertisment = () => {
                   className="w-full h-full object-cover rounded-lg shadow-lg"
                   style={{ opacity: imageOpacity }}
                 />
-                <div className="absolute inset-0 flex flex-col justify-between p-4">
+                <div className="absolute inset-0 flex flex-col gap-10 p-12">
+                  {logo && (
+                    <div className="relative">
+                      <img
+                        src={logo}
+                        alt="Logo"
+                        className="absolute left-1/2 transform -translate-x-1/2 max-w-[100px] max-h-[100px]"
+                      />
+                    </div>
+                  )}
+
                   {tagline && (
                     <div
                       style={{
@@ -238,36 +277,12 @@ const UpdateAdvertisment = () => {
                         fontWeight: "bold",
                         textAlign: "center",
                         marginBottom: "10px",
+                        marginTop: "80px",
                       }}
                     >
                       {tagline}
                     </div>
                   )}
-
-                  {logo && (
-                    <img
-                      src={logo}
-                      alt="Logo"
-                      className="absolute top-4 right-4 max-w-[100px] max-h-[100px]"
-                    />
-                  )}
-
-                  {(includeDate || includeDateTime) && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: "10px",
-                        left: "10px",
-                        color: textColor,
-                        fontSize: "14px",
-                      }}
-                    >
-                      {includeDateTime
-                        ? new Date().toLocaleString()
-                        : new Date().toLocaleDateString()}
-                    </div>
-                  )}
-
                   <div
                     style={{
                       color: textColor,
@@ -277,9 +292,69 @@ const UpdateAdvertisment = () => {
                       fontFamily,
                       textAlign: "center",
                       alignSelf: "center",
+                      justifySelf: "center",
                     }}
                   >
                     {overlayText}
+                  </div>
+
+                  <div className="flex flex-col gap-6">
+                    {/* Event Details Section */}
+                    <div className="flex flex-col gap-6">
+                      {/* Event Details Section */}
+                      <div className="flex flex-row justify-around items-center gap-4">
+                        {date && (
+                          <div className="flex items-center space-x-2">
+                            <CalendarIcon className="w-5 h-5 " />
+                            <p>{date}</p>
+                          </div>
+                        )}
+                        {time && (
+                          <div className="flex items-center space-x-2">
+                            <ClockIcon className="w-5 h-5 " />
+                            <p>{time}</p>
+                          </div>
+                        )}
+                        {location && (
+                          <div className="flex items-center space-x-2">
+                            <MapPinIcon className="w-5 h-5" />
+                            <p>{location}</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Social Media Links Section */}
+                      <div className="flex flex-row justify-around items-center gap-4">
+                        {instagram && (
+                          <div className="flex items-center space-x-2">
+                            <FaInstagram className="w-5 h-5 text-pink-600" />
+                            <p>{instagram}</p>
+                          </div>
+                        )}
+                        {facebook && (
+                          <div className="flex items-center space-x-2">
+                            <FaFacebook className="w-5 h-5 text-blue-600" />
+                            <p>{facebook}</p>
+                          </div>
+                        )}
+                        {linkedin && (
+                          <div className="flex items-center space-x-2">
+                            <FaLinkedin className="w-5 h-5 text-blue-800" />
+                            <p>{linkedin}</p>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Website Section */}
+                      <div className="flex justify-center items-center text-center">
+                        {website && (
+                          <div className="flex items-center space-x-2">
+                            <Globe2Icon className="w-5 h-5 " />
+                            <p>{website}</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -347,84 +422,137 @@ const UpdateAdvertisment = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Background Image (Optional)</Label>
-                <FileInput
-                  onChange={handleUploadBackground}
-                  accept="image/*"
-                  icon={Upload}
-                />
-              </div>
-
-              <div>
-                <Label>Size Ratio</Label>
-                <Select
-                  value={ratio}
-                  onChange={(e) => setRatio(e.target.value)}
-                >
-                  <option value="1:1">1:1</option>
-                  <option value="16:9">16:9</option>
-                  <option value="4:3">4:3</option>
-                </Select>
-              </div>
-            </div>
-
-            {/* <div className="mt-4 p-4 bg-gray-100 rounded-lg">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
+            <div className="mt-4 p-4  rounded-lg  shadow-sm border-2 border-gray-100">
+              <h3 className="text-lg font-semibold mb-4 flex items-center ">
                 Optional Elements
               </h3>
-              
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label>Logo</Label>
-                  <FileInput
-                    onChange={handleUploadLogo}
-                    accept="image/*"
-                    icon={LogoIcon}
-                  />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Logo Upload */}
+                <div className="space-y-2">
+                  <Label className="text-gray-600">Logo</Label>
+                  <div className="     rounded-lg p-4 hover:border-blue-500 transition-all">
+                    <FileInput
+                      onChange={handleUploadLogo}
+                      accept="image/*"
+                      icon={LogoIcon}
+                      className="w-full"
+                      helperText="Upload your event or company logo (PNG, JPG)"
+                    />
+                  </div>
                 </div>
-                
-                <div>
-                  <Label>Date Options</Label>
-                  <div className="flex space-x-2">
-                    <Button
-                      size="sm"
-                      color={includeDate ? "blue" : "light"}
-                      onClick={() => {
-                        setIncludeDate(!includeDate);
-                        setIncludeDateTime(false);
-                      }}
-                    >
+
+                {/* Event Details Column */}
+                <div className="space-y-4">
+                  {/* Date Input */}
+                  <div>
+                    <Label htmlFor="eventDate" className="text-gray-600">
                       Date
-                    </Button>
-                    <Button
-                      size="sm"
-                      color={includeDateTime ? "blue" : "light"}
-                      onClick={() => {
-                        setIncludeDateTime(!includeDateTime);
-                        setIncludeDate(false);
-                      }}
-                    >
-                      Date & Time
-                    </Button>
+                    </Label>
+                    <TextInput
+                      type="date"
+                      id="eventDate"
+                      value={date}
+                      onChange={(e) => setDate(e.target.value)}
+                      name="date"
+                      className="mt-1"
+                      color="gray"
+                      addon={<CalendarIcon className="w-5 h-5 text-gray-500" />}
+                    />
+                  </div>
+
+                  {/* Time Input */}
+                  <div>
+                    <Label htmlFor="eventTime" className="text-gray-600">
+                      Time
+                    </Label>
+                    <TextInput
+                      type="time"
+                      id="eventTime"
+                      value={time}
+                      onChange={(e) => setTime(e.target.value)}
+                      name="time"
+                      className="mt-1"
+                      addon={<ClockIcon className="w-5 h-5 text-gray-500" />}
+                    />
+                  </div>
+
+                  {/* Location Input */}
+                  <div>
+                    <Label htmlFor="eventLocation" className="text-gray-600">
+                      Location
+                    </Label>
+                    <TextInput
+                      type="text"
+                      id="eventLocation"
+                      value={location}
+                      onChange={(e) => setLocation(e.target.value)}
+                      name="location"
+                      placeholder="City, Venue, or Address"
+                      className="mt-1"
+                      addon={<MapPinIcon className="w-5 h-5 text-gray-500" />}
+                    />
                   </div>
                 </div>
               </div>
 
-              <div className="mt-4">
-                <Label>Background Opacity</Label>
-                <input 
-                  type="range" 
-                  min="0.1" 
-                  max="1" 
-                  step="0.1" 
-                  value={imageOpacity} 
-                  onChange={(e) => setImageOpacity(parseFloat(e.target.value))}
-                  className="w-full"
-                />
+              {/* Website and Social Media */}
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Website */}
+                <div>
+                  <Label className="text-gray-600">Website</Label>
+                  <TextInput
+                    type="url"
+                    name="website"
+                    value={website}
+                    onChange={(e) => setWebsite(e.target.value)}
+                    placeholder="https://www.yourwebsite.com"
+                    className="mt-1"
+                    addon={<Globe2Icon className="w-5 h-5 text-gray-500" />}
+                  />
+                </div>
+
+                {/* Social Media Links */}
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-gray-600">Facebook</Label>
+                    <TextInput
+                      type="url"
+                      name="socials.facebook"
+                      value={facebook}
+                      onChange={(e) => setFacebook(e.target.value)}
+                      placeholder="Facebook Profile/Page URL"
+                      className="mt-1"
+                      addon={<FaFacebook className="w-5 h-5 text-blue-600" />}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gray-600">Instagram</Label>
+                    <TextInput
+                      type="url"
+                      name="socials.instagram"
+                      value={instagram}
+                      onChange={(e) => setInstagram(e.target.value)}
+                      placeholder="Instagram Profile URL"
+                      className="mt-1"
+                      addon={<FaInstagram className="w-5 h-5 text-pink-600" />}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gray-600">LinkedIn</Label>
+                    <TextInput
+                      type="url"
+                      name="socials.linkedin"
+                      value={linkedin}
+                      onChange={(e) => setLinkedin(e.target.value)}
+                      placeholder="LinkedIn Profile/Company URL"
+                      className="mt-1"
+                      addon={<FaLinkedin className="w-5 h-5 text-blue-800" />}
+                    />
+                  </div>
+                </div>
               </div>
-            </div> */}
+            </div>
 
             <div className="mt-4 p-4 rounded-lg">
               <h3 className="text-lg font-semibold mb-4 flex items-center">

@@ -18,7 +18,12 @@ import {
   ImagePlus,
   Calendar,
   Image as LogoIcon,
+  Globe2Icon,
+  MapPinIcon,
+  ClockIcon,
+  CalendarIcon,
 } from "lucide-react";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 const DashImageAd = () => {
   const { currentUser } = useSelector((state) => state.user);
@@ -41,14 +46,21 @@ const DashImageAd = () => {
   const [fontWeight, setFontWeight] = useState("normal");
   const [fontFamily, setFontFamily] = useState("Arial");
 
-  const [includeDate, setIncludeDate] = useState(false);
-  const [includeDateTime, setIncludeDateTime] = useState(false);
+ 
   const [logo, setLogo] = useState("");
+  const [date, setDate] = useState("");
+  const [time, setTime] = useState("");
+  const [location, setLocation] = useState("");
+  const [website, setWebsite] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [linkedin, setLinkedin] = useState("");
+
   const [imageOpacity, setImageOpacity] = useState(1);
   const adRef = useRef(null);
 
   const ratioSizes = {
-    "1:1": { width: 400, height: 600 },
+    "1:1": { width: 600, height: 600 },
     "16:9": { width: 640, height: 360 },
     "4:3": { width: 600, height: 450 },
   };
@@ -72,9 +84,9 @@ const DashImageAd = () => {
       if (!textResponse.ok) throw new Error("Failed to generate text");
       const textData = await textResponse.json();
       setOverlayText(textData.data);
-      
+
       const imageResponse = await fetch(
-        "https://b4a9-35-237-238-15.ngrok-free.app/generate-image",
+        "https://8368-34-173-54-47.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {
@@ -127,7 +139,7 @@ const DashImageAd = () => {
       const finalBase64Image = finalCanvas.toDataURL("image/png");
 
       // Capture the raw image (without text overlay)
-      const rawImageElement = adRef.current.querySelector('img');
+      const rawImageElement = adRef.current.querySelector("img");
       const rawCanvas = await html2canvas(rawImageElement, { useCORS: true });
       const rawBase64Image = rawCanvas.toDataURL("image/png");
 
@@ -145,6 +157,7 @@ const DashImageAd = () => {
           textPrompt,
           overlayText,
           userId: currentUser._id,
+          logo,
           // includeDate,
           // includeDateTime,
         }),
@@ -165,9 +178,9 @@ const DashImageAd = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="rounded-lg p-6 flex flex-col items-center justify-center">
+        <div className="rounded-lg p-6 flex flex-col items-center ">
           {!finalImageReady ? (
-            <div className="flex flex-col items-center justify-center text-gray-500">
+            <div className="flex flex-col items-center justify-center text-gray-500 mt-48">
               <ImageIcon size={64} className="mb-4" />
               <p className="text-center">Your generated ad will appear here</p>
             </div>
@@ -188,7 +201,17 @@ const DashImageAd = () => {
                   className="w-full h-full object-cover rounded-lg shadow-lg"
                   style={{ opacity: imageOpacity }}
                 />
-                <div className="absolute inset-0 flex flex-col justify-between p-4">
+                <div className="absolute inset-0 flex flex-col gap-10 p-12">
+                  {logo && (
+                    <div className="relative">
+                      <img
+                        src={logo}
+                        alt="Logo"
+                        className="absolute left-1/2 transform -translate-x-1/2 max-w-[100px] max-h-[100px]"
+                      />
+                    </div>
+                  )}
+
                   {tagline && (
                     <div
                       style={{
@@ -197,33 +220,10 @@ const DashImageAd = () => {
                         fontWeight: "bold",
                         textAlign: "center",
                         marginBottom: "10px",
+                        marginTop: "80px",
                       }}
                     >
                       {tagline}
-                    </div>
-                  )}
-
-                  {logo && (
-                    <img
-                      src={logo}
-                      alt="Logo"
-                      className="absolute top-4 right-4 max-w-[100px] max-h-[100px]"
-                    />
-                  )}
-
-                  {(includeDate || includeDateTime) && (
-                    <div
-                      style={{
-                        position: "absolute",
-                        bottom: "10px",
-                        left: "10px",
-                        color: textColor,
-                        fontSize: "14px",
-                      }}
-                    >
-                      {includeDateTime
-                        ? new Date().toLocaleString()
-                        : new Date().toLocaleDateString()}
                     </div>
                   )}
 
@@ -239,6 +239,22 @@ const DashImageAd = () => {
                     }}
                   >
                     {overlayText}
+                  </div>
+
+                  <div className="flex flex-row justify-around gap-4">
+                    <p>{date}</p>
+                    <p>{time}</p>
+                    <p>{location}</p>
+                  </div>
+
+                  <div className="flex flex-row justify-around gap-4">
+                    <p>{instagram}</p>
+                    <p>{facebook}</p>
+                    <p>{linkedin}</p>
+                  </div>
+
+                  <div className="justify-center text-center">
+                    <p>{website}</p>
                   </div>
                 </div>
               </div>
@@ -306,26 +322,135 @@ const DashImageAd = () => {
               />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label>Background Image (Optional)</Label>
-                <FileInput
-                  onChange={handleUploadBackground}
-                  accept="image/*"
-                  icon={Upload}
-                />
+            <div className="mt-4 p-4  rounded-lg  shadow-sm border-2 border-gray-100">
+              <h3 className="text-lg font-semibold mb-4 flex items-center ">
+                Optional Elements
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Logo Upload */}
+                <div className="space-y-2">
+                  <Label className="text-gray-600">Logo</Label>
+                  <div className="     rounded-lg p-4 hover:border-blue-500 transition-all">
+                    <FileInput
+                      onChange={handleUploadLogo}
+                      accept="image/*"
+                      icon={LogoIcon}
+                      className="w-full"
+                      helperText="Upload your event or company logo (PNG, JPG)"
+                    />
+                  </div>
+                </div>
+
+                {/* Event Details Column */}
+                <div className="space-y-4">
+                  {/* Date Input */}
+                  <div>
+                    <Label htmlFor="eventDate" className="text-gray-600">
+                      Date
+                    </Label>
+                    <TextInput
+                      type="date"
+                      id="eventDate"
+                      name="date"
+                      className="mt-1"
+                      value={date}
+                      color="gray"
+                      addon={<CalendarIcon className="w-5 h-5 text-gray-500" />}
+                      onChange={(e) => setDate(e.target.value)}
+                    />
+                  </div>
+
+                  {/* Time Input */}
+                  <div>
+                    <Label htmlFor="eventTime" className="text-gray-600">
+                      Time
+                    </Label>
+                    <TextInput
+                      type="time"
+                      id="eventTime"
+                      name="time"
+                      value={time}
+                      className="mt-1"
+                      addon={<ClockIcon className="w-5 h-5 text-gray-500" />}
+                      onChange={(e) => setTime(e.target.value)}
+                    />
+                  </div>
+
+                  {/* Location Input */}
+                  <div>
+                    <Label htmlFor="eventLocation" className="text-gray-600">
+                      Location
+                    </Label>
+                    <TextInput
+                      type="text"
+                      id="eventLocation"
+                      name="location"
+                      value={location}
+                      placeholder="City, Venue, or Address"
+                      className="mt-1"
+                      addon={<MapPinIcon className="w-5 h-5 text-gray-500" />}
+                      onChange={(e) => setLocation(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
 
-              <div>
-                <Label>Size Ratio</Label>
-                <Select
-                  value={ratio}
-                  onChange={(e) => setRatio(e.target.value)}
-                >
-                  <option value="1:1">1:1</option>
-                  <option value="16:9">16:9</option>
-                  <option value="4:3">4:3</option>
-                </Select>
+              {/* Website and Social Media */}
+              <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Website */}
+                <div>
+                  <Label className="text-gray-600">Website</Label>
+                  <TextInput
+                    type="url"
+                    name="website"
+                    value={website}
+                    placeholder="https://www.yourwebsite.com"
+                    className="mt-1"
+                    addon={<Globe2Icon className="w-5 h-5 text-gray-500" />}
+                    onChange={(e) => setWebsite(e.target.value)}
+                  />
+                </div>
+
+                {/* Social Media Links */}
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-gray-600">Facebook</Label>
+                    <TextInput
+                      type="url"
+                      name="socials.facebook"
+                      value={facebook}
+                      placeholder="Facebook Profile/Page URL"
+                      className="mt-1"
+                      addon={<FaFacebook className="w-5 h-5 text-blue-600" />}
+                      onChange={(e) => setFacebook(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gray-600">Instagram</Label>
+                    <TextInput
+                      type="url"
+                      name="socials.instagram"
+                      value={instagram}
+                      placeholder="Instagram Profile URL"
+                      className="mt-1"
+                      addon={<FaInstagram className="w-5 h-5 text-pink-600" />}
+                      onChange={(e) => setInstagram(e.target.value)}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-gray-600">LinkedIn</Label>
+                    <TextInput
+                      type="url"
+                      name="socials.linkedin"
+                      value={linkedin}
+                      placeholder="LinkedIn Profile/Company URL"
+                      className="mt-1"
+                      addon={<FaLinkedin className="w-5 h-5 text-blue-800" />}
+                      onChange={(e) => setLinkedin(e.target.value)}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -419,7 +544,9 @@ const DashImageAd = () => {
             )}
 
             {error && <Alert color="failure">{error}</Alert>}
-            {uploadSuccessMessage && <Alert color="success">{uploadSuccessMessage}</Alert>}
+            {uploadSuccessMessage && (
+              <Alert color="success">{uploadSuccessMessage}</Alert>
+            )}
 
             <div className="flex space-x-4">
               <Button

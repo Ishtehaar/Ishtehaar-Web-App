@@ -88,7 +88,7 @@ export const uploadAd = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Ad uploaded successfully",
-      imageUrl: uploadF.secure_url,
+      imageUrl: uploadFinal.secure_url,
     });
   } catch (error) {
     console.error("Error uploading ad:", error);
@@ -202,7 +202,7 @@ export const getEditAd = async (req, res) => {
 export const updateAd = async (req, res) => {
   try {
     const { adId } = req.params; // Get `adId` from route parameters
-    const { title, textPrompt, imagePrompt, overlayText, tagline, rawBase64Image, finalBase64Image } = req.body; // Get updated fields from request body
+    const { title, textPrompt, imagePrompt, overlayText, tagline, rawBase64Image, finalBase64Image, logo, date, time, location, website, instagram, facebook, linkedin } = req.body; // Get updated fields from request body
 
     const uploadFinal = await cloudinary.v2.uploader.upload(finalBase64Image, {
       folder: "ads",
@@ -212,9 +212,13 @@ export const updateAd = async (req, res) => {
       folder: "ads",
     });
 
+    const uploadLogo = await cloudinary.v2.uploader.upload(logo, {
+      folder: "ads",
+    });
+
     const updatedAd = await Advertisment.findOneAndUpdate(
       { _id: adId },
-      { title, textPrompt, imagePrompt, overlayText, tagline, backgroundImage: uploadBg.secure_url, finalAd: uploadFinal.secure_url },
+      { title, textPrompt, imagePrompt, overlayText, tagline, backgroundImage: uploadBg.secure_url, finalAd: uploadFinal.secure_url, logo: uploadLogo.secure_url, date, time, location, website, instagram, facebook, linkedin },
       { new: true }
       );
       console.log(updatedAd);

@@ -32,7 +32,8 @@ const adSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    finalAd: { //URL of final ad after overlaying text on generated image on cloudinary
+    finalAd: {
+      //URL of final ad after overlaying text on generated image on cloudinary
       type: String,
       required: true,
     },
@@ -40,6 +41,33 @@ const adSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+    },
+    logo: {
+      type: String,
+    },
+    website: {
+      type: String,
+    },
+    location: {
+      type: String,
+    },
+    date: {
+      type: String,
+    },
+    time: {
+      type: String,
+    },
+    instagram: {
+      type: String,
+    },
+    facebook: {
+      type: String,
+    },
+    linkedin: {
+      type: String,
+    },
+    twitter: {
+      type: String,
     },
   },
   { timestamps: true }

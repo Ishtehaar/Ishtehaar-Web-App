@@ -54,11 +54,14 @@ export default function AdvertismentPage() {
           Edit
         </Button>
       </Link>
+      <Button color="red" pill size="xs"className="self-center mt-5">
+        Delete
+      </Button>
 
       <img
         src={ad && (ad.finalAd) ||(ad.backgroundImage)}
         alt={ad && ad.title}
-        className="mt-10 p-3 max-h-[600px] w-full object-cover"
+        className="mt-10 p-3 max-h-[600px] max-w-[600px] object-cover justify-center items-center mx-auto"
       />
       <div className="flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-2xl text-xs">
         <span>{ad && new Date(ad.createdAt).toLocaleDateString()}</span>
