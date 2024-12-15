@@ -2,10 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { Link, useParams } from "react-router-dom";
 import { Button, Spinner } from "flowbite-react";
-// import AdvertismentCard from "../components/AdvertismentCard";
 
 export default function AdvertismentPage() {
-  const [recentPosts, setRecentPosts] = useState(null);
   const { adSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -35,22 +33,6 @@ export default function AdvertismentPage() {
     };
     fetchPost();
   }, [adSlug]);
-
-//   useEffect(() => {
-//     try {
-//       const fetchRecentPosts = async () => {
-//         const res = await fetch(`/api/post/getposts?limit=3`);
-//         const data = await res.json();
-//         if (res.ok) {
-//           setRecentPosts(data.posts);
-//         }
-//       };
-//       fetchRecentPosts();
-//     } catch (error) {
-//       console.log(error.message);
-//     }
-//   }, []);
-
   
 
   if (loading)
@@ -65,7 +47,7 @@ export default function AdvertismentPage() {
         {ad && ad.title}
       </h1>
       <Link
-        // to={`/search?category=${post && post.category}`}
+         to={`/update-ad/${ad._id}`}
         className="self-center mt-5"
       >
         <Button color="gray" pill size="xs">
@@ -74,7 +56,7 @@ export default function AdvertismentPage() {
       </Link>
 
       <img
-        src={ad && ad.backgroundImage}
+        src={ad && (ad.finalAd) ||(ad.backgroundImage)}
         alt={ad && ad.title}
         className="mt-10 p-3 max-h-[600px] w-full object-cover"
       />

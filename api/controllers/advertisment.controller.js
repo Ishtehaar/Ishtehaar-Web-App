@@ -15,6 +15,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
+//controller to generate AI content from OPEN AI model
 export const generateContent = async (req, res, next) => {
   const { prompt } = req.body;
 
@@ -50,13 +51,17 @@ export const generateContent = async (req, res, next) => {
   }
 };
 
+// Controller to upload an advertisement on cloudinary and then in db
 export const uploadAd = async (req, res, next) => {
-  //to upload on cloudinary and then saving in DB
-  const { base64Image, title, imagePrompt, textPrompt, overlayText, userId } =
+  const { finalBase64Image, rawBase64Image, title, imagePrompt, textPrompt, overlayText, userId, tagline } =
     req.body;
 
   try {
-    const uploadResult = await cloudinary.v2.uploader.upload(base64Image, {
+    const uploadFinal = await cloudinary.v2.uploader.upload(finalBase64Image, {
+      folder: "ads",
+    });
+
+    const uploadBg = await cloudinary.v2.uploader.upload(rawBase64Image, {
       folder: "ads",
     });
 
@@ -71,9 +76,11 @@ export const uploadAd = async (req, res, next) => {
       userId,
       textPrompt,
       imagePrompt,
-      backgroundImage: uploadResult.secure_url,
+      backgroundImage: uploadBg.secure_url,
       overlayText,
       slug,
+      tagline,
+      finalAd: uploadFinal.secure_url,
     });
 
     await newAd.save();
@@ -81,7 +88,7 @@ export const uploadAd = async (req, res, next) => {
     res.status(200).json({
       success: true,
       message: "Ad uploaded successfully",
-      imageUrl: uploadResult.secure_url,
+      imageUrl: uploadF.secure_url,
     });
   } catch (error) {
     console.error("Error uploading ad:", error);
@@ -136,7 +143,7 @@ export const getAds = async (req, res) => {
   }
 };
 
-// Controller to fetch a single advertisement
+// Controller to fetch a single advertisement for viewing purposes
 export const getAd = async (req, res) => {
   try {
     const { adSlug } = req.params; // Get `adSlug` from route parameters
@@ -163,3 +170,73 @@ export const getAd = async (req, res) => {
     });
   }
 };
+
+// Controller to fetch a single advertisement for editing
+export const getEditAd = async (req, res) => {
+  try {
+    const { adId } = req.params; // Get `adId` from route parameters
+    const ad = await Advertisment.findOne({ _id: adId }); // Find the ad by id
+    console.log(adId);
+    if (!ad) {
+      return res.status(404).json({
+        success: false,
+        message: "Advertisement not found.",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Advertisement fetched successfully.",
+      ad,
+    });
+  } catch (error) {
+    console.error("Error fetching advertisement:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch advertisement.",
+      error: error.message,
+    });
+  }
+};
+
+export const updateAd = async (req, res) => {
+  try {
+    const { adId } = req.params; // Get `adId` from route parameters
+    const { title, textPrompt, imagePrompt, overlayText, tagline, rawBase64Image, finalBase64Image } = req.body; // Get updated fields from request body
+
+    const uploadFinal = await cloudinary.v2.uploader.upload(finalBase64Image, {
+      folder: "ads",
+    });
+
+    const uploadBg = await cloudinary.v2.uploader.upload(rawBase64Image, {
+      folder: "ads",
+    });
+
+    const updatedAd = await Advertisment.findOneAndUpdate(
+      { _id: adId },
+      { title, textPrompt, imagePrompt, overlayText, tagline, backgroundImage: uploadBg.secure_url, finalAd: uploadFinal.secure_url },
+      { new: true }
+      );
+      console.log(updatedAd);
+      if (!updatedAd) {
+        return res.status(404).json({
+          success: false,
+          message: "Advertisement not found.",
+        });
+      }
+      res.status(200).json({
+        success: true,
+        message: "Advertisement updated successfully.",
+        updatedAd,
+      });
+    }
+    catch (error) {
+      console.error("Error updating advertisement:", error);
+      res.status(500).json({
+        success: false,
+        message: "Failed to update advertisement.",
+        error: error.message,
+      });
+    }
+  };
+

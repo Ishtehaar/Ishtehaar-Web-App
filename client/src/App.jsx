@@ -18,6 +18,7 @@ import DashSidebar from "./components/DashSidebar";
 import ProfileComp from "./components/ProfileComp";
 import DashSaveAd from "./components/DashSaveAd";
 import AdvertismentPage from "./pages/AdvertismentPage";
+import UpdateAdvertisment from "./pages/UpdateAdvertisment";
 
 export default function App() {
   return (
@@ -36,6 +37,7 @@ export default function App() {
             <Route path="/profile-comp" element={<ProfileComp />} />
             <Route path="/profile-page" element={<ProfilePage />} />
             <Route path="/ad/:adSlug" element={<AdvertismentPage />} />
+            <Route path="/update-ad/:adId" element={<UpdateAdvertisment />} />
           </Route>
 
           <Route element={<PublicRoute />}>

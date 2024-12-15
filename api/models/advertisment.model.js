@@ -7,6 +7,10 @@ const adSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    tagline: {
+      type: String,
+      required: true,
+    },
     userId: {
       type: String,
       required: true,
@@ -28,23 +32,15 @@ const adSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    finalAd: { //URL of final ad after overlaying text on generated image on cloudinary
+      type: String,
+      required: true,
+    },
     slug: {
       type: String,
       required: true,
       unique: true,
     },
-    // platform: {
-    //   type: [String],
-    //   enum: ["Facebook", "Instagram", "Twitter", "LinkedIn"],
-    // },
-    // status: {
-    //   type: [],
-    //   enum: ["draft", "scheduled", "posted"],
-    //   default: "draft",
-    // },
-    // scheduledPostDate: {
-    //   type: Date,
-    // },
   },
   { timestamps: true }
 );

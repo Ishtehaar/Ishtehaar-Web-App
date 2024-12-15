@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import {
   Button,
   TextInput,
@@ -19,9 +19,11 @@ import {
   Calendar,
   Image as LogoIcon,
 } from "lucide-react";
+import { useParams } from "react-router-dom";
 
-const DashImageAd = () => {
+const UpdateAdvertisment = () => {
   const { currentUser } = useSelector((state) => state.user);
+  const [ad, setAd] = useState(null);
   const [title, setTitle] = useState("");
   const [tagline, setTagline] = useState("");
   const [textPrompt, setTextPrompt] = useState("");
@@ -40,6 +42,7 @@ const DashImageAd = () => {
   const [fontStyle, setFontStyle] = useState("normal");
   const [fontWeight, setFontWeight] = useState("normal");
   const [fontFamily, setFontFamily] = useState("Arial");
+  // console.log("Error", error);
 
   const [includeDate, setIncludeDate] = useState(false);
   const [includeDateTime, setIncludeDateTime] = useState(false);
@@ -47,12 +50,50 @@ const DashImageAd = () => {
   const [imageOpacity, setImageOpacity] = useState(1);
   const adRef = useRef(null);
 
+  const { adId } = useParams();
+  console.log(adId);
+
   const ratioSizes = {
     "1:1": { width: 400, height: 600 },
     "16:9": { width: 640, height: 360 },
     "4:3": { width: 600, height: 450 },
   };
   const { width, height } = ratioSizes[ratio];
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/advertisment/getEditAd/${adId}`);
+        const data = await res.json();
+        if (!res.ok) {
+          setError(true);
+          setLoading(false);
+        }
+        if (res.ok) {
+          setAd(data.ad);
+          setTagline(data.ad.tagline);
+          setTitle(data.ad.title);
+          setTextPrompt(data.ad.textPrompt);
+          setImagePrompt(data.ad.imagePrompt);
+          setOverlayText(data.ad.overlayText);
+          setBackgroundImage(data.ad.backgroundImage);
+          setImage(data.ad.finalAd);
+          setFinalImageReady(true);
+          setLoading(false);
+          setError(false);
+
+          
+          setLoading(false);
+          setError(false);
+        }
+      } catch (error) {
+        setError(true);
+        setLoading(false);
+      }
+    };
+    fetchPost();
+  }, [adId]);
 
   const handleGenerate = async (e) => {
     e.preventDefault();
@@ -72,9 +113,9 @@ const DashImageAd = () => {
       if (!textResponse.ok) throw new Error("Failed to generate text");
       const textData = await textResponse.json();
       setOverlayText(textData.data);
-      
+
       const imageResponse = await fetch(
-        "https://b4a9-35-237-238-15.ngrok-free.app/generate-image",
+        "https://e03c-34-29-158-158.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {
@@ -118,7 +159,7 @@ const DashImageAd = () => {
     }
   };
 
-  const handleUploadFinalAd = async () => {
+  const handleUpdateFinalAd = async () => {
     if (!adRef.current) return;
 
     try {
@@ -131,14 +172,14 @@ const DashImageAd = () => {
       const rawCanvas = await html2canvas(rawImageElement, { useCORS: true });
       const rawBase64Image = rawCanvas.toDataURL("image/png");
 
-      const response = await fetch("/api/advertisment/upload-ad", {
+      const response = await fetch(`/api/advertisment/update-ad/${ad._id}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          finalBase64Image,
           rawBase64Image,
+          finalBase64Image,
           title,
           tagline,
           imagePrompt,
@@ -248,7 +289,7 @@ const DashImageAd = () => {
 
         <div>
           <h2 className="text-2xl font-bold mb-6 flex items-center">
-            <Type className="mr-2" /> Create Your Advertisement
+            <Type className="mr-2" /> Edit Your Advertisement
           </h2>
 
           <form onSubmit={handleGenerate} className="space-y-4">
@@ -328,6 +369,62 @@ const DashImageAd = () => {
                 </Select>
               </div>
             </div>
+
+            {/* <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+              <h3 className="text-lg font-semibold mb-4 flex items-center">
+                Optional Elements
+              </h3>
+              
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label>Logo</Label>
+                  <FileInput
+                    onChange={handleUploadLogo}
+                    accept="image/*"
+                    icon={LogoIcon}
+                  />
+                </div>
+                
+                <div>
+                  <Label>Date Options</Label>
+                  <div className="flex space-x-2">
+                    <Button
+                      size="sm"
+                      color={includeDate ? "blue" : "light"}
+                      onClick={() => {
+                        setIncludeDate(!includeDate);
+                        setIncludeDateTime(false);
+                      }}
+                    >
+                      Date
+                    </Button>
+                    <Button
+                      size="sm"
+                      color={includeDateTime ? "blue" : "light"}
+                      onClick={() => {
+                        setIncludeDateTime(!includeDateTime);
+                        setIncludeDate(false);
+                      }}
+                    >
+                      Date & Time
+                    </Button>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4">
+                <Label>Background Opacity</Label>
+                <input 
+                  type="range" 
+                  min="0.1" 
+                  max="1" 
+                  step="0.1" 
+                  value={imageOpacity} 
+                  onChange={(e) => setImageOpacity(parseFloat(e.target.value))}
+                  className="w-full"
+                />
+              </div>
+            </div> */}
 
             <div className="mt-4 p-4 rounded-lg">
               <h3 className="text-lg font-semibold mb-4 flex items-center">
@@ -419,7 +516,9 @@ const DashImageAd = () => {
             )}
 
             {error && <Alert color="failure">{error}</Alert>}
-            {uploadSuccessMessage && <Alert color="success">{uploadSuccessMessage}</Alert>}
+            {uploadSuccessMessage && (
+              <Alert color="success">{uploadSuccessMessage}</Alert>
+            )}
 
             <div className="flex space-x-4">
               <Button
@@ -433,10 +532,10 @@ const DashImageAd = () => {
               {finalImageReady && (
                 <Button
                   gradientDuoTone="greenToBlue"
-                  onClick={handleUploadFinalAd}
+                  onClick={handleUpdateFinalAd}
                   className="flex-grow"
                 >
-                  Save Advertisement
+                  Update Advertisement
                 </Button>
               )}
             </div>
@@ -447,4 +546,4 @@ const DashImageAd = () => {
   );
 };
 
-export default DashImageAd;
+export default UpdateAdvertisment;
