@@ -70,6 +70,12 @@ export const uploadAd = async (req, res, next) => {
     instagram,
     facebook,
     linkedin,
+    fontSize,
+    taglineFontSize,
+    textColor,
+    fontStyle,
+    fontWeight,
+    fontFamily,
   } = req.body;
 
   try {
@@ -105,6 +111,12 @@ export const uploadAd = async (req, res, next) => {
       instagram,
       facebook,
       linkedin,
+      fontSize,
+      taglineFontSize,
+      textColor,
+      fontStyle,
+      fontWeight,
+      fontFamily
     });
 
     await newAd.save();
@@ -243,6 +255,12 @@ export const updateAd = async (req, res) => {
       instagram,
       facebook,
       linkedin,
+      fontSize,
+      taglineFontSize,
+      textColor,
+      fontStyle,
+      fontWeight,
+      fontFamily,
     } = req.body; // Get updated fields from request body
 
     const uploadFinal = await cloudinary.v2.uploader.upload(finalBase64Image, {
@@ -275,6 +293,12 @@ export const updateAd = async (req, res) => {
         instagram,
         facebook,
         linkedin,
+        fontSize,
+        taglineFontSize,
+        textColor,
+        fontStyle,
+        fontWeight,
+        fontFamily,
       },
       { new: true }
     );

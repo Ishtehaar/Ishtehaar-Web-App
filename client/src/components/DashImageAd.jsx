@@ -43,6 +43,7 @@ const DashImageAd = () => {
   const [error, setError] = useState("");
   const [uploadSuccessMessage, setUploadSuccessMessage] = useState("");
   const [ratio, setRatio] = useState("1:1");
+  
   const [fontSize, setFontSize] = useState(24);
   const [taglineFontSize, setTaglineFontSize] = useState(18);
   const [textColor, setTextColor] = useState("#FFFFFF");
@@ -61,6 +62,50 @@ const DashImageAd = () => {
 
   const [imageOpacity, setImageOpacity] = useState(1);
   const adRef = useRef(null);
+
+  const fontFamilies = [
+    "Arial", // Classic sans-serif
+    "Verdana", // Classic sans-serif
+    "Georgia", // Classic serif
+    "Times New Roman", // Classic serif
+    "Courier New", // Monospaced
+    "Impact", // Bold and striking
+    "Helvetica", // Classic and clean
+    "Roboto", // Google Font - Modern sans-serif
+    "Open Sans", // Google Font - Versatile sans-serif
+    "Lato", // Google Font - Clean and modern sans-serif
+    "Montserrat", // Google Font - Elegant sans-serif
+    "Poppins", // Google Font - Trending sans-serif
+    "Nunito", // Google Font - Rounded and approachable
+    "Raleway", // Google Font - Stylish sans-serif
+    "Playfair Display", // Google Font - Elegant serif
+    "Merriweather", // Google Font - Readable serif
+    "Oswald", // Google Font - Condensed sans-serif
+    "PT Sans", // Google Font - Modern sans-serif
+    "Work Sans", // Google Font - Clean sans-serif
+    "Ubuntu", // Google Font - Tech-inspired sans-serif
+    "Source Sans Pro", // Google Font - User-friendly sans-serif
+    "Quicksand", // Google Font - Playful and modern
+    "Inter", // Google Font - Versatile and trending sans-serif
+    "DM Sans", // Google Font - Minimalist sans-serif
+    "Cabin", // Google Font - Humanist sans-serif
+    "Fira Sans", // Google Font - Designed for readability
+    "Rubik", // Google Font - Geometric sans-serif
+    "Karla", // Google Font - Clean and compact sans-serif
+  ];
+
+  const fontStyles = [
+    { name: "Normal", value: "normal" },
+    { name: "Italic", value: "italic" },
+    { name: "Oblique", value: "oblique" },
+  ];
+
+  const fontWeights = [
+    { name: "Normal", value: "normal" },
+    { name: "Bold", value: "bold" },
+    { name: "Light", value: "300" },
+    { name: "Semibold", value: "600" },
+  ];
 
   const ratioSizes = {
     "1:1": { width: 600, height: 600 },
@@ -177,6 +222,12 @@ const DashImageAd = () => {
           facebook,
           instagram,
           linkedin,
+          fontSize,
+          taglineFontSize,
+          textColor,
+          fontStyle,
+          fontWeight,
+          fontFamily,
         }),
       });
 
@@ -216,6 +267,9 @@ const DashImageAd = () => {
               <div
                 className="relative w-full h-full"
                 style={{
+                  fontFamily: `theme('fontFamily.${fontFamily
+                    .toLowerCase()
+                    .replace(/\s+/g, "-")}')`,
                   width,
                   height,
                   position: "relative",
@@ -228,7 +282,15 @@ const DashImageAd = () => {
                   className="w-full h-full object-cover rounded-lg shadow-lg"
                   style={{ opacity: imageOpacity }}
                 />
-                <div className="absolute inset-0 flex flex-col gap-10 p-12">
+                <div
+                  className="absolute inset-0 flex flex-col gap-10 p-12"
+                  style={{
+                    color: textColor,
+                    fontFamily: fontFamily,
+                    fontStyle: fontStyle,
+                    fontWeight: fontWeight,
+                  }}
+                >
                   {logo && (
                     <div className="relative">
                       <img
@@ -242,7 +304,6 @@ const DashImageAd = () => {
                   {tagline && (
                     <div
                       style={{
-                        color: textColor,
                         fontSize: `${taglineFontSize}px`,
                         fontWeight: "bold",
                         textAlign: "center",
@@ -255,11 +316,7 @@ const DashImageAd = () => {
                   )}
                   <div
                     style={{
-                      color: textColor,
                       fontSize: `${fontSize}px`,
-                      fontWeight,
-                      fontStyle,
-                      fontFamily,
                       textAlign: "center",
                       alignSelf: "center",
                       justifySelf: "center",
@@ -269,61 +326,55 @@ const DashImageAd = () => {
                   </div>
 
                   <div className="flex flex-col gap-6">
-                    {/* Event Details Section */}
-                    <div className="flex flex-col gap-6">
-                      {/* Event Details Section */}
-                      <div className="flex flex-row justify-around items-center gap-4">
-                        {date && (
-                          <div className="flex items-center space-x-2">
-                            <CalendarIcon className="w-5 h-5 " />
-                            <p>{date}</p>
-                          </div>
-                        )}
-                        {time && (
-                          <div className="flex items-center space-x-2">
-                            <ClockIcon className="w-5 h-5 " />
-                            <p>{time}</p>
-                          </div>
-                        )}
-                        {location && (
-                          <div className="flex items-center space-x-2">
-                            <MapPinIcon className="w-5 h-5" />
-                            <p>{location}</p>
-                          </div>
-                        )}
-                      </div>
+                    <div className="flex flex-row justify-around items-center gap-4">
+                      {date && (
+                        <div className="flex items-center space-x-2">
+                          <CalendarIcon className="w-5 h-5 " />
+                          <p>{date}</p>
+                        </div>
+                      )}
+                      {time && (
+                        <div className="flex items-center space-x-2">
+                          <ClockIcon className="w-5 h-5 " />
+                          <p>{time}</p>
+                        </div>
+                      )}
+                      {location && (
+                        <div className="flex items-center space-x-2">
+                          <MapPinIcon className="w-5 h-5" />
+                          <p>{location}</p>
+                        </div>
+                      )}
+                    </div>
 
-                      {/* Social Media Links Section */}
-                      <div className="flex flex-row justify-around items-center gap-4">
-                        {instagram && (
-                          <div className="flex items-center space-x-2">
-                            <FaInstagram className="w-5 h-5 text-pink-600" />
-                            <p>{instagram}</p>
-                          </div>
-                        )}
-                        {facebook && (
-                          <div className="flex items-center space-x-2">
-                            <FaFacebook className="w-5 h-5 text-blue-600" />
-                            <p>{facebook}</p>
-                          </div>
-                        )}
-                        {linkedin && (
-                          <div className="flex items-center space-x-2">
-                            <FaLinkedin className="w-5 h-5 text-blue-800" />
-                            <p>{linkedin}</p>
-                          </div>
-                        )}
-                      </div>
+                    <div className="flex flex-row justify-around items-center gap-4">
+                      {instagram && (
+                        <div className="flex items-center space-x-2">
+                          <FaInstagram className="w-5 h-5 text-pink-600" />
+                          <p>{instagram}</p>
+                        </div>
+                      )}
+                      {facebook && (
+                        <div className="flex items-center space-x-2">
+                          <FaFacebook className="w-5 h-5 text-blue-600" />
+                          <p>{facebook}</p>
+                        </div>
+                      )}
+                      {linkedin && (
+                        <div className="flex items-center space-x-2">
+                          <FaLinkedin className="w-5 h-5 text-blue-800" />
+                          <p>{linkedin}</p>
+                        </div>
+                      )}
+                    </div>
 
-                      {/* Website Section */}
-                      <div className="flex justify-center items-center text-center">
-                        {website && (
-                          <div className="flex items-center space-x-2">
-                            <Globe2Icon className="w-5 h-5 " />
-                            <p>{website}</p>
-                          </div>
-                        )}
-                      </div>
+                    <div className="flex justify-center items-center text-center">
+                      {website && (
+                        <div className="flex items-center space-x-2">
+                          <Globe2Icon className="w-5 h-5 " />
+                          <p>{website}</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -573,52 +624,52 @@ const DashImageAd = () => {
               <Tabs.Item title="Text Styling" icon={Palette}>
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-4">
-                    <Select
-                      value={fontFamily}
-                      onChange={(e) => setFontFamily(e.target.value)}
-                    >
-                      {[
-                        "Arial",
-                        "Verdana",
-                        "Georgia",
-                        "Times New Roman",
-                        "Courier New",
-                        "Impact",
-                      ].map((font) => (
-                        <option key={font} value={font}>
-                          {font}
-                        </option>
-                      ))}
-                    </Select>
-
-                    <div className="flex space-x-2">
-                      <Button
-                        size="sm"
-                        color={fontWeight === "bold" ? "blue" : "light"}
-                        onClick={() =>
-                          setFontWeight(
-                            fontWeight === "normal" ? "bold" : "normal"
-                          )
-                        }
+                    <div>
+                      <Label>Font Family</Label>
+                      <Select
+                        value={fontFamily}
+                        onChange={(e) => setFontFamily(e.target.value)}
                       >
-                        B
-                      </Button>
+                        {fontFamilies.map((font) => (
+                          <option key={font} value={font}>
+                            {font}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
 
-                      <Button
-                        size="sm"
-                        color={fontStyle === "italic" ? "blue" : "light"}
-                        onClick={() =>
-                          setFontStyle(
-                            fontStyle === "normal" ? "italic" : "normal"
-                          )
-                        }
+                    <div>
+                      <Label>Font Style</Label>
+                      <Select
+                        value={fontStyle}
+                        onChange={(e) => setFontStyle(e.target.value)}
+                        className="w-full"
                       >
-                        I
-                      </Button>
+                        {fontStyles.map((style) => (
+                          <option key={style.value} value={style.value}>
+                            {style.name}
+                          </option>
+                        ))}
+                      </Select>
                     </div>
                   </div>
 
                   <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <Label>Font Weight</Label>
+                      <Select
+                        value={fontWeight}
+                        onChange={(e) => setFontWeight(e.target.value)}
+                        className="w-full"
+                      >
+                        {fontWeights.map((weight) => (
+                          <option key={weight.value} value={weight.value}>
+                            {weight.name}
+                          </option>
+                        ))}
+                      </Select>
+                    </div>
+
                     <div>
                       <Label>Text Font Size</Label>
                       <TextInput
@@ -630,7 +681,9 @@ const DashImageAd = () => {
                         placeholder="Main Text Font Size"
                       />
                     </div>
+                  </div>
 
+                  <div className="grid grid-cols-2 gap-4 mt-4">
                     <div>
                       <Label>Tagline Font Size</Label>
                       <TextInput
@@ -644,19 +697,19 @@ const DashImageAd = () => {
                         placeholder="Tagline Font Size"
                       />
                     </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Label>Color</Label>
+                      <input
+                        type="color"
+                        value={textColor}
+                        onChange={(e) => setTextColor(e.target.value)}
+                        className="w-full h-10"
+                      />
+                    </div>
                   </div>
 
-                  <div className="flex items-center space-x-2 mt-4">
-                    <Label>Color</Label>
-                    <input
-                      type="color"
-                      value={textColor}
-                      onChange={(e) => setTextColor(e.target.value)}
-                      className="w-full h-10"
-                    />
-                  </div>
-
-                  <div className="flex justify-between space-x-2">
+                  <div className="flex justify-between space-x-2 mt-4">
                     <Button
                       gradientDuoTone="greenToBlue"
                       onClick={handlePreviousTab}

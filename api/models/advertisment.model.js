@@ -69,7 +69,32 @@ const adSchema = new mongoose.Schema(
     twitter: {
       type: String,
     },
+    fontSize: {
+      type: Number,
+      default: 20,
+    },
+    taglineFontSize: {
+      type: Number,
+      default: 36,
+    },
+    textColor: {
+      type: String,
+      default: "#FFFFFF",
+    },
+    fontStyle: {
+      type: String,
+      default: "normal",
+    },
+    fontWeight: {
+      type: String,
+      default: "normal",
+    },
+    fontFamily: {
+      type: String,
+      default: "Arial",
+    },
   },
+
   { timestamps: true }
 );
 
