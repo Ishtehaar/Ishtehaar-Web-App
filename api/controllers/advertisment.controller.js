@@ -53,8 +53,24 @@ export const generateContent = async (req, res, next) => {
 
 // Controller to upload an advertisement on cloudinary and then in db
 export const uploadAd = async (req, res, next) => {
-  const { finalBase64Image, rawBase64Image, title, imagePrompt, textPrompt, overlayText, userId, tagline } =
-    req.body;
+  const {
+    finalBase64Image,
+    rawBase64Image,
+    title,
+    imagePrompt,
+    textPrompt,
+    overlayText,
+    userId,
+    tagline,
+    logo,
+    date,
+    time,
+    location,
+    website,
+    instagram,
+    facebook,
+    linkedin,
+  } = req.body;
 
   try {
     const uploadFinal = await cloudinary.v2.uploader.upload(finalBase64Image, {
@@ -81,6 +97,14 @@ export const uploadAd = async (req, res, next) => {
       slug,
       tagline,
       finalAd: uploadFinal.secure_url,
+      logo,
+      date,
+      time,
+      location,
+      website,
+      instagram,
+      facebook,
+      linkedin,
     });
 
     await newAd.save();
@@ -199,10 +223,27 @@ export const getEditAd = async (req, res) => {
   }
 };
 
+// Controller to update an advertisement
 export const updateAd = async (req, res) => {
   try {
     const { adId } = req.params; // Get `adId` from route parameters
-    const { title, textPrompt, imagePrompt, overlayText, tagline, rawBase64Image, finalBase64Image, logo, date, time, location, website, instagram, facebook, linkedin } = req.body; // Get updated fields from request body
+    const {
+      title,
+      textPrompt,
+      imagePrompt,
+      overlayText,
+      tagline,
+      rawBase64Image,
+      finalBase64Image,
+      logo,
+      date,
+      time,
+      location,
+      website,
+      instagram,
+      facebook,
+      linkedin,
+    } = req.body; // Get updated fields from request body
 
     const uploadFinal = await cloudinary.v2.uploader.upload(finalBase64Image, {
       folder: "ads",
@@ -218,29 +259,72 @@ export const updateAd = async (req, res) => {
 
     const updatedAd = await Advertisment.findOneAndUpdate(
       { _id: adId },
-      { title, textPrompt, imagePrompt, overlayText, tagline, backgroundImage: uploadBg.secure_url, finalAd: uploadFinal.secure_url, logo: uploadLogo.secure_url, date, time, location, website, instagram, facebook, linkedin },
+      {
+        title,
+        textPrompt,
+        imagePrompt,
+        overlayText,
+        tagline,
+        backgroundImage: uploadBg.secure_url,
+        finalAd: uploadFinal.secure_url,
+        logo: uploadLogo.secure_url,
+        date,
+        time,
+        location,
+        website,
+        instagram,
+        facebook,
+        linkedin,
+      },
       { new: true }
-      );
-      console.log(updatedAd);
-      if (!updatedAd) {
-        return res.status(404).json({
-          success: false,
-          message: "Advertisement not found.",
-        });
-      }
-      res.status(200).json({
-        success: true,
-        message: "Advertisement updated successfully.",
-        updatedAd,
-      });
-    }
-    catch (error) {
-      console.error("Error updating advertisement:", error);
-      res.status(500).json({
+    );
+    console.log(updatedAd);
+    if (!updatedAd) {
+      return res.status(404).json({
         success: false,
-        message: "Failed to update advertisement.",
-        error: error.message,
+        message: "Advertisement not found.",
       });
     }
-  };
+    res.status(200).json({
+      success: true,
+      message: "Advertisement updated successfully.",
+      updatedAd,
+    });
+  } catch (error) {
+    console.error("Error updating advertisement:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update advertisement.",
+      error: error.message,
+    });
+  }
+};
 
+// Controller to delete an advertisement
+export const deleteAd = async (req, res) => {
+  try {
+    const { adId } = req.params; // Get `adId` from route parameters
+    const deletedAd = await Advertisment.findOneAndDelete({
+      _id: adId,
+    });
+    console.log(deletedAd);
+    if (!deletedAd) {
+      return res.status(404).json({
+        success: false,
+        message: "Advertisement not found.",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Advertisement deleted successfully.",
+      deletedAd,
+    });
+  } catch (error) {
+    console.error("Error deleting advertisement:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to delete advertisement.",
+      error: error.message,
+    });
+  }
+};
