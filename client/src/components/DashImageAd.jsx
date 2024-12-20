@@ -43,9 +43,9 @@ const DashImageAd = () => {
   const [error, setError] = useState("");
   const [uploadSuccessMessage, setUploadSuccessMessage] = useState("");
   const [ratio, setRatio] = useState("1:1");
-  
-  const [fontSize, setFontSize] = useState(24);
-  const [taglineFontSize, setTaglineFontSize] = useState(18);
+
+  const [fontSize, setFontSize] = useState(18);
+  const [taglineFontSize, setTaglineFontSize] = useState(24);
   const [textColor, setTextColor] = useState("#FFFFFF");
   const [fontStyle, setFontStyle] = useState("normal");
   const [fontWeight, setFontWeight] = useState("normal");
@@ -114,14 +114,21 @@ const DashImageAd = () => {
   };
   const { width, height } = ratioSizes[ratio];
 
-  const handleNextTab = () => {
-    setActiveTab((prev) => Math.min(prev + 1, 3));
-  };
+  const tabOrder = ['Basic Info', 'Optional Elements', 'Text Styling', 'Generate & Save'];
 
-  const handlePreviousTab = () => {
-    setActiveTab((prev) => Math.max(prev - 1, 0));
-  };
+const handleNextTab = () => {
+  const currentIndex = tabOrder.indexOf(activeTab);
+  if (currentIndex < tabOrder.length - 1) {
+    setActiveTab(tabOrder[currentIndex + 1]);
+  }
+};
 
+const handlePreviousTab = () => {
+  const currentIndex = tabOrder.indexOf(activeTab);
+  if (currentIndex > 0) {
+    setActiveTab(tabOrder[currentIndex - 1]);
+  }
+};
   const handleGenerate = async (e) => {
     e.preventDefault();
     setError("");
@@ -142,7 +149,7 @@ const DashImageAd = () => {
       setOverlayText(textData.data);
 
       const imageResponse = await fetch(
-        "https://97de-35-240-167-218.ngrok-free.app/generate-image",
+        "https://4308-34-170-49-55.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {
@@ -167,15 +174,6 @@ const DashImageAd = () => {
     }
   };
 
-  const handleUploadBackground = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = (event) => setBackgroundImage(event.target.result);
-      reader.readAsDataURL(file);
-      setImage("");
-    }
-  };
 
   const handleUploadLogo = (e) => {
     const file = e.target.files[0];
@@ -715,6 +713,12 @@ const DashImageAd = () => {
                       onClick={handlePreviousTab}
                     >
                       Previous: Optional Elements
+                    </Button>
+                    <Button
+                      gradientDuoTone="purpleToBlue"
+                      onClick={handleNextTab}
+                    >
+                      Next: Review & Update
                     </Button>
                   </div>
                 </div>

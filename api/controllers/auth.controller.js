@@ -177,9 +177,7 @@ export const google = async (req, res, next) => {
       user.lastLogin = new Date();
 
       const { password: pass, ...rest } = user._doc;
-      res
-        .status(200)
-        .json(rest);
+      res.status(200).json(rest);
     } else {
       const generatedPassword =
         Math.random().toString(36).slice(-8) +
@@ -204,8 +202,8 @@ export const google = async (req, res, next) => {
       const { password, ...rest } = newUser._doc;
       // const expiryDate = new Date(Date.now() + 3600000);
       res
-      .status(201)
-      .json({ success: true, message: "SignUp Successfull", user: rest });
+        .status(201)
+        .json({ success: true, message: "SignUp Successfull", user: rest });
     }
   } catch (error) {
     errorHandler(400, "Error in google signin/signup");

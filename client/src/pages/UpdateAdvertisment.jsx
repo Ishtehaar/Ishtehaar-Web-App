@@ -55,8 +55,7 @@ const UpdateAdvertisment = () => {
   const [error, setError] = useState("");
   const [uploadSuccessMessage, setUploadSuccessMessage] = useState("");
   const [ratio, setRatio] = useState("1:1");
-  
-  
+
   const [logo, setLogo] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
@@ -72,8 +71,7 @@ const UpdateAdvertisment = () => {
   const [fontStyle, setFontStyle] = useState("normal");
   const [fontWeight, setFontWeight] = useState("normal");
   const [fontFamily, setFontFamily] = useState("Arial");
-  
-  
+
   const [imageOpacity, setImageOpacity] = useState(1);
 
   const fontFamilies = [
@@ -182,7 +180,25 @@ const UpdateAdvertisment = () => {
   }, [adId]);
 
   const handleNextTab = () => {
+    // Validate inputs based on current tab before moving
+    switch (activeTab) {
+      case 0: // Basic Info Tab
+        if (!title || !textPrompt) {
+          setError("Please fill in the required fields: Title and Text Prompt");
+          return;
+        }
+        break;
+      case 1: // Optional Elements Tab
+        // No specific validation required
+        break;
+      case 2: // Text Styling Tab
+        // No specific validation required
+        break;
+    }
+
+    // Move to next tab if validation passes
     setActiveTab((prev) => Math.min(prev + 1, 3));
+    setError(""); // Clear any previous errors
   };
 
   const handlePreviousTab = () => {
@@ -209,7 +225,7 @@ const UpdateAdvertisment = () => {
       setOverlayText(textData.data);
 
       const imageResponse = await fetch(
-        "https://fa43-34-139-127-139.ngrok-free.app/generate-image",
+        "https://5e8a-34-170-49-55.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {
@@ -774,6 +790,12 @@ const UpdateAdvertisment = () => {
                       onClick={handlePreviousTab}
                     >
                       Previous: Optional Elements
+                    </Button>
+                    <Button
+                      gradientDuoTone="purpleToBlue"
+                      onClick={handleNextTab}
+                    >
+                      Next: Review & Update
                     </Button>
                   </div>
                 </div>

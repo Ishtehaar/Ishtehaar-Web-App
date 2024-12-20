@@ -19,15 +19,19 @@ import ProfileComp from "./components/ProfileComp";
 import DashSaveAd from "./components/DashSaveAd";
 import AdvertismentPage from "./pages/AdvertismentPage";
 import UpdateAdvertisment from "./pages/UpdateAdvertisment";
+import ScrollToTop from "./components/ScrollToTop";
+import About from "./pages/About";
 
 export default function App() {
   return (
     <>
       <BrowserRouter>
+      <ScrollToTop />
         <Header />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/pricing" element={<Pricing />} />
+          <Route path="/about" element={<About />} />
 
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
