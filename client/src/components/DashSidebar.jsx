@@ -82,6 +82,16 @@ export default function DashSidebar() {
                   Visual Ad Creation
                 </Sidebar.Item>
               </Link>
+              <Link to="/dashboard?tab=seo-keywords">
+                <Sidebar.Item
+                  icon={CiImageOn}
+                  className="cursor-pointer"
+                  active={tab === "seo-keywords"}
+                  as="div"
+                >
+                  SEO Assistant
+                </Sidebar.Item>
+              </Link>
               <Link to="/dashboard?tab=saved-ads">
                 <Sidebar.Item
                   icon={CiSaveDown2}

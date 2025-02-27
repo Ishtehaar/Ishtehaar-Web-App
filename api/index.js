@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import advertismentRoutes from "./routes/advertisment.route.js";
+import keywordRoutes from "./routes/keywords.route.js";
+
 
 import cookieParser from "cookie-parser";
 
@@ -14,7 +16,7 @@ mongoose
     console.log("Connected to MongoDB");
   })
   .catch((err) => {
-    console.log("MongoDB not connected");
+    console.log("MongoDB not connected:", err.message);
   });
 
 const app = express();
@@ -32,6 +34,7 @@ app.use(cookieParser());
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/advertisment", advertismentRoutes);
+app.use("/api/keywords", keywordRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

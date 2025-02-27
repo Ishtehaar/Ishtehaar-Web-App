@@ -3,6 +3,7 @@ import * as dotenv from "dotenv";
 import OpenAI from "openai";
 import { errorHandler } from "../utils/error.js";
 import Advertisment from "../models/advertisment.model.js";
+import User from "../models/user.model.js";
 dotenv.config();
 
 cloudinary.v2.config({
@@ -17,6 +18,7 @@ const openai = new OpenAI({
 
 //controller to generate AI content from OPEN AI model
 export const generateContent = async (req, res, next) => {
+  // const { userId } = req.user.userId;
   const { prompt } = req.body;
 
   if (!prompt) {

@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema(
   {
@@ -19,28 +19,36 @@ const userSchema = new mongoose.Schema(
     profilePicture: {
       type: String,
       default:
-        'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png',
+        "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
     },
-    isAdmin : {
+    isAdmin: {
       type: Boolean,
       default: false,
     },
     lastLogin: {
       type: Date,
-      default: Date.now
+      default: Date.now,
     },
     isVerified: {
       type: Boolean,
-      default: false
+      default: false,
+    },
+    freePromptsUsed: { 
+      type: Number,
+      default: 0 
+    },
+    hasSubscription: { 
+      type: Boolean,
+      default: false 
     },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,
-    verificationTokenExpiresAt: Date
+    verificationTokenExpiresAt: Date,
   },
   { timestamps: true }
 );
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 export default User;

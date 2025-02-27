@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import DashSidebar from "../components/DashSidebar";
 import DashImageAd from "../components/DashImageAd";
 import DashSaveAd from "../components/DashSaveAd";
+import DashSEOKeywords from "../components/DashSEOKeywords";
 // import DashProfile from "../compnents/DashProfile";
 
 function Dashboard() {
@@ -25,6 +26,7 @@ function Dashboard() {
     {/* ImageAd */}
     {tab === "image-ad" && <DashImageAd />}
     {tab === "saved-ads" && <DashSaveAd />}
+    {tab === "seo-keywords" && <DashSEOKeywords />}
 
   </div>
 </div>

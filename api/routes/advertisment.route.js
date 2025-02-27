@@ -1,6 +1,7 @@
 import express from "express";
 import { generateContent, uploadAd, getAds, getAd, getEditAd, updateAd, deleteAd } from "../controllers/advertisment.controller.js";
 import { verifyToken } from "../utils/verifyUser.js";
+import { checkUsageLimit } from "../utils/checkUsageLimit.js";
 
 const router = express.Router();
 
