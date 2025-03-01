@@ -40,7 +40,10 @@ export default function LighthouseAudit() {
       if (response.ok) {
         setAuditResult(data.result);
         console.log("Audit result:", data.result); // For debugging
-        if (data.result.fullPageScreenshot && data.result.fullPageScreenshot.screenshot) {
+        if (
+          data.result.fullPageScreenshot &&
+          data.result.fullPageScreenshot.screenshot
+        ) {
           setImageSrc(data.result.fullPageScreenshot.screenshot.data);
         }
       } else {
@@ -67,18 +70,27 @@ export default function LighthouseAudit() {
   const getMetricExplanation = (key) => {
     const explanations = {
       // Core Web Vitals
-      performance: "Performance measures how quickly the page loads and becomes interactive. It considers First Contentful Paint, Speed Index, Largest Contentful Paint, Time to Interactive, Total Blocking Time, and Cumulative Layout Shift.",
-      accessibility: "Accessibility measures how usable your site is for users with disabilities or impairments. It checks for proper use of ARIA attributes, sufficient color contrast, correct heading structure, and more.",
-      "best-practices": "Best Practices evaluates the site's adherence to modern web development standards. It checks for secure HTTPS usage, proper image aspect ratios, avoidance of deprecated APIs, and more.",
+      performance:
+        "Performance measures how quickly the page loads and becomes interactive. It considers First Contentful Paint, Speed Index, Largest Contentful Paint, Time to Interactive, Total Blocking Time, and Cumulative Layout Shift.",
+      accessibility:
+        "Accessibility measures how usable your site is for users with disabilities or impairments. It checks for proper use of ARIA attributes, sufficient color contrast, correct heading structure, and more.",
+      "best-practices":
+        "Best Practices evaluates the site's adherence to modern web development standards. It checks for secure HTTPS usage, proper image aspect ratios, avoidance of deprecated APIs, and more.",
       seo: "SEO (Search Engine Optimization) measures how well your site can be discovered through search engines. It checks for proper meta tags, crawlable links, mobile-friendly design, and descriptive text content.",
-      
+
       // Lab Data Metrics
-      "first-contentful-paint": "First Contentful Paint (FCP) measures the time from when the page starts loading to when any part of the page's content is rendered on the screen. A good FCP score is under 1.8 seconds.",
-      "speed-index": "Speed Index measures how quickly content is visually displayed during page load. It shows how quickly the contents of a page are visibly populated. A good score is under 3.4 seconds.",
-      "largest-contentful-paint": "Largest Contentful Paint (LCP) measures the time when the largest text or image is rendered on the page. A good LCP is under 2.5 seconds and is a Core Web Vital.",
-      "interactive": "Time to Interactive (TTI) measures how long it takes for the page to become fully interactive. A good TTI score is under 3.8 seconds.",
-      "total-blocking-time": "Total Blocking Time (TBT) measures the total amount of time that a page is blocked from responding to user input, such as mouse clicks or screen taps. A good TBT score is under 200 milliseconds.",
-      "cumulative-layout-shift": "Cumulative Layout Shift (CLS) measures the sum of all unexpected layout shifts that occur during the loading of a page. A good CLS score is under 0.1 and is a Core Web Vital."
+      "first-contentful-paint":
+        "First Contentful Paint (FCP) measures the time from when the page starts loading to when any part of the page's content is rendered on the screen. A good FCP score is under 1.8 seconds.",
+      "speed-index":
+        "Speed Index measures how quickly content is visually displayed during page load. It shows how quickly the contents of a page are visibly populated. A good score is under 3.4 seconds.",
+      "largest-contentful-paint":
+        "Largest Contentful Paint (LCP) measures the time when the largest text or image is rendered on the page. A good LCP is under 2.5 seconds and is a Core Web Vital.",
+      interactive:
+        "Time to Interactive (TTI) measures how long it takes for the page to become fully interactive. A good TTI score is under 3.8 seconds.",
+      "total-blocking-time":
+        "Total Blocking Time (TBT) measures the total amount of time that a page is blocked from responding to user input, such as mouse clicks or screen taps. A good TBT score is under 200 milliseconds.",
+      "cumulative-layout-shift":
+        "Cumulative Layout Shift (CLS) measures the sum of all unexpected layout shifts that occur during the loading of a page. A good CLS score is under 0.1 and is a Core Web Vital.",
     };
 
     return explanations[key] || "No explanation available for this metric.";
@@ -114,6 +126,26 @@ export default function LighthouseAudit() {
     return `${filled} ${circumference}`;
   };
 
+  // Sample metrics for the empty state visualization
+  const emptyStateMetrics = [
+    {
+      icon: "⚡",
+      title: "Performance",
+      description: "Page load speed and responsiveness",
+    },
+    {
+      icon: "♿",
+      title: "Accessibility",
+      description: "How accessible your site is to all users",
+    },
+    {
+      icon: "✅",
+      title: "Best Practices",
+      description: "Adherence to web development standards",
+    },
+    { icon: "🔍", title: "SEO", description: "Search engine discoverability" },
+  ];
+
   // Fallback data for example view or when partial data is available
   const sampleResult = auditResult || {
     categories: {
@@ -138,7 +170,7 @@ export default function LighthouseAudit() {
         score: 0.92,
         displayValue: "1.5 s",
       },
-      "interactive": {
+      interactive: {
         title: "Time to Interactive",
         score: 0.85,
         displayValue: "1.3 s",
@@ -159,13 +191,18 @@ export default function LighthouseAudit() {
   return (
     <div className="max-w-4xl mx-auto p-4">
       {/* Header with search */}
-      <div className="rounded-lg shadow-sm p-4 mb-4">
-        <h2 className="text-xl font-semibold mb-4">Website Audit</h2>
+      <div className="rounded-lg shadow-sm p-6 mb-6">
+        <h2 className="text-3xl font-bold mb-4 text-center">Website Audit Tool</h2>
+        <p className="text-gray-500  mb-6">
+          Analyze your website performance, accessibility, SEO, and best
+          practices using Ishtehaar's Website Audit Tool
+        </p>
         <div className="flex flex-col sm:flex-row gap-2">
           <div className="flex-grow">
             <TextInput
               type="url"
-              placeholder="Enter a web page URL"
+              required
+              placeholder="https://ishtehaar.com"
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
               sizing="md"
@@ -174,14 +211,7 @@ export default function LighthouseAudit() {
             />
           </div>
           <Button color="blue" onClick={runAudit} disabled={loading}>
-            {loading ? (
-              <>
-                <Spinner size="sm" className="mr-2" />
-                Analyzing...
-              </>
-            ) : (
-              "Analyze"
-            )}
+            {loading ? <>Analyzing...</> : "Analyze"}
           </Button>
         </div>
       </div>
@@ -200,11 +230,111 @@ export default function LighthouseAudit() {
         </div>
       )}
 
+      {/* Empty state - What you'll see before analysis */}
+      {!loading && !auditResult && (
+        <div className="space-y-6">
+          <Card className="overflow-hidden">
+            <div className="p-6 text-center border-b">
+              <h3 className="text-xl font-medium mb-2">What We Analyze</h3>
+              <p className="text-gray-500">
+                Our website audit tool provides a comprehensive analysis of your
+                site's performance and user experience
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
+              {emptyStateMetrics.map((metric, index) => (
+                <div
+                  key={index}
+                  className="border rounded-lg p-4 flex flex-col items-center text-center hover:shadow-md transition-shadow"
+                >
+                  <div className="text-3xl mb-3">{metric.icon}</div>
+                  <h4 className="font-semibold mb-2">{metric.title}</h4>
+                  <p className="text-sm text-gray-500">{metric.description}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          <Card>
+            <div className="p-6">
+              <h3 className="text-lg font-medium mb-4">How It Works</h3>
+
+              <div className="space-y-4">
+                <div className="flex">
+                  <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 mr-3">
+                    1
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Enter Your URL</h4>
+                    <p className="text-sm text-gray-500">
+                      Paste the full URL of the page you want to analyze
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex">
+                  <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 mr-3">
+                    2
+                  </div>
+                  <div>
+                    <h4 className="font-medium">We Analyze Your Site</h4>
+                    <p className="text-sm text-gray-500">
+                      Our tool runs a comprehensive audit on your
+                      page
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex">
+                  <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-600 mr-3">
+                    3
+                  </div>
+                  <div>
+                    <h4 className="font-medium">Get Detailed Results</h4>
+                    <p className="text-sm text-gray-500">
+                      View performance metrics and actionable recommendations
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 p-4  rounded-lg border border-blue-100">
+                <div className="flex items-start">
+                  <div className="flex-shrink-0 text-blue-500">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-5 h-5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+                      />
+                    </svg>
+                  </div>
+                  <div className="ml-3">
+                    <h5 className="font-medium">Pro Tip</h5>
+                    <p className="text-sm">
+                      For the most accurate results, analyze your live
+                      production site rather than a development or staging
+                      environment.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
       {/* Explanation Modal */}
       <Modal show={showModal} onClose={() => setShowModal(false)} size="md">
-        <Modal.Header>
-          {currentMetric.title}
-        </Modal.Header>
+        <Modal.Header>{currentMetric.title}</Modal.Header>
         <Modal.Body>
           <div className="space-y-3">
             <p>{currentMetric.description}</p>
@@ -280,14 +410,29 @@ export default function LighthouseAudit() {
                         </div>
                       </div>
                       <div className="flex items-center justify-center space-x-2">
-                        <h4 className="font-medium text-sm">{category.title}</h4>
-                        <button 
-                          onClick={() => showMetricExplanation(category.title, key)}
+                        <h4 className="font-medium text-sm">
+                          {category.title}
+                        </h4>
+                        <button
+                          onClick={() =>
+                            showMetricExplanation(category.title, key)
+                          }
                           className="text-blue-500 hover:text-blue-700"
                           aria-label={`Learn more about ${category.title}`}
                         >
-                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            strokeWidth={1.5}
+                            stroke="currentColor"
+                            className="w-4 h-4"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+                            />
                           </svg>
                         </button>
                       </div>
@@ -328,13 +473,26 @@ export default function LighthouseAudit() {
                       <div className="flex justify-between items-center">
                         <div className="flex items-center space-x-2">
                           <h4 className="font-medium">{category.title}</h4>
-                          <button 
-                            onClick={() => showMetricExplanation(category.title, key)}
+                          <button
+                            onClick={() =>
+                              showMetricExplanation(category.title, key)
+                            }
                             className="text-blue-500 hover:text-blue-700"
                             aria-label={`Learn more about ${category.title}`}
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                              <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth={1.5}
+                              stroke="currentColor"
+                              className="w-4 h-4"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+                              />
                             </svg>
                           </button>
                           <p className="text-xs text-gray-500">
@@ -368,7 +526,6 @@ export default function LighthouseAudit() {
                   );
                 }
               )}
-              
             </div>
           </Card>
 
@@ -403,13 +560,26 @@ export default function LighthouseAudit() {
                           <div className="flex justify-between text-sm">
                             <div className="flex items-center space-x-2">
                               <span>{audit.title}</span>
-                              <button 
-                                onClick={() => showMetricExplanation(audit.title, key)}
+                              <button
+                                onClick={() =>
+                                  showMetricExplanation(audit.title, key)
+                                }
                                 className="text-blue-500 hover:text-blue-700"
                                 aria-label={`Learn more about ${audit.title}`}
                               >
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                  <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-4 h-4"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+                                  />
                                 </svg>
                               </button>
                             </div>
@@ -443,13 +613,26 @@ export default function LighthouseAudit() {
                         <div className="flex justify-between text-sm">
                           <div className="flex items-center space-x-2">
                             <span>{audit.title}</span>
-                            <button 
-                              onClick={() => showMetricExplanation(audit.title, key)}
+                            <button
+                              onClick={() =>
+                                showMetricExplanation(audit.title, key)
+                              }
                               className="text-blue-500 hover:text-blue-700"
                               aria-label={`Learn more about ${audit.title}`}
                             >
-                              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-4 h-4"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+                                />
                               </svg>
                             </button>
                           </div>

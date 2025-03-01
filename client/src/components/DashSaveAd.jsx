@@ -29,7 +29,7 @@ export default function DashSaveAd() {
         </div>
       ) : ads && ads.length > 0 ? (
         <div className='flex flex-col gap-6'>
-          <h2 className='text-2xl font-semibold text-center'>Your Advertisements</h2>
+          <h2 className='text-3xl font-bold mb-4 text-center'>Your Advertisements</h2>
           <div className='flex flex-wrap gap-4 justify-center'>
             {ads.map((ad) => (
               <AdvertismentCard key={ad._id} ad={ad} />

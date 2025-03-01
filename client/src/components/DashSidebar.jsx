@@ -5,6 +5,9 @@ import { IoPricetagsOutline } from "react-icons/io5";
 import { MdOutlineFeedback } from "react-icons/md";
 import { CiImageOn, CiSaveDown2, CiLogout } from "react-icons/ci";
 import { MdHistory } from "react-icons/md";
+import { CiSearch } from "react-icons/ci";
+
+import { LuEarth } from "react-icons/lu";
 import { Link, useLocation } from "react-router-dom";
 import { signoutSuccess } from "../redux/user/userSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -84,7 +87,7 @@ export default function DashSidebar() {
               </Link>
               <Link to="/dashboard?tab=seo-keywords">
                 <Sidebar.Item
-                  icon={CiImageOn}
+                  icon={CiSearch}
                   className="cursor-pointer"
                   active={tab === "seo-keywords"}
                   as="div"
@@ -94,7 +97,7 @@ export default function DashSidebar() {
               </Link>
               <Link to="/dashboard?tab=website-audit">
                 <Sidebar.Item
-                  icon={CiImageOn}
+                  icon={LuEarth}
                   className="cursor-pointer"
                   active={tab === "website-audit"}
                   as="div"
