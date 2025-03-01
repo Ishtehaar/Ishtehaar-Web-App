@@ -4,6 +4,7 @@ import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
 import advertismentRoutes from "./routes/advertisment.route.js";
 import keywordRoutes from "./routes/keywords.route.js";
+import websiteAuditRoutes from "./routes/websiteAudit.route.js";
 
 
 import cookieParser from "cookie-parser";
@@ -35,6 +36,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/advertisment", advertismentRoutes);
 app.use("/api/keywords", keywordRoutes);
+app.use("/api/audit", websiteAuditRoutes);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;

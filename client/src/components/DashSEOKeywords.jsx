@@ -23,7 +23,7 @@ export default function DashSEOKeywords() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ prompt   : domain }),
+        body: JSON.stringify({ prompt: domain }),
       });
 
       if (!response.ok) {
@@ -69,24 +69,33 @@ export default function DashSEOKeywords() {
   const sections = parseContentSections();
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
-      <Card className="mb-4">
-        <h2 className="text-2xl font-bold mb-4">SEO Content Generator</h2>
-        <p className="mb-4 text-gray-600">
-          Enter your business domain and we'll generate SEO content recommendations using AI.
+    <div className="p-6 max-w-4xl mx-auto">
+      {/* Header section */}
+      <div className="mb-6 text-center">
+        <h1 className="text-3xl font-bold  mb-2">SEO Assistant</h1>
+        <p className=" max-w-2xl mx-auto">
+          Optimize your website's search engine visibility with AI-powered SEO recommendations 
+          tailored specifically for your business domain.
         </p>
-        
+      </div>
+
+      <Card className="mb-6 shadow-sm">
         <div className="mb-4">
           <div className="mb-2 block">
-            <Label htmlFor="domain" value="Business Domain" />
+            <Label htmlFor="domain" value="Business Domain" className="text-base font-medium" />
           </div>
           <TextInput
             id="domain"
-            placeholder="e.g. Food truck business, Digital marketing agency"
+            placeholder="e.g. Food truck business, Digital marketing agency, E-commerce store"
             value={domain}
             onChange={(e) => setDomain(e.target.value)}
             required
+            className="w-full"
+            sizing="lg"
           />
+          <p className="mt-2 text-sm text-gray-500">
+            Provide details about your business to receive more accurate recommendations
+          </p>
         </div>
         
         <Button 
@@ -94,6 +103,7 @@ export default function DashSEOKeywords() {
           onClick={handleGenerateKeywords}
           disabled={loading}
           className="w-full"
+          size="lg"
         >
           {loading ? (
             <>
@@ -107,60 +117,71 @@ export default function DashSEOKeywords() {
       </Card>
 
       {error && (
-        <Alert color="failure" className="mb-4">
+        <Alert color="failure" className="mb-6 shadow-sm">
           {error}
         </Alert>
       )}
 
       {seoContent && (
-        <Card>
-          <h3 className="text-xl font-bold mb-3">SEO Content Recommendations</h3>
+        <Card className="shadow-sm">
+          <div className="border-b pb-3 mb-4">
+            <h3 className="text-xl font-bold ">SEO Content Recommendations</h3>
+            <p className="text-sm text-gray-500">Based on your business domain information</p>
+          </div>
           
-          <div className="space-y-4">
+          <div className="space-y-5">
             {sections.title && (
-              <div className="border rounded p-3">
-                <h4 className="font-bold text-lg mb-2">Title Suggestions</h4>
-                <div className="whitespace-pre-line">{sections.title}</div>
+              <div className="border border-gray-200 rounded-lg p-4 ">
+                <h4 className="font-bold text-lg mb-2 ">Title Suggestions</h4>
+                <div className="whitespace-pre-line text-sm ">{sections.title}</div>
               </div>
             )}
             
             {sections.headings && (
-              <div className="border rounded p-3">
-                <h4 className="font-bold text-lg mb-2">Heading Suggestions</h4>
-                <div className="whitespace-pre-line">{sections.headings}</div>
+              <div className="border border-gray-200 rounded-lg p-4 ">
+                <h4 className="font-bold text-lg mb-2 ">Heading Suggestions</h4>
+                <div className="whitespace-pre-line text-sm">{sections.headings}</div>
               </div>
             )}
             
             {sections.meta && (
-              <div className="border rounded p-3">
+              <div className="border border-gray-200 rounded-lg p-4 ">
                 <h4 className="font-bold text-lg mb-2">Meta Description</h4>
-                <div className="whitespace-pre-line">{sections.meta}</div>
+                <div className="whitespace-pre-line text-sm">{sections.meta}</div>
               </div>
             )}
             
             {sections.body && (
-              <div className="border rounded p-3">
-                <h4 className="font-bold text-lg mb-2">Body Content Structure</h4>
-                <div className="whitespace-pre-line">{sections.body}</div>
+              <div className="border border-gray-200 rounded-lg p-4 ">
+                <h4 className="font-bold text-lg mb-2 ">Body Content Structure</h4>
+                <div className="whitespace-pre-line text-sm">{sections.body}</div>
               </div>
             )}
             
             {sections.tips && (
-              <div className="border rounded p-3">
-                <h4 className="font-bold text-lg mb-2">Additional Tips</h4>
-                <div className="whitespace-pre-line">{sections.tips}</div>
+              <div className="border border-gray-200 rounded-lg p-4 ">
+                <h4 className="font-bold text-lg mb-2 ">Additional Tips</h4>
+                <div className="whitespace-pre-line text-sm">{sections.tips}</div>
               </div>
             )}
           </div>
           
-          <div className="mt-4 flex gap-2">
-            <Button color="light" onClick={() => {
-              navigator.clipboard.writeText(seoContent);
-            }}>
+          <div className="mt-6 flex gap-3 justify-end">
+            <Button 
+              color="light" 
+              onClick={() => {
+                navigator.clipboard.writeText(seoContent);
+              }}
+              className="font-medium"
+            >
               Copy All Content
             </Button>
             
-            <Button color="gray" onClick={() => setSeoContent('')}>
+            <Button 
+              color="gray" 
+              onClick={() => setSeoContent('')}
+              className="font-medium"
+            >
               Clear Results
             </Button>
           </div>

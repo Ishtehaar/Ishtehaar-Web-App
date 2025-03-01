@@ -92,6 +92,16 @@ export default function DashSidebar() {
                   SEO Assistant
                 </Sidebar.Item>
               </Link>
+              <Link to="/dashboard?tab=website-audit">
+                <Sidebar.Item
+                  icon={CiImageOn}
+                  className="cursor-pointer"
+                  active={tab === "website-audit"}
+                  as="div"
+                >
+                  Website Audit
+                </Sidebar.Item>
+              </Link>
               <Link to="/dashboard?tab=saved-ads">
                 <Sidebar.Item
                   icon={CiSaveDown2}

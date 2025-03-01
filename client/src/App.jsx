@@ -23,6 +23,7 @@ import ScrollToTop from "./components/ScrollToTop";
 import About from "./pages/About";
 import LandingPage from "./pages/Landing";
 import DashSEOKeywords from "./components/DashSEOKeywords";
+import WebsiteAudit from "./components/WebsiteAudit";
 
 export default function App() {
   return (
@@ -40,7 +41,8 @@ export default function App() {
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/image-ad" element={<DashImageAd />} />
-            <Route path="/seo-keyworda" element={<DashSEOKeywords />} />
+            <Route path="/seo-keywords" element={<DashSEOKeywords />} />
+            <Route path="/website-audit" element={<WebsiteAudit />} />
             <Route path="/saved-ads" element={<DashSaveAd />} />
             <Route path="/dash-sidebar" element={<DashSidebar />} />
             <Route path="/profile-comp" element={<ProfileComp />} />
