@@ -143,13 +143,15 @@ const handlePreviousTab = () => {
         },
         body: JSON.stringify({ prompt: textPrompt }),
       });
+      if (textResponse.statusText == "Forbidden") throw new Error("You have reached the limit for ad generation on the free plan. Please upgrade to continue.");
 
       if (!textResponse.ok) throw new Error("Failed to generate text");
+      
       const textData = await textResponse.json();
       setOverlayText(textData.data);
 
       const imageResponse = await fetch(
-        "https://93e5-34-90-206-230.ngrok-free.app/generate-image",
+        "https://b849-34-143-163-48.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {
@@ -728,7 +730,7 @@ const handlePreviousTab = () => {
               <Tabs.Item title="Generate & Save" icon={Upload}>
                 <div className="flex flex-col space-y-4 mt-12">
                   <Button
-                    gradientDuoTone="purpleToBlue"
+                    gradientDuoTone="purpleToPink"
                     onClick={handleGenerate}
                     disabled={loading}
                     className="mb-2"

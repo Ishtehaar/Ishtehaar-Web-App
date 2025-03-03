@@ -21,9 +21,9 @@ import AdvertismentPage from "./pages/AdvertismentPage";
 import UpdateAdvertisment from "./pages/UpdateAdvertisment";
 import ScrollToTop from "./components/ScrollToTop";
 import About from "./pages/About";
-import LandingPage from "./pages/Landing";
 import DashSEOKeywords from "./components/DashSEOKeywords";
 import WebsiteAudit from "./components/WebsiteAudit";
+import DashUsers from "./components/DashAdminUsers";
 
 export default function App() {
   return (
@@ -35,7 +35,6 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/about" element={<About />} />
-          <Route path="/land" element={<LandingPage />} />
           
 
           <Route element={<PrivateRoute />}>
@@ -43,6 +42,7 @@ export default function App() {
             <Route path="/image-ad" element={<DashImageAd />} />
             <Route path="/seo-keywords" element={<DashSEOKeywords />} />
             <Route path="/website-audit" element={<WebsiteAudit />} />
+            <Route path="/dash-admin-users" element={<DashUsers />} />
             <Route path="/saved-ads" element={<DashSaveAd />} />
             <Route path="/dash-sidebar" element={<DashSidebar />} />
             <Route path="/profile-comp" element={<ProfileComp />} />

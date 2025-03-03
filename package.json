@@ -14,6 +14,7 @@
   "dependencies": {
     "axios": "^1.7.7",
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.3",
     "chrome-launcher": "^1.1.2",
     "cloudinary": "^2.5.1",
     "cookie-parser": "^1.4.6",
@@ -25,6 +26,7 @@
     "mongoose": "^8.6.1",
     "nodemon": "^3.1.4",
     "openai": "^4.73.0",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "stripe": "^17.7.0"
   }
 }

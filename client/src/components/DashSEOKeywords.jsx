@@ -148,7 +148,7 @@ export default function DashSEOKeywords() {
         </div>
 
         <Button
-          color="blue"
+          gradientDuoTone="purpleToPink"
           onClick={handleGenerateKeywords}
           disabled={loading}
           className="w-full font-medium"

@@ -210,7 +210,7 @@ export default function LighthouseAudit() {
               id="url-input"
             />
           </div>
-          <Button color="blue" onClick={runAudit} disabled={loading}>
+          <Button gradientDuoTone="purpleToPink" onClick={runAudit} disabled={loading}>
             {loading ? <>Analyzing...</> : "Analyze"}
           </Button>
         </div>

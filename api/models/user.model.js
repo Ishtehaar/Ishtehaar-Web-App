@@ -33,13 +33,18 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    freePromptsUsed: { 
-      type: Number,
-      default: 0 
+    subscription: {
+      type: String,
+      enum: ["free", "paid"],
+      default: "free",
     },
-    hasSubscription: { 
-      type: Boolean,
-      default: false 
+    adCreditsRemaining: {
+      type: Number,
+      default: 5, // Free users start with 5 credits
+    },
+    subscriptionEndDate: {
+      type: Date,
+      default: null,
     },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,

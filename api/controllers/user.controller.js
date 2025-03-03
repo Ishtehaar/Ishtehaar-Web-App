@@ -103,6 +103,15 @@ export const deleteUser = async (req, res, next) => {
   }
 };
 
+export const adminDeleteUser = async (req, res, next) => {
+  try {
+    await User.findByIdAndDelete(req.params.userId);
+    res.status(200).json("User has been deleted");
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export const getUsers = async (req, res, next) => {
   console.log(req.user);
@@ -145,5 +154,16 @@ export const getUsers = async (req, res, next) => {
       });
     } catch (error) {
       next(error); 
+    }
+  };
+
+  export const getUser = async (req, res, next) => {
+    try {
+      const user = await User.findById(req.user.userId);
+      console.log(req.user.userId);
+      const { password, ...rest } = user._doc;
+      res.status(200).json(rest);
+    } catch (error) {
+      next(error);
     }
   };
