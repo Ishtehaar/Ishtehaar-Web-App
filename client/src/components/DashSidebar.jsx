@@ -159,12 +159,13 @@ export default function DashSidebar() {
               >
                 Saved Ads
               </CustomSidebarItem>
-              {/* <CustomSidebarItem
-                icon={MdHistory}
-                active={tab === "history"}
+              <CustomSidebarItem
+                icon={CiSaveDown2}
+                active={tab === "social-media"}
+                to="/dashboard?tab=social-media"
               >
-                History
-              </CustomSidebarItem> */}
+                Post to Socials
+              </CustomSidebarItem>
             </>
           )}
         </div>

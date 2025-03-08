@@ -1,5 +1,7 @@
 import express from "express";
 import mongoose from "mongoose";
+import session from "express-session";
+import cors from "cors";
 import Stripe from "stripe";
 import authRoutes from "./routes/auth.route.js";
 import userRoutes from "./routes/user.route.js";
@@ -7,13 +9,14 @@ import advertismentRoutes from "./routes/advertisment.route.js";
 import keywordRoutes from "./routes/keywords.route.js";
 import websiteAuditRoutes from "./routes/websiteAudit.route.js";
 import stripeRoutes from "./routes/stripe.route.js";
+import facebookRoutes from "./routes/socialMedia.route.js";
+
 
 
 import cookieParser from "cookie-parser";
 import bodyParser from 'body-parser';
 
 import dotenv from "dotenv";
-import { webHook } from "./controllers/stripe.controller.js";
 import { updateUserSubscription } from "./services/subscriptionService.js";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 dotenv.config();
@@ -33,8 +36,8 @@ app.listen(PORT, () => {
   console.log("Server is running on port: ", PORT);
 });
 
-// app.use(express.json());
 
+//Stripe webhook implementation
 app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
   const sig = req.headers["stripe-signature"];
   
@@ -77,6 +80,18 @@ app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(express.json({ limit: '50mb' }));
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(
+  session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000, // 1 day session persistence
+      secure: false, // Set to true if using HTTPS
+    },
+  })
+);
 
 
 app.use("/api/auth", authRoutes);
@@ -85,6 +100,7 @@ app.use("/api/advertisment", advertismentRoutes);
 app.use("/api/keywords", keywordRoutes);
 app.use("/api/audit", websiteAuditRoutes);
 app.use("/api/stripe", stripeRoutes);
+app.use("/api/facebook", facebookRoutes);
 
 
 

@@ -24,6 +24,7 @@ import About from "./pages/About";
 import DashSEOKeywords from "./components/DashSEOKeywords";
 import WebsiteAudit from "./components/WebsiteAudit";
 import DashUsers from "./components/DashAdminUsers";
+import SocialMedia  from "./components/SocialMedia";
 
 export default function App() {
   return (
@@ -42,6 +43,8 @@ export default function App() {
             <Route path="/image-ad" element={<DashImageAd />} />
             <Route path="/seo-keywords" element={<DashSEOKeywords />} />
             <Route path="/website-audit" element={<WebsiteAudit />} />
+            <Route path="/social-media" element={<SocialMedia/>} />
+
             <Route path="/dash-admin-users" element={<DashUsers />} />
             <Route path="/saved-ads" element={<DashSaveAd />} />
             <Route path="/dash-sidebar" element={<DashSidebar />} />
