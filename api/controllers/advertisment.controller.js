@@ -88,6 +88,10 @@ export const uploadAd = async (req, res, next) => {
     const uploadBg = await cloudinary.v2.uploader.upload(rawBase64Image, {
       folder: "ads",
     });
+    
+    const uploadLogo = await cloudinary.v2.uploader.upload(logo, {
+      folder: "ads",
+    });
 
     const slug = title
       .split(" ")
@@ -105,7 +109,7 @@ export const uploadAd = async (req, res, next) => {
       slug,
       tagline,
       finalAd: uploadFinal.secure_url,
-      logo,
+      logo: uploadLogo.secure_url,
       date,
       time,
       location,

@@ -8,9 +8,12 @@ import {
   fbPostNow,
   fbSchedulePost,
   getInstagramAccounts,
+  getInstaPosts,
   getPageMetaData,
   getPagePosts,
   getPages,
+  instaPostNow,
+  postToBoth,
 } from "../controllers/socialMedia.controller.js";
 
 // // / Set up multer to store the uploaded file in a 'uploads' directory
@@ -33,8 +36,14 @@ router.get("/get-pages", getPages);
 router.get("/get-instagram-accounts", getInstagramAccounts);
 router.get("get-page-metadata/:pageId", getPageMetaData);
 router.get("get-page-posts", getPagePosts);
+router.get("/get-insta-posts", getInstaPosts);
 router.get("/check-connection-status", checkConnectionStatus);
 router.post("/fb-post-now", fbPostNow);
 router.post("/fb-schedule-post", fbSchedulePost);
+router.post("/insta-post-now", instaPostNow);
+
+
+router.post("/post-to-both", postToBoth);
+
 
 export default router;

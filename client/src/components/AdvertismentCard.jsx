@@ -7,7 +7,7 @@ export default function AdvertismentCard({ ad }) {
         <img
           src={ad.finalAd || ad.backgroundImage}
           alt='post cover'
-          className='h-[260px] w-full  object-cover group-hover:h-[200px] transition-all duration-300 z-20'
+          className='h-58 w-full  object-cover group-hover:h-[200px] transition-all duration-300 z-20'
         />
       <div className='p-3 flex flex-col gap-2'>
         <p className='text-lg font-semibold line-clamp-2'>{ad.title}</p>

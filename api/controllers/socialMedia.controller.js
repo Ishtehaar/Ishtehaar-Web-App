@@ -63,7 +63,7 @@ export const getPages = async (req, res) => {
       id: page.id,
       name: page.name,
     }));
-    console.log(pages)
+    console.log(pages);
 
     res.json(pages);
   } catch (error) {
@@ -89,11 +89,11 @@ export const getInstagramAccounts = async (req, res) => {
       { params: { access_token: userAccessToken } }
     );
     const pages = pagesResponse.data.data.map((page) => ({
-        id: page.id,
-        name: page.name,
-        access_token: page.access_token,
+      id: page.id,
+      name: page.name,
+      access_token: page.access_token,
     }));
-    console.log("ncildnc",pages)
+    console.log("ncildnc", pages);
 
     const instagramDetails = [];
 
@@ -149,7 +149,7 @@ export const getInstagramAccounts = async (req, res) => {
         );
       }
     }
-    console.log(instagramDetails)
+    console.log(instagramDetails);
     res.json({ success: true, instagramDetails });
   } catch (error) {
     console.error(
@@ -251,6 +251,33 @@ export const getPagePosts = async (req, res) => {
       .json({ error: "Error fetching posts", details: error.message });
   }
 };
+
+export const getInstaPosts = async (req, res) => {
+    const { igAccountId } = req.query;
+  const userAccessToken = req.session.access_token;
+
+  if (!userAccessToken || !igAccountId) {
+    return res.status(400).json({ error: 'Missing access token or Instagram account ID.' });
+  }
+
+  try {
+    // Fetch recent Instagram posts
+    const response = await axios.get(
+      `https://graph.facebook.com/v17.0/${igAccountId}/media`,
+      {
+        params: {
+          access_token: userAccessToken,
+          fields: 'id,caption,media_type,media_url,timestamp',
+        },
+      }
+    );
+
+    res.json({ success: true, posts: response.data.data });
+  } catch (error) {
+    console.error('Error fetching Instagram posts:', error.response?.data || error.message);
+    res.status(500).json({ error: 'Failed to fetch Instagram posts.' });
+  }
+}
 
 export const checkConnectionStatus = async (req, res) => {
   try {
@@ -354,86 +381,323 @@ export const fbPostNow = async (req, res) => {
 };
 
 export const fbSchedulePost = async (req, res) => {
-    console.log("Entering FB Schedule Post");
-    const { pageId, message, cloudinaryUrl, scheduledTime } = req.body;
-    console.log("Image URL for scheduled post:", cloudinaryUrl); 
-    console.log("Scheduled time:", scheduledTime);
-    console.log("Page ID:", pageId);
+  const { pageId, message, cloudinaryUrl, scheduledTime } = req.body;
 
+  if (!pageId || !message || !cloudinaryUrl || !scheduledTime) {
+    return res.status(400).send("Missing required parameters");
+  }
+
+  // Convert scheduledTime to Unix timestamp (seconds, not milliseconds)
+  const scheduledTimestamp = Math.floor(
+    new Date(scheduledTime).getTime() / 1000
+  );
+  const now = Math.floor(Date.now() / 1000);
+
+  // Validate scheduled time is in the future (at least 10 minutes from now)
+  if (scheduledTimestamp <= now + 600) {
+    return res
+      .status(400)
+      .send("Scheduled time must be at least 10 minutes in the future");
+  }
+
+  const userAccessToken = req.session.access_token;
+
+  if (!userAccessToken) {
+    return res.status(401).send("User is not authenticated.");
+  }
+
+  try {
+    // Get the Page Access Token
+    const pagesResponse = await axios.get(
+      `https://graph.facebook.com/v22.0/me/accounts`,
+      {
+        params: { access_token: userAccessToken },
+      }
+    );
+
+    const page = pagesResponse.data.data.find((p) => p.id === pageId);
+
+    if (!page) {
+      return res.status(404).send("Page not found");
+    }
+
+    const pageAccessToken = page.access_token;
+
+    // Download the image from Cloudinary
+    const imageResponse = await axios({
+      method: "get",
+      url: cloudinaryUrl,
+      responseType: "stream",
+    });
+
+    // Create form data for Facebook API
+    const formData = new FormData();
+    formData.append("file", imageResponse.data);
+    formData.append("message", message);
+    formData.append("scheduled_publish_time", scheduledTimestamp);
+    formData.append("published", "false"); // This indicates it's a scheduled post
+    formData.append("access_token", pageAccessToken);
+
+    // Upload the image to the page with scheduling parameters
+    const imageUploadUrl = `https://graph.facebook.com/v22.0/${pageId}/photos`;
+
+    // Post the image with scheduling information
+    const postResponse = await axios.post(imageUploadUrl, formData, {
+      headers: {
+        ...formData.getHeaders(),
+      },
+    });
+
+    res.json({
+      success: true,
+      postId: postResponse.data.id,
+      imageUrl: postResponse.data.post_url || cloudinaryUrl,
+      scheduledTime: new Date(scheduledTimestamp * 1000).toISOString(),
+    });
+  } catch (error) {
+    console.error(
+      "Error scheduling post to Page:",
+      error.response?.data || error.message
+    );
+    res.status(500).send("Error scheduling post to the Page");
+  }
+};
+
+export const instaPostNow = async (req, res) => {
+  const { instagramAccountId, caption, cloudinaryUrl } = req.body;
+
+  // Validate required parameters
+  if (!instagramAccountId) {
+    return res.status(400).json({ error: "Instagram account ID is missing" });
+  }
+
+  if (!cloudinaryUrl) {
+    return res.status(400).json({ error: "Cloudinary URL is missing" });
+  }
+
+  // Validate access token
+  if (!req.session.access_token) {
+    return res.status(401).json({ error: "No access token available" });
+  }
+
+  try {
+    // Create media container using the provided Cloudinary URL
+    const instagramResponse = await axios.post(
+      `https://graph.facebook.com/v22.0/${instagramAccountId}/media`,
+      {
+        image_url: cloudinaryUrl,
+        caption: caption || "",
+        access_token: req.session.access_token,
+      }
+    );
+
+    if (!instagramResponse.data.id) {
+      return res
+        .status(400)
+        .json({ error: "Failed to create media container" });
+    }
+
+    const mediaId = instagramResponse.data.id;
+
+    // Publish the media
+    const publishResponse = await axios.post(
+      `https://graph.facebook.com/v22.0/${instagramAccountId}/media_publish`,
+      {
+        creation_id: mediaId,
+        access_token: req.session.access_token,
+      }
+    );
+
+    res.json({
+      success: true,
+      postId: mediaId,
+      imageUrl: cloudinaryUrl,
+      publishResponse: publishResponse.data,
+    });
+  } catch (err) {
+    console.error(
+      "Instagram posting error:",
+      err.response?.data || err.message
+    );
+    return res.status(500).json({
+      error: "Error posting to Instagram",
+      details: err.response?.data || err.message,
+    });
+  }
+};
+
+export const postToBoth = async (req, res) => {
+    console.log("Entering Post to Both FB and Instagram");
+    
+    const { 
+      pageId, 
+      instagramAccountId, 
+      message, 
+      caption, 
+      cloudinaryUrl 
+    } = req.body;
+    
+    console.log("Image URL for posting:", cloudinaryUrl);
   
-    if (!pageId || !message || !cloudinaryUrl || !scheduledTime) {
-      return res.status(400).send("Missing required parameters");
+    // Validate required parameters
+    if (!cloudinaryUrl) {
+      return res.status(400).json({ error: "Cloudinary URL is missing" });
     }
   
-    // Convert scheduledTime to Unix timestamp (seconds, not milliseconds)
-    const scheduledTimestamp = Math.floor(new Date(scheduledTime).getTime() / 1000);
-    const now = Math.floor(Date.now() / 1000);
-    
-    // Validate scheduled time is in the future (at least 10 minutes from now)
-    if (scheduledTimestamp <= now + 600) {
-      return res.status(400).send("Scheduled time must be at least 10 minutes in the future");
-      
+    // Check at least one platform is specified
+    if (!instagramAccountId && !pageId) {
+      return res.status(400).json({ error: "At least one platform (Instagram or Facebook) must be specified" });
+    }
+  
+    // Validate access token
+    if (!req.session || !req.session.access_token) {
+      return res.status(401).json({ error: "User is not authenticated" });
     }
   
     const userAccessToken = req.session.access_token;
+    const results = { instagram: null, facebook: null };
+    let hasError = false;
   
-    if (!userAccessToken) {
-      return res.status(401).send("User is not authenticated.");
+    // Step 1: Post to Instagram first (if Instagram account ID is provided)
+    if (instagramAccountId) {
+      try {
+        // Create media container using the provided Cloudinary URL
+        const instagramResponse = await axios.post(
+          `https://graph.facebook.com/v22.0/${instagramAccountId}/media`,
+          {
+            image_url: cloudinaryUrl,
+            caption: caption || message || "", // Use caption, fallback to message if not provided
+            access_token: userAccessToken,
+          }
+        );
+  
+        if (!instagramResponse.data.id) {
+          throw new Error("Failed to create media container");
+        }
+  
+        const mediaId = instagramResponse.data.id;
+  
+        // Publish the media
+        const publishResponse = await axios.post(
+          `https://graph.facebook.com/v22.0/${instagramAccountId}/media_publish`,
+          {
+            creation_id: mediaId,
+            access_token: userAccessToken,
+          }
+        );
+  
+        results.instagram = {
+          success: true,
+          postId: publishResponse.data.id,
+          imageUrl: cloudinaryUrl
+        };
+        
+        console.log("Successfully posted to Instagram");
+        
+      } catch (instaError) {
+        console.error(
+          "Instagram posting error:",
+          instaError.response?.data || instaError.message
+        );
+        
+        results.instagram = {
+          success: false,
+          error: instaError.response?.data || instaError.message
+        };
+        
+        hasError = true;
+      }
     }
   
-    try {
-      // Get the Page Access Token
-      const pagesResponse = await axios.get(
-        `https://graph.facebook.com/v22.0/me/accounts`,
-        {
-          params: { access_token: userAccessToken },
+    // Step 2: Post to Facebook (if page ID is provided)
+    if (pageId) {
+      try {
+        // Get the Page Access Token
+        const pagesResponse = await axios.get(
+          `https://graph.facebook.com/v22.0/me/accounts`,
+          {
+            params: { access_token: userAccessToken },
+          }
+        );
+  
+        const page = pagesResponse.data.data.find((p) => p.id === pageId);
+  
+        if (!page) {
+          throw new Error("Page not found");
         }
-      );
   
-      const page = pagesResponse.data.data.find((p) => p.id === pageId);
+        const pageAccessToken = page.access_token;
   
-      if (!page) {
-        return res.status(404).send("Page not found");
+        // Download the image from Cloudinary
+        const imageResponse = await axios({
+          method: "get",
+          url: cloudinaryUrl,
+          responseType: "stream",
+        });
+  
+        // Create form data for Facebook API
+        const formData = new FormData();
+        formData.append("file", imageResponse.data);
+        formData.append("message", message || caption || ""); // Use message, fallback to caption
+        formData.append("access_token", pageAccessToken);
+  
+        // Upload the image to the page
+        const imageUploadUrl = `https://graph.facebook.com/v22.0/${pageId}/photos`;
+  
+        // Post the image
+        const postResponse = await axios.post(imageUploadUrl, formData, {
+          headers: {
+            ...formData.getHeaders(),
+          },
+        });
+  
+        results.facebook = {
+          success: true,
+          postId: postResponse.data.id,
+          imageUrl: postResponse.data.post_url || cloudinaryUrl
+        };
+        
+        console.log("Successfully posted to Facebook");
+        
+      } catch (fbError) {
+        console.error(
+          "Error posting to Facebook Page:",
+          fbError.response?.data || fbError.message
+        );
+        
+        results.facebook = {
+          success: false,
+          error: fbError.response?.data || fbError.message
+        };
+        
+        hasError = true;
       }
+    }
   
-      const pageAccessToken = page.access_token;
-  
-      // Download the image from Cloudinary
-      const imageResponse = await axios({
-        method: "get",
-        url: cloudinaryUrl,
-        responseType: "stream",
-      });
-  
-      // Create form data for Facebook API
-      const formData = new FormData();
-      formData.append("file", imageResponse.data);
-      formData.append("message", message);
-      formData.append("scheduled_publish_time", scheduledTimestamp);
-      formData.append("published", "false"); // This indicates it's a scheduled post
-      formData.append("access_token", pageAccessToken);
-  
-      // Upload the image to the page with scheduling parameters
-      const imageUploadUrl = `https://graph.facebook.com/v22.0/${pageId}/photos`;
-  
-      // Post the image with scheduling information
-      const postResponse = await axios.post(imageUploadUrl, formData, {
-        headers: {
-          ...formData.getHeaders(),
-        },
-      });
-  
-      res.json({
+    // Determine appropriate response based on results
+    if (hasError) {
+      // If any platform failed, but at least one succeeded
+      if ((results.instagram && results.instagram.success) || 
+          (results.facebook && results.facebook.success)) {
+        return res.status(207).json({
+          success: true,
+          message: "Partially successful posting",
+          results
+        });
+      } else {
+        // If all attempts failed
+        return res.status(500).json({
+          success: false,
+          message: "Failed to post to any platform",
+          results
+        });
+      }
+    } else {
+      // Everything succeeded
+      return res.status(200).json({
         success: true,
-        postId: postResponse.data.id,
-        imageUrl: postResponse.data.post_url || cloudinaryUrl,
-        scheduledTime: new Date(scheduledTimestamp * 1000).toISOString()
+        message: "Successfully posted to all specified platforms",
+        results
       });
-    } catch (error) {
-      console.error(
-        "Error scheduling post to Page:",
-        error.response?.data || error.message
-      );
-      res.status(500).send("Error scheduling post to the Page");
     }
   };
