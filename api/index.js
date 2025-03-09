@@ -10,6 +10,7 @@ import keywordRoutes from "./routes/keywords.route.js";
 import websiteAuditRoutes from "./routes/websiteAudit.route.js";
 import stripeRoutes from "./routes/stripe.route.js";
 import facebookRoutes from "./routes/socialMedia.route.js";
+import subscriptionRoutes from "./routes/subscription.route.js";
 
 
 
@@ -18,6 +19,7 @@ import bodyParser from 'body-parser';
 
 import dotenv from "dotenv";
 import { updateUserSubscription } from "./services/subscriptionService.js";
+import { console } from "inspector";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 dotenv.config();
 mongoose
@@ -39,6 +41,7 @@ app.listen(PORT, () => {
 
 //Stripe webhook implementation
 app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
+  console .log("🔔 Webhook received");
   const sig = req.headers["stripe-signature"];
   
   let event;
@@ -78,8 +81,9 @@ app.post("/webhook", express.raw({ type: "application/json" }), (req, res) => {
 });
 
 app.use(cookieParser());
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 app.use(
   session({
@@ -101,6 +105,8 @@ app.use("/api/keywords", keywordRoutes);
 app.use("/api/audit", websiteAuditRoutes);
 app.use("/api/stripe", stripeRoutes);
 app.use("/api/facebook", facebookRoutes);
+app.use("/api/subscription", subscriptionRoutes);
+
 
 
 
