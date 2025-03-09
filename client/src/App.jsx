@@ -25,6 +25,7 @@ import DashSEOKeywords from "./components/DashSEOKeywords";
 import WebsiteAudit from "./components/WebsiteAudit";
 import DashUsers from "./components/DashAdminUsers";
 import SocialMedia  from "./components/SocialMedia";
+import DashAdminSubscriptions from "./components/DashAdminSubscriptions";
 
 export default function App() {
   return (
@@ -46,6 +47,7 @@ export default function App() {
             <Route path="/social-media" element={<SocialMedia/>} />
 
             <Route path="/dash-admin-users" element={<DashUsers />} />
+            <Route path="/dash-admin-subscriptions" element={<DashAdminSubscriptions />} />
             <Route path="/saved-ads" element={<DashSaveAd />} />
             <Route path="/dash-sidebar" element={<DashSidebar />} />
             <Route path="/profile-comp" element={<ProfileComp />} />

@@ -14,10 +14,14 @@ import { useDispatch, useSelector } from "react-redux";
 export default function DashSidebar() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [userData, setUserData] = useState({});
+  console.log(userData);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [userSubscription, setUserSubscription] = useState({
     subscription: "free",
     adCreditsRemaining: 5,
-    subscriptionEndDate: null
+    subscriptionEndDate: null,
   });
   const { currentUser } = useSelector((state) => state.user);
 
@@ -32,49 +36,28 @@ export default function DashSidebar() {
     }
   }, [location.search]);
 
-  // useEffect(() => {
-  //   // Fetch user subscription data
-  //   const fetchUserSubscription = async () => {
-  //     try {
-  //       const res = await fetch("/api/user/getUser");
-  //       const data = await res.json();
-  //       if (data.success) {
-  //         setUserSubscription({
-  //           subscription: data.subscription,
-  //           adCreditsRemaining: data.adCreditsRemaining,
-  //           subscriptionEndDate: data.subscriptionEndDate
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.log("Error fetching subscription data:", error.message);
-  //     }
-  //   };
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("/api/user/getUser");
 
-  //   if (currentUser && !currentUser.isAdmin) {
-  //     fetchUserSubscription();
-  //   }
-  // }, []);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status}`);
+        }
 
+        const userData = await response.json();
+        setUserData(userData);
+      } catch (err) {
+        setError(err.message);
+        console.error("Failed to fetch user:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // const handleSignout = async () => {
-  //   try {
-  //     const res = await fetch("/api/auth/signout", {
-  //       method: "POST",
-  //     });
-  //     const data = await res.json();
-  //     if (!res.ok) {
-  //       console.log(data.message);
-  //     } else {
-  //       dispatch(signoutSuccess());
-  //     }
-  //   } catch (error) {
-  //     console.log(error.message);
-  //   }
-  // };
-
-  // const handleNavigation = (path) => {
-  //   navigate(path);
-  // };
+    fetchUser();
+  }, []);
 
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -82,20 +65,26 @@ export default function DashSidebar() {
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
-      year: "numeric"
+      year: "numeric",
     });
   };
 
   // Custom sidebar item component that doesn't rely on Flowbite's context
   const CustomSidebarItem = ({ icon: Icon, active, onClick, children, to }) => {
     const content = (
-      <div 
+      <div
         className={`flex items-center p-2 text-base font-normal rounded-lg cursor-pointer py-4
-          ${active ? 'bg-gray-100 dark:bg-gray-700' : 'hover:bg-gray-100 dark:hover:bg-gray-700'}
+          ${
+            active
+              ? "bg-gray-100 dark:bg-gray-700"
+              : "hover:bg-gray-100 dark:hover:bg-gray-700"
+          }
         `}
         onClick={onClick}
       >
-        {Icon && <Icon className="w-6 h-6 mr-3 text-gray-500 dark:text-gray-400" />}
+        {Icon && (
+          <Icon className="w-6 h-6 mr-3 text-gray-500 dark:text-gray-400" />
+        )}
         <span className="flex-1 whitespace-nowrap">{children}</span>
       </div>
     );
@@ -118,7 +107,8 @@ export default function DashSidebar() {
               </CustomSidebarItem>
               <CustomSidebarItem
                 icon={IoPricetagsOutline}
-                active={tab === "image-ad"}
+                active={tab === "dash-admin-subscriptions"}
+                to="/dashboard?tab=dash-admin-subscriptions"
               >
                 Subscription Control
               </CustomSidebarItem>
@@ -170,55 +160,66 @@ export default function DashSidebar() {
           )}
         </div>
       </div>
-      
+
       {/* Subscription Status at bottom */}
       {currentUser && !currentUser.isAdmin && (
         <div className="mt-auto mb-2 px-3">
-          <div className=" rounded-lg p-3 border border-gray-200">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium ">Your Plan</h3>
-              <Badge color={currentUser.subscription === 'paid' ? "purple" : "gray"} size="sm">
-                {currentUser.subscription === 'paid' ? "Premium" : "Free"}
-              </Badge>
+          {loading ? (
+            <div className="flex justify-center items-center p-6">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500"></div>
             </div>
-            
-            {currentUser.subscription === 'paid' ? (
-              <div className="flex items-center text-sm  mb-2">
-                <FaCrown className="h-4 w-4 text-purple-500 mr-2" />
-                <span>Unlimited ad credits</span>
-              </div>
-            ) : (
-              <>
-                <div className="mb-1 flex justify-between">
-                  <span className="text-xs font-medium ">
-                    Credits Remaining
-                  </span>
-                  <span className="text-xs font-medium ">
-                    {currentUser.adCreditsRemaining}/5
-                  </span>
-                </div>
-                <Progress 
-                  color="purple" 
-                  progress={Math.round((currentUser.adCreditsRemaining / 5) * 100)} 
+          ) : (
+            <div className="rounded-lg p-3 border border-gray-200">
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-medium">Your Plan</h3>
+                <Badge
+                  color={userData.subscription === "paid" ? "purple" : "gray"}
                   size="sm"
-                />
-              </>
-            )}
-            
-            {currentUser.subscription === 'paid' && (
-              <div className="text-xs  mt-2">
-                Valid until: {formatDate(currentUser.subscriptionEndDate)}
+                >
+                  {userData.subscription === "paid" ? "Premium" : "Free"}
+                </Badge>
               </div>
-            )}
-            
-            {currentUser.subscription === 'free' && (
-              <Link to="/pricing">
-                <button className="w-full mt-2 text-xs px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:bg-purple-700 transition-colors">
-                  Upgrade to Premium
-                </button>
-              </Link>
-            )}
-          </div>
+
+              {userData.subscription === "paid" ? (
+                <div className="flex items-center text-sm mb-2">
+                  <FaCrown className="h-4 w-4 text-purple-500 mr-2" />
+                  <span>Unlimited ad credits</span>
+                </div>
+              ) : (
+                <>
+                  <div className="mb-1 flex justify-between">
+                    <span className="text-xs font-medium">
+                      Credits Remaining
+                    </span>
+                    <span className="text-xs font-medium">
+                      {userData.adCreditsRemaining}/5
+                    </span>
+                  </div>
+                  <Progress
+                    color="purple"
+                    progress={Math.round(
+                      (userData.adCreditsRemaining / 5) * 100
+                    )}
+                    size="sm"
+                  />
+                </>
+              )}
+
+              {userData.subscription === "paid" && (
+                <div className="text-xs mt-2">
+                  Valid until: {formatDate(userData.subscriptionEndDate)}
+                </div>
+              )}
+
+              {userData.subscription === "free" && (
+                <Link to="/pricing">
+                  <button className="w-full mt-2 text-xs px-3 py-1.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-md hover:bg-purple-700 transition-colors">
+                    Upgrade to Premium
+                  </button>
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       )}
     </div>

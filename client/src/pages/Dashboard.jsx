@@ -8,6 +8,7 @@ import WebsiteAudit from "../components/WebsiteAudit";
 import DashUsers from "../components/DashAdminUsers";
 import { useSelector } from "react-redux";
 import SocialMedia from "../components/SocialMedia";
+import DashAdminSubscriptions from "../components/DashAdminSubscriptions";
 // import DashProfile from "../compnents/DashProfile";
 
 function Dashboard() {
@@ -34,6 +35,8 @@ function Dashboard() {
         {tab === "seo-keywords" && <DashSEOKeywords />}
         {tab === "website-audit" && <WebsiteAudit />}
         {tab === "dash-admin-users" && <DashUsers />}
+        {tab === "dash-admin-subscriptions" && <DashAdminSubscriptions />}
+
         {tab === "social-media" && <SocialMedia />}
       </div>
     </div>

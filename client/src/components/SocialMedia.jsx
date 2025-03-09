@@ -821,7 +821,7 @@ export default function SocialMedia() {
             </Button>
           </Tooltip>
 
-          <Tooltip content="Schedule publication for a later time">
+          <Tooltip content="Schedule publication on Facebook for a later time">
             <Button
               color="dark"
               onClick={scheduleFbPost}
@@ -847,7 +847,7 @@ export default function SocialMedia() {
                   />
                 </svg>
               )}
-              Schedule Publication
+              Schedule Publication on Facebook
             </Button>
           </Tooltip>
         </div>

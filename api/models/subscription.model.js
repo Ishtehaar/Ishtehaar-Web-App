@@ -4,42 +4,30 @@ const { Schema } = mongoose;
 
 const SubscriptionSchema = new Schema(
   {
-    userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    plan: {
+    planName: {
       type: String,
-      enum: ["basic", "premium", "enterprise"],
       required: true,
     },
-    startDate: {
-      type: Date,
+    planPrice: {
+      type: Number,
       required: true,
     },
-    endDate: {
-      type: Date,
-      required: true,
+    features: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
+    isRecommended: {
+      type: Boolean,
+      default: false,
     },
-    status: {
+    buttonText: {
       type: String,
-      enum: ["active", "expired", "cancelled"],
-      default: "active",
+      required: true,
     },
-    paymentDetails: {
-      transactionId: {
-        type: String, // Unique identifier for the payment transaction
-      },
-      amount: {
-        type: Number, // Amount paid for the subscription
-      },
-      method: {
-        type: String, // Payment method used (e.g., credit card, PayPal)
-      },
-      date: {
-        type: Date, // Date of the payment
-      },
+    buttonUrl: {
+      type: String,
     },
   },
   { timestamps: true } // Automatically adds createdAt and updatedAt fields
