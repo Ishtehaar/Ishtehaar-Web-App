@@ -19,7 +19,7 @@ import bodyParser from 'body-parser';
 
 import dotenv from "dotenv";
 import { updateUserSubscription } from "./services/subscriptionService.js";
-import { console } from "inspector";
+
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 dotenv.config();
 mongoose

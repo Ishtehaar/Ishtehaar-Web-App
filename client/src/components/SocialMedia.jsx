@@ -29,7 +29,14 @@ export default function SocialMedia() {
   // Connection state
   const [isConnected, setIsConnected] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [isPosting, setIsPosting] = useState(false);
+  const [captionLoading, setCaptionLoading] = useState(false);
+  // const [isPosting, setIsPosting] = useState(false);
+
+  const [isPostingToInstagram, setIsPostingToInstagram] = useState(false);
+  const [isPostingToFacebook, setIsPostingToFacebook] = useState(false);
+  const [isPostingToBoth, setIsPostingToBoth] = useState(false);
+  const [isSchedulingFbPost, setIsSchedulingFbPost] = useState(false);
+
 
   // Account states
   const [pages, setPages] = useState([]);
@@ -44,6 +51,7 @@ export default function SocialMedia() {
   );
   const [savedAds, setSavedAds] = useState([]);
   const [selectedAd, setSelectedAd] = useState("");
+  console.log(selectedAd._id);
 
   // Replace tabs with simple state
   const [activeSection, setActiveSection] = useState("accounts");
@@ -51,6 +59,11 @@ export default function SocialMedia() {
   // Notification states
   const [notifications, setNotifications] = useState([]);
   const [response, setResponse] = useState({ message: "", type: "" });
+
+  const isAnyPostingInProgress = () => {
+    return isPostingToInstagram || isPostingToFacebook || isPostingToBoth || isSchedulingFbPost;
+  };
+
 
   // Module information
   const moduleInfo = {
@@ -100,6 +113,38 @@ export default function SocialMedia() {
         notifications.filter((n) => n.id !== id)
       );
     }, 5000);
+  };
+
+  // update ad helper
+  const updateAdvertisementHelper = async (adId) => {
+    try {
+      const response = await fetch(`/api/advertisment/update-ad-for-caption/${adId}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          caption: caption,
+        }),
+      });
+
+      if (!response.ok) {
+        setResponse({
+          message: "Failed to update Caption",
+          type: "failure",
+        });
+        addNotification("Failed to update Caption");
+      }
+
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      setResponse({
+        message: "Failed to update Caption: " + error.message,
+        type: "failure",
+      });
+      addNotification("Failed to update Caption: " + error.message);
+    }
   };
 
   // Check if user is already connected to Facebook
@@ -246,9 +291,10 @@ export default function SocialMedia() {
 
   // Post to Facebook
   const postToFacebook = async () => {
+    updateAdvertisementHelper(selectedAd._id);
     if (!validatePostFields("facebook")) return;
 
-    setIsPosting(true);
+    setIsPostingToFacebook(true);
     try {
       const response = await fetch("/api/facebook/fb-post-now", {
         method: "POST",
@@ -280,15 +326,16 @@ export default function SocialMedia() {
       });
       addNotification("Failed to post to Facebook", "error");
     } finally {
-      setIsPosting(false);
+      setIsPostingToFacebook(false);
     }
   };
 
   // Post to Instagram
   const postToInstagram = async () => {
+    updateAdvertisementHelper(selectedAd._id);
     if (!validatePostFields("instagram")) return;
 
-    setIsPosting(true);
+    setIsPostingToInstagram(true);
     try {
       const response = await fetch("/api/facebook/insta-post-now", {
         method: "POST",
@@ -323,15 +370,16 @@ export default function SocialMedia() {
       });
       addNotification("Failed to post to Instagram", "error");
     } finally {
-      setIsPosting(false);
+      setIsPostingToInstagram(false);
     }
   };
 
   // Post to Both Platforms
   const postToBoth = async () => {
+    updateAdvertisementHelper(selectedAd._id);
     if (!validatePostFields("both")) return;
 
-    setIsPosting(true);
+    setIsPostingToBoth(true);
     try {
       const response = await fetch("/api/facebook/post-to-both", {
         method: "POST",
@@ -377,12 +425,13 @@ export default function SocialMedia() {
       });
       addNotification("Failed to post to both platforms", "error");
     } finally {
-      setIsPosting(false);
+      setIsPostingToBoth(false);
     }
   };
 
   // Schedule post
   const scheduleFbPost = async () => {
+    updateAdvertisementHelper(selectedAd._id);
     if (!validatePostFields("facebook")) return;
 
     // Validate date
@@ -395,7 +444,7 @@ export default function SocialMedia() {
       return;
     }
 
-    setIsPosting(true);
+    setIsSchedulingFbPost(true);
     try {
       const response = await fetch("/api/facebook/fb-schedule-post", {
         method: "POST",
@@ -430,7 +479,34 @@ export default function SocialMedia() {
       });
       addNotification("Failed to schedule post", "error");
     } finally {
-      setIsPosting(false);
+      setIsSchedulingFbPost(false);
+    }
+  };
+
+  //Generate caption helper
+  const generateCaption = async () => {
+    setCaptionLoading(true);
+    try {
+      const response = await fetch("/api/advertisment/generate-caption", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          prompt: selectedAd.textPrompt,
+        }),
+      });
+      const data = await response.json();
+      setCaption(data.caption);
+      setCaptionLoading(false);
+    } catch (err) {
+      setCaptionLoading(false);
+      setCaption("");
+      setResponse({
+        message: "Failed to generate caption: " + err.message,
+        type: "failure",
+      });
+      addNotification("Failed to generate caption", "error");
     }
   };
 
@@ -636,8 +712,25 @@ export default function SocialMedia() {
 
       <div className="space-y-6">
         <div>
-          <div className="mb-2">
+          <div className="mb-4 flex items-center gap-12">
             <Label htmlFor="caption" value="Post Caption:" />
+            <Button
+              size="xs"
+              variant="outline"
+              gradientDuoTone="purpleToBlue"
+              className="px-1 py-1 text-xs font-medium rounded-lg"
+              onClick={generateCaption}
+              disabled={captionLoading}
+            >
+              {captionLoading ? (
+                <div className="flex items-center justify-center gap-1">
+                  <span className="h-3 w-3 animate-spin rounded-full border-2 border-b-transparent border-white"></span>
+                  <span>Generating...</span>
+                </div>
+              ) : (
+                "Generate Caption"
+              )}
+            </Button>
           </div>
           <Textarea
             id="caption"
@@ -646,7 +739,7 @@ export default function SocialMedia() {
             value={caption}
             onChange={(e) => setCaption(e.target.value)}
             required
-            helperText="Add hashtags and @mentions as needed"
+            helperText="Add hashtags, @mentions, or click 'Generate Caption'. Feel free to customize as needed."
             className="w-full"
           />
         </div>
@@ -739,11 +832,11 @@ export default function SocialMedia() {
             <Button
               color="purple"
               onClick={postToInstagram}
-              disabled={isPosting}
+              disabled={isAnyPostingInProgress()}
               gradientDuoTone="purpleToPink"
               className="flex-1 px-2 font-medium rounded-lg transition-all duration-200 hover:shadow-md"
             >
-              {isPosting ? (
+              {isPostingToInstagram ? (
                 <Spinner size="sm" className="mr-2" />
               ) : (
                 <svg
@@ -767,11 +860,11 @@ export default function SocialMedia() {
             <Button
               color="blue"
               onClick={postToFacebook}
-              disabled={isPosting}
+              disabled={isAnyPostingInProgress()}
               gradientDuoTone="purpleToBlue"
               className="flex-1 px-2 font-medium rounded-lg transition-all duration-200 hover:shadow-md"
             >
-              {isPosting ? (
+              {isPostingToFacebook ? (
                 <Spinner size="sm" className="mr-2" />
               ) : (
                 <svg
@@ -795,11 +888,11 @@ export default function SocialMedia() {
             <Button
               color="green"
               onClick={postToBoth}
-              disabled={isPosting}
+              disabled={isAnyPostingInProgress()}
               gradientDuoTone="greenToBlue"
               className="flex-1 px-2 font-medium rounded-lg transition-all duration-200 hover:shadow-md"
             >
-              {isPosting ? (
+              {isPostingToBoth ? (
                 <Spinner size="sm" className="mr-2" />
               ) : (
                 <svg
@@ -825,11 +918,11 @@ export default function SocialMedia() {
             <Button
               color="dark"
               onClick={scheduleFbPost}
-              disabled={isPosting}
+              disabled={isAnyPostingInProgress()}
               gradientDuoTone="purpleToPink"
               className="flex-1 px-2 font-medium rounded-lg transition-all duration-200 hover:shadow-md"
             >
-              {isPosting ? (
+              {isSchedulingFbPost ? (
                 <Spinner size="sm" className="mr-2" />
               ) : (
                 <svg

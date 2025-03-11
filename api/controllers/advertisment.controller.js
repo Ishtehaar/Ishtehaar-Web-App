@@ -53,6 +53,56 @@ export const generateContent = async (req, res, next) => {
   }
 };
 
+
+export const generateCaption = async (req, res, next) => {
+  try {
+    const { prompt } = req.body;
+
+
+    // Validate input
+    if (!prompt) {
+      return res.status(400).json({
+        success: false,
+        message: "Prompt is required",
+      });
+    }
+
+    // Generate content with OpenAI
+    const gptResponse = await openai.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "system",
+          content:
+            "You are a skilled content writer specializing in creating engaging social media captions. Based on the details provided, craft a compelling caption for Instagram and Facebook posts. The caption should be attention-grabbing, relevant to the topic, and include trending hashtags that will increase visibility. Strike a balance between creativity and professionalism. Generate content that encourages engagement and reflects current social media trends. Be concise and accuarte, Don't give me text in double quotes.",
+        },
+        { role: "user", content: prompt },
+      ],
+      max_tokens: 200, // Increased token limit to accommodate hashtags
+    });
+
+    const generatedContent = gptResponse.choices[0]?.message?.content;
+
+    return res.status(200).json({
+      success: true,
+      caption: generatedContent,
+    });
+  } catch (error) {
+    console.error("Caption generation error:", error);
+
+    // Handle specific OpenAI errors
+    if (error.response?.status === 429) {
+      return res.status(429).json({
+        success: false,
+        message: "Rate limit exceeded. Please try again later.",
+      });
+    }
+
+    // Use your error handler, but return instead of passing to next
+    return errorHandler(400, "Error generating content")(req, res, next);
+  }
+};
+
 // Controller to upload an advertisement on cloudinary and then in db
 export const uploadAd = async (req, res, next) => {
   const {
@@ -88,7 +138,7 @@ export const uploadAd = async (req, res, next) => {
     const uploadBg = await cloudinary.v2.uploader.upload(rawBase64Image, {
       folder: "ads",
     });
-    
+
     const uploadLogo = await cloudinary.v2.uploader.upload(logo, {
       folder: "ads",
     });
@@ -122,7 +172,7 @@ export const uploadAd = async (req, res, next) => {
       textColor,
       fontStyle,
       fontWeight,
-      fontFamily
+      fontFamily,
     });
 
     await newAd.save();
@@ -330,6 +380,39 @@ export const updateAd = async (req, res) => {
   }
 };
 
+export const updateAdforCaption = async (req, res) => {
+  try {
+    const { adId } = req.params; // Get `adId` from route parameters
+    const { caption } = req.body; // Get updated fields from request body
+
+    const updatedAd = await Advertisment.findOneAndUpdate(
+      { _id: adId },
+      {
+        caption,
+      },
+      { new: true }
+    );
+    console.log(updatedAd);
+    if (!updatedAd) {
+      return res.status(404).json({
+        success: false,
+        message: "Advertisement not found.",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Advertisement updated successfully.",
+      updatedAd,
+    });
+  } catch (error) {
+    console.error("Error updating advertisement:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to update advertisement.",
+      error: error.message,
+    });
+  }
+}
 // Controller to delete an advertisement
 export const deleteAd = async (req, res) => {
   try {
