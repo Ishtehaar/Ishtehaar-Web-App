@@ -94,3 +94,39 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
 </body>
 </html>
 `;
+
+export const SUBSCRIPTION_UPDATE_SUCCESS_EMAIL = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Subscription Upgraded</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #4CAF50, #45a049); padding: 20px; text-align: center;">
+    <h1 style="color: white; margin: 0;">Subscription Upgraded!</h1>
+  </div>
+  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <p>Hello,</p>
+    <p>Great news! Your subscription has been successfully upgraded to our <strong>Premium Plan</strong>.</p>
+    <p>You can now enjoy the following benefits:</p>
+    <ul style="list-style-type: none; padding-left: 0;">
+      <listyle="margin-bottom: 10px; padding-left: 25px;>Unlimited ad creations for a full month</li>
+      <li style="margin-bottom: 10px; padding-left: 25px; >Access to all premium templates</li>
+      <li style="margin-bottom: 10px; padding-left: 25px; >Priority customer support</li>
+    </ul>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="{dashboardURL}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Go To Dashboard</a>
+    </div>
+    <p>Your premium subscription will be active until {expiryDate}.</p>
+    <p>Thank you for your continued support!</p>
+    <p>Best regards,<br>Ishtehaar Team</p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
+    <p>Have questions? Contact our support team at <a href="mailto:ishtehaar.fyp@gmail.com.com" style="color: #4CAF50;">support@ishtehaar.com</a></p>
+    <p>© 2025 Ishtehaar. All rights reserved.</p>
+  </div>
+</body>
+</html>
+`;

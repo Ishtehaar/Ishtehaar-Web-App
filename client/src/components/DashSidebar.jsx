@@ -4,6 +4,8 @@ import { FaUsersCog, FaCrown } from "react-icons/fa";
 import { IoPricetagsOutline } from "react-icons/io5";
 import { MdOutlineFeedback } from "react-icons/md";
 import { CiImageOn, CiSaveDown2, CiLogout } from "react-icons/ci";
+import { RxDashboard } from "react-icons/rx";
+import { SlSocialInstagram } from "react-icons/sl";
 // import { MdHistory } from "react-icons/md";
 import { CiSearch } from "react-icons/ci";
 import { LuEarth } from "react-icons/lu";
@@ -99,6 +101,13 @@ export default function DashSidebar() {
           {currentUser && currentUser.isAdmin ? (
             <>
               <CustomSidebarItem
+                icon={RxDashboard}
+                active={tab === "overview"}
+                to="/dashboard?tab=overview"
+              >
+                Dashboard
+              </CustomSidebarItem>
+              <CustomSidebarItem
                 icon={FaUsersCog}
                 active={tab === "dash-admin-users"}
                 to="/dashboard?tab=dash-admin-users"
@@ -121,6 +130,14 @@ export default function DashSidebar() {
             </>
           ) : (
             <>
+              <CustomSidebarItem
+                icon={RxDashboard}
+                active={tab === "overview"}
+                to="/dashboard?tab=overview"
+              >
+                Dashboard
+              </CustomSidebarItem>
+
               <CustomSidebarItem
                 icon={CiImageOn}
                 active={tab === "image-ad"}
@@ -150,7 +167,7 @@ export default function DashSidebar() {
                 Saved Ads
               </CustomSidebarItem>
               <CustomSidebarItem
-                icon={CiSaveDown2}
+                icon={SlSocialInstagram}
                 active={tab === "social-media"}
                 to="/dashboard?tab=social-media"
               >

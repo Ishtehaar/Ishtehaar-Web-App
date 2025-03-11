@@ -2,6 +2,7 @@ import { errorHandler } from "../utils/error.js";
 import {
   PASSWORD_RESET_REQUEST_TEMPLATE,
   PASSWORD_RESET_SUCCESS_TEMPLATE,
+  SUBSCRIPTION_UPDATE_SUCCESS_EMAIL,
   VERIFICATION_EMAIL_TEMPLATE,
 } from "./emailTemplates.js";
 import { mailtrapClient, sender } from "./mailtrap.config.js";
@@ -81,5 +82,27 @@ export const sendResetSuccessEmail = async (email) => {
     console.log("Password reset success email sent successfully", response);
   } catch (error) {
     errorHandler(500, "Error sending password reset success email", error);
+  }
+}
+
+
+export const sendSubscriptionUpdateEmail = async (email, expiryDate) => {
+  const dashboardURL = "http://localhost:5173/dashboard";
+  const recipient = [{ email }];
+
+  try {
+    const response = await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "Subscription Upgraded Successfully",
+      html: SUBSCRIPTION_UPDATE_SUCCESS_EMAIL
+        .replace("{dashboardURL}", dashboardURL)
+        .replace("{expiryDate}", expiryDate),
+      category: "Subscription Upgraded",
+    });
+
+    console.log("Subscription Upgarde email sent successfully", response);
+  } catch (error) {
+    errorHandler(500, "Error sending Subscription upgrade email", error);
   }
 }

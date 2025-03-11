@@ -197,7 +197,6 @@ export const getAds = async (req, res) => {
   try {
     // Extract userId from the authenticated user (e.g., from req.user provided by middleware)
     const userId = req.user?.userId;
-    // console.log(userId);
 
     // Ensure userId is present (security check)
     if (!userId) {
@@ -207,22 +206,25 @@ export const getAds = async (req, res) => {
       });
     }
 
-    // Fetch advertisements for the specific user, sorted by save time (earliest saved first)
-    const savedAds = await Advertisment.find({ userId }).sort({
-      createdAt: -1,
-    });
+    // Fetch advertisements for the specific user, sorted by save time (latest saved first)
+    const savedAds = await Advertisment.find({ userId }).sort({ createdAt: -1 });
 
-    if (!savedAds) {
+    // Count the number of fetched ads
+    const adCount = savedAds.length;
+
+    if (adCount === 0) {
       return res.status(404).json({
         success: false,
         message: "No advertisements found for the signed-in user.",
+        adCount: 0,
       });
     }
 
-    // Respond with the fetched advertisements
+    // Respond with the fetched advertisements and count
     res.status(200).json({
       success: true,
       message: "Advertisements fetched successfully.",
+      adCount,
       savedAds,
     });
   } catch (error) {

@@ -8,6 +8,9 @@ export default function DashSEOKeywords() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
+  
+        
+
   const handleGenerateKeywords = async () => {
     if (!domain.trim()) {
       setError("Please enter your business domain");

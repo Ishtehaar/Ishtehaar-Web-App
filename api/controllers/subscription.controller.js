@@ -60,9 +60,10 @@ export const getSubscriptions = async (req, res, next) => {
   }
   try {
     const subscriptions = await Subscription.find({}).sort({ planPrice: 1 });
+    // const subscriptionCount = subscriptions.length;
     res.status(200).json({
       success: true,
-      count: subscriptions.length,
+      subscriptionCount: subscriptions.length,
       data: subscriptions,
     });
   } catch (error) {

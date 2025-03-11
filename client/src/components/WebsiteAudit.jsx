@@ -29,6 +29,12 @@ export default function LighthouseAudit() {
     setError(null);
     setAuditResult(null);
     try {
+      const manipulateResponse = await fetch("http://localhost:5000/api/audit/manipulate-audit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       const response = await fetch("/api/audit/website-audit", {
         method: "POST",
         headers: {

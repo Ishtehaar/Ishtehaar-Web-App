@@ -720,7 +720,7 @@ export default function SocialMedia() {
               gradientDuoTone="purpleToBlue"
               className="px-1 py-1 text-xs font-medium rounded-lg"
               onClick={generateCaption}
-              disabled={captionLoading}
+              disabled={captionLoading || !selectedAd}
             >
               {captionLoading ? (
                 <div className="flex items-center justify-center gap-1">

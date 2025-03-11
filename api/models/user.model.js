@@ -46,6 +46,22 @@ const userSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    adsCreated: {
+      type: Number,
+      default: 0,
+    },
+    SEOKeywordsCreated: {
+      type: Number,
+      default: 0,
+    },
+    websiteAuditsCreated: {
+      type: Number,
+      default: 0,
+    },
+    socialCampaignsCreated: {
+      type: Number,
+      default: 0,
+    },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,

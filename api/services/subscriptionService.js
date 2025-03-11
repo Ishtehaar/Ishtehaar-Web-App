@@ -1,3 +1,4 @@
+import { sendSubscriptionUpdateEmail } from "../mailtrap/email.js";
 import User from "../models/user.model.js";
 
 // services/subscriptionService.js
@@ -12,6 +13,7 @@ export const updateUserSubscription = async (userId) => {   // from free to prem
       user.subscriptionEndDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
       
       await user.save();
+      await sendSubscriptionUpdateEmail(user.email, user.subscriptionEndDate);
       return user;
     } catch (error) {
       console.error('Error updating user subscription:', error);

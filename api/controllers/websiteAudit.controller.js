@@ -1,6 +1,8 @@
 import lighthouse from "lighthouse";
 // import chromeLauncher from "chrome-launcher";
 import * as chromeLauncher from "chrome-launcher";
+import User from "../models/user.model.js";
+import { errorHandler } from "../utils/error.js";
 
 
 function formatUrl(url) {
@@ -38,3 +40,20 @@ export const websiteAudit = async (req, res) => {
         res.status(500).json({ error: "Failed to analyze website" });
     }
 }
+
+
+export const manipulateAudit = async (req, res) => {
+  try {
+    const currentUser = await User.findById(req.user.userId);
+    currentUser.websiteAuditsCreated += 1;
+    await currentUser.save();
+    console.log("Audit count updated successfully");
+    res.status(200).json({
+      success: true,
+      message: "Audit count updated successfully",
+    });
+  } catch (error) {
+    console.error("Error updating audit count:", error);
+    errorHandler(400, "Error updating Audit count");
+  }
+};

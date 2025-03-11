@@ -116,6 +116,7 @@ export const adminDeleteUser = async (req, res, next) => {
 export const getUsers = async (req, res, next) => {
   console.log(req.user);
   const currentUser = await User.findById(req.user.userId);
+  console.log(currentUser)
 
     if (!currentUser.isAdmin) {
       return next(errorHandler(403, "You are not allowed to see all users"));
