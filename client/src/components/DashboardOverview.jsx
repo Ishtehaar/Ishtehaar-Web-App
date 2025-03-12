@@ -146,7 +146,7 @@ const DashboardOverview = ({ currentUser }) => {
     },
     {
       title: "Website Audits",
-      value:  SEOCount || 0,
+      value:  auditCount || 0,
       icon: <FiCode className="text-purple-500" />,
       link: "?tab=website-audit",
     },

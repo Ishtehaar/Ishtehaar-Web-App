@@ -2,16 +2,18 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import OAuth from "../components/OAuth";
+import { HelpCircle } from "lucide-react";
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({});
-
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
   };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.username || !formData.email || !formData.password) {
@@ -40,6 +42,7 @@ export default function SignUpPage() {
       setLoading(false);
     }
   };
+  
   return (
     <div className="min-h-screen mt-20">
       <div className="flex p-3 max-w-3xl mx-auto flex-col md:flex-row md:items-center gap-5">
@@ -54,26 +57,34 @@ export default function SignUpPage() {
             Your Digital Marketing Partner
           </p>
         </div>
+        
         {/* right */}
-
         <div className="flex-1">
           <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div>
+            {/* Username field with tooltip */}
+            <div className="mb-6">
               <Label value="Your username" />
-              <TextInput
-                type="text"
-                placeholder="Username"
-                id="username"
-                onChange={handleChange}
-              />
-              <p className="mt-2 text-xs text-red-400 font-small">
-                Username must only contain letters, numbers, and no spaces.{" "}
-              </p>
-              <p className="mt-2 text-xs text-red-400 font-small">
-                Username must be between 7 and 20 characters.{" "}
-              </p>
+              <div className="relative">
+                <TextInput
+                  type="text"
+                  placeholder="Username"
+                  id="username"
+                  onChange={handleChange}
+                />
+                <div className="group absolute right-2 top-1/2 -translate-y-1/2">
+                  <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
+                  <div className="absolute right-0 top-0 -translate-y-full mb-2 w-64 scale-0 transition-all rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100 z-50">
+                    <ul className="list-disc pl-4">
+                      <li>Must only contain letters, numbers, and no spaces</li>
+                      <li>Must be between 7 and 20 characters</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
+            
+            {/* Email field */}
+            <div className="mb-6">
               <Label value="Your email" />
               <TextInput
                 type="email"
@@ -82,29 +93,31 @@ export default function SignUpPage() {
                 onChange={handleChange}
               />
             </div>
-            <div>
-              <Label value="Your password" />
-              <TextInput
-                type="password"
-                placeholder="Password"
-                id="password"
-                onChange={handleChange}
-              />
-              <p className="mt-2 text-xs text-red-400  font-small">
-                Password must be at least 8 characters.{" "}
-              </p>
-              <p className="mt-2 text-xs text-red-400  font-small">
-                Must include at least one upper case letter.{" "}
-              </p>
-              <p className="mt-2 text-xs text-red-400  font-small">
-                Must contain at least one number.{" "}
-              </p>
-              <p className="mt-2 text-xs text-red-400  font-small">
-                Must have at least one symbol.{" "}
-              </p>
-              
             
+            {/* Password field with tooltip */}
+            <div className="mb-6">
+              <Label value="Your password" />
+              <div className="relative">
+                <TextInput
+                  type="password"
+                  placeholder="Password"
+                  id="password"
+                  onChange={handleChange}
+                />
+                <div className="group absolute right-2 top-1/2 -translate-y-1/2">
+                  <HelpCircle className="h-4 w-4 text-gray-400 cursor-help" />
+                  <div className="absolute right-0 top-0 -translate-y-full mb-2 w-64 scale-0 transition-all rounded bg-gray-800 p-2 text-xs text-white group-hover:scale-100 z-50">
+                    <ul className="list-disc pl-4">
+                      <li>Must be at least 8 characters</li>
+                      <li>Must include at least one upper case letter</li>
+                      <li>Must contain at least one number</li>
+                      <li>Must have at least one symbol</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
             </div>
+            
             <Button
               gradientDuoTone="purpleToPink"
               type="submit"
@@ -121,6 +134,7 @@ export default function SignUpPage() {
             </Button>
             <OAuth />
           </form>
+          
           <div className="flex text-sm mt-5 justify-between">
             <div className="flex gap-2">
               <span>Have an account?</span>
@@ -128,11 +142,11 @@ export default function SignUpPage() {
                 Sign In
               </Link>
             </div>
-
             <Link to="/forgot-password" className="text-red-500">
               Forgot Password?
             </Link>
           </div>
+          
           {errorMessage && (
             <Alert className="mt-5" color="failure">
               {errorMessage}
