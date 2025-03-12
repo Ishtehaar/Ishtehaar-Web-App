@@ -62,10 +62,10 @@ const DashboardOverview = ({ currentUser }) => {
   }, []);
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchSubscriptions = async () => {
       try {
         setLoading(true);
-        const res = await fetch("/api/subscription/get-Subscriptions");
+        const res = await fetch("/api/subscription/get-subscriptions");
         const data = await res.json();
         console.log(data);
         setSubscriptionCount(data.subscriptionCount);
@@ -75,10 +75,46 @@ const DashboardOverview = ({ currentUser }) => {
         setLoading(false);
       }
     };
-    fetchUsers();
+    fetchSubscriptions();
   }, []);
 
-//   useEffect(() => {    // when complaintys will be implemented
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/user/getUser");
+        const data = await res.json();
+        console.log(data);
+        setAuditCount(data.websiteAuditsCreated);
+        setSEOCount(data.SEOKeywordsCreated);
+        setSocialCampaignCount(data.socialCampaignsCreated);
+      } catch (error) {
+        console.error("Error fetching ads:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, []);
+
+  // useEffect(() => {
+  //   const fetchSEO = async () => {
+  //     try {
+  //       setLoading(true);
+  //       const res = await fetch("/api/user/getUser");
+  //       const data = await res.json();
+  //       console.log(data);
+  //       setSEOCount(data.SEOKeywordsCreated);
+  //     } catch (error) {
+  //       console.error("Error fetching ads:", error);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+  //   fetchSEO();
+  // }, []);
+
+//   useEffect(() => {    // when complaintys will be
 //     const fetchUsers = async () => {
 //       try {
 //         setLoading(true);
@@ -104,19 +140,19 @@ const DashboardOverview = ({ currentUser }) => {
     },
     {
       title: "SEO Keywords",
-      value: currentUser?.stats?.keywordsTracked || 0,
+      value: SEOCount || 0,
       icon: <FiSearch className="text-green-500" />,
       link: "?tab=seo-keywords",
     },
     {
       title: "Website Audits",
-      value: currentUser?.stats?.websiteAudits || 0,
+      value:  SEOCount || 0,
       icon: <FiCode className="text-purple-500" />,
       link: "?tab=website-audit",
     },
     {
       title: "Social Campaigns",
-      value: currentUser?.stats?.socialCampaigns || 0,
+      value: socialCampaignCount || 0,
       icon: <FiUsers className="text-red-500" />,
       link: "?tab=social-media",
     },

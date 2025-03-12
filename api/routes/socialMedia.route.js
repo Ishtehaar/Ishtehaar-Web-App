@@ -13,6 +13,7 @@ import {
   getPagePosts,
   getPages,
   instaPostNow,
+  manipulateSocialMediaCampaign,
   postToBoth,
 } from "../controllers/socialMedia.controller.js";
 
@@ -44,6 +45,7 @@ router.post("/insta-post-now", instaPostNow);
 
 
 router.post("/post-to-both", postToBoth);
+router.post("/manipulate-social-media-campaign", verifyToken, manipulateSocialMediaCampaign);
 
 
 export default router;

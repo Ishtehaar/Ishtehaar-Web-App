@@ -29,12 +29,7 @@ export default function LighthouseAudit() {
     setError(null);
     setAuditResult(null);
     try {
-      const manipulateResponse = await fetch("http://localhost:5000/api/audit/manipulate-audit", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      
       const response = await fetch("/api/audit/website-audit", {
         method: "POST",
         headers: {
@@ -55,6 +50,13 @@ export default function LighthouseAudit() {
       } else {
         setError(data.error || "Failed to analyze website");
       }
+
+      const manipulateResponse = await fetch("/api/audit/manipulate-audit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
     } catch (err) {
       setError("Server error. Please try again later.");
     } finally {

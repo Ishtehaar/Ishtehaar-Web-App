@@ -27,7 +27,7 @@ export default function OAuth() {
             const data = await res.json()
             if (res.ok){
                 dispatch(signInSuccess(data))
-                navigate('/dashboard?tab=image-ad')
+                navigate('/dashboard?tab=overview')
             }
         } catch (error) {
             console.log(error);

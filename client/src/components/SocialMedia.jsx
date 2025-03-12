@@ -37,7 +37,6 @@ export default function SocialMedia() {
   const [isPostingToBoth, setIsPostingToBoth] = useState(false);
   const [isSchedulingFbPost, setIsSchedulingFbPost] = useState(false);
 
-
   // Account states
   const [pages, setPages] = useState([]);
   const [instagramAccounts, setInstagramAccounts] = useState([]);
@@ -61,9 +60,13 @@ export default function SocialMedia() {
   const [response, setResponse] = useState({ message: "", type: "" });
 
   const isAnyPostingInProgress = () => {
-    return isPostingToInstagram || isPostingToFacebook || isPostingToBoth || isSchedulingFbPost;
+    return (
+      isPostingToInstagram ||
+      isPostingToFacebook ||
+      isPostingToBoth ||
+      isSchedulingFbPost
+    );
   };
-
 
   // Module information
   const moduleInfo = {
@@ -118,15 +121,18 @@ export default function SocialMedia() {
   // update ad helper
   const updateAdvertisementHelper = async (adId) => {
     try {
-      const response = await fetch(`/api/advertisment/update-ad-for-caption/${adId}`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          caption: caption,
-        }),
-      });
+      const response = await fetch(
+        `/api/advertisment/update-ad-for-caption/${adId}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            caption: caption,
+          }),
+        }
+      );
 
       if (!response.ok) {
         setResponse({
@@ -296,6 +302,8 @@ export default function SocialMedia() {
 
     setIsPostingToFacebook(true);
     try {
+      // Your tested API endpoint
+
       const response = await fetch("/api/facebook/fb-post-now", {
         method: "POST",
         headers: {
@@ -312,6 +320,16 @@ export default function SocialMedia() {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to post to Facebook");
       }
+
+      const manipulateResponse = await fetch(
+        "/api/facebook/manipulate-social-media-campaign",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const data = await response.json();
       setResponse({
@@ -355,6 +373,15 @@ export default function SocialMedia() {
           errorData.error || errorData.details || "Failed to post to Instagram"
         );
       }
+      const manipulateResponse = await fetch(
+        "/api/facebook/manipulate-social-media-campaign",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const data = await response.json();
       setResponse({
@@ -418,6 +445,15 @@ export default function SocialMedia() {
         });
         addNotification("Failed to post to both platforms", "error");
       }
+      const manipulateResponse = await fetch(
+        "/api/facebook/manipulate-social-media-campaign",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
     } catch (err) {
       setResponse({
         message: `Posting failed: ${err.message}`,
@@ -463,6 +499,15 @@ export default function SocialMedia() {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to schedule post");
       }
+      const manipulateResponse = await fetch(
+        "/api/facebook/manipulate-social-media-campaign",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const data = await response.json();
       setResponse({

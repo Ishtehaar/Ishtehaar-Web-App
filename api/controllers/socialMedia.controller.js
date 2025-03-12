@@ -4,6 +4,8 @@ import https from "https";
 import axios from "axios";
 import stream from "stream";
 import FormData from "form-data";
+import { errorHandler } from "../utils/error.js";
+import User from "../models/user.model.js";
 
 dotenv.config();
 cloudinary.v2.config({
@@ -253,11 +255,13 @@ export const getPagePosts = async (req, res) => {
 };
 
 export const getInstaPosts = async (req, res) => {
-    const { igAccountId } = req.query;
+  const { igAccountId } = req.query;
   const userAccessToken = req.session.access_token;
 
   if (!userAccessToken || !igAccountId) {
-    return res.status(400).json({ error: 'Missing access token or Instagram account ID.' });
+    return res
+      .status(400)
+      .json({ error: "Missing access token or Instagram account ID." });
   }
 
   try {
@@ -267,17 +271,20 @@ export const getInstaPosts = async (req, res) => {
       {
         params: {
           access_token: userAccessToken,
-          fields: 'id,caption,media_type,media_url,timestamp',
+          fields: "id,caption,media_type,media_url,timestamp",
         },
       }
     );
 
     res.json({ success: true, posts: response.data.data });
   } catch (error) {
-    console.error('Error fetching Instagram posts:', error.response?.data || error.message);
-    res.status(500).json({ error: 'Failed to fetch Instagram posts.' });
+    console.error(
+      "Error fetching Instagram posts:",
+      error.response?.data || error.message
+    );
+    res.status(500).json({ error: "Failed to fetch Instagram posts." });
   }
-}
+};
 
 export const checkConnectionStatus = async (req, res) => {
   try {
@@ -527,177 +534,193 @@ export const instaPostNow = async (req, res) => {
 };
 
 export const postToBoth = async (req, res) => {
-    console.log("Entering Post to Both FB and Instagram");
-    
-    const { 
-      pageId, 
-      instagramAccountId, 
-      message, 
-      caption, 
-      cloudinaryUrl 
-    } = req.body;
-    
-    console.log("Image URL for posting:", cloudinaryUrl);
-  
-    // Validate required parameters
-    if (!cloudinaryUrl) {
-      return res.status(400).json({ error: "Cloudinary URL is missing" });
-    }
-  
-    // Check at least one platform is specified
-    if (!instagramAccountId && !pageId) {
-      return res.status(400).json({ error: "At least one platform (Instagram or Facebook) must be specified" });
-    }
-  
-    // Validate access token
-    if (!req.session || !req.session.access_token) {
-      return res.status(401).json({ error: "User is not authenticated" });
-    }
-  
-    const userAccessToken = req.session.access_token;
-    const results = { instagram: null, facebook: null };
-    let hasError = false;
-  
-    // Step 1: Post to Instagram first (if Instagram account ID is provided)
-    if (instagramAccountId) {
-      try {
-        // Create media container using the provided Cloudinary URL
-        const instagramResponse = await axios.post(
-          `https://graph.facebook.com/v22.0/${instagramAccountId}/media`,
-          {
-            image_url: cloudinaryUrl,
-            caption: caption || message || "", // Use caption, fallback to message if not provided
-            access_token: userAccessToken,
-          }
-        );
-  
-        if (!instagramResponse.data.id) {
-          throw new Error("Failed to create media container");
+  console.log("Entering Post to Both FB and Instagram");
+
+  const { pageId, instagramAccountId, message, caption, cloudinaryUrl } =
+    req.body;
+
+  console.log("Image URL for posting:", cloudinaryUrl);
+
+  // Validate required parameters
+  if (!cloudinaryUrl) {
+    return res.status(400).json({ error: "Cloudinary URL is missing" });
+  }
+
+  // Check at least one platform is specified
+  if (!instagramAccountId && !pageId) {
+    return res
+      .status(400)
+      .json({
+        error:
+          "At least one platform (Instagram or Facebook) must be specified",
+      });
+  }
+
+  // Validate access token
+  if (!req.session || !req.session.access_token) {
+    return res.status(401).json({ error: "User is not authenticated" });
+  }
+
+  const userAccessToken = req.session.access_token;
+  const results = { instagram: null, facebook: null };
+  let hasError = false;
+
+  // Step 1: Post to Instagram first (if Instagram account ID is provided)
+  if (instagramAccountId) {
+    try {
+      // Create media container using the provided Cloudinary URL
+      const instagramResponse = await axios.post(
+        `https://graph.facebook.com/v22.0/${instagramAccountId}/media`,
+        {
+          image_url: cloudinaryUrl,
+          caption: caption || message || "", // Use caption, fallback to message if not provided
+          access_token: userAccessToken,
         }
-  
-        const mediaId = instagramResponse.data.id;
-  
-        // Publish the media
-        const publishResponse = await axios.post(
-          `https://graph.facebook.com/v22.0/${instagramAccountId}/media_publish`,
-          {
-            creation_id: mediaId,
-            access_token: userAccessToken,
-          }
-        );
-  
-        results.instagram = {
-          success: true,
-          postId: publishResponse.data.id,
-          imageUrl: cloudinaryUrl
-        };
-        
-        console.log("Successfully posted to Instagram");
-        
-      } catch (instaError) {
-        console.error(
-          "Instagram posting error:",
-          instaError.response?.data || instaError.message
-        );
-        
-        results.instagram = {
-          success: false,
-          error: instaError.response?.data || instaError.message
-        };
-        
-        hasError = true;
+      );
+
+      if (!instagramResponse.data.id) {
+        throw new Error("Failed to create media container");
       }
-    }
-  
-    // Step 2: Post to Facebook (if page ID is provided)
-    if (pageId) {
-      try {
-        // Get the Page Access Token
-        const pagesResponse = await axios.get(
-          `https://graph.facebook.com/v22.0/me/accounts`,
-          {
-            params: { access_token: userAccessToken },
-          }
-        );
-  
-        const page = pagesResponse.data.data.find((p) => p.id === pageId);
-  
-        if (!page) {
-          throw new Error("Page not found");
+
+      const mediaId = instagramResponse.data.id;
+
+      // Publish the media
+      const publishResponse = await axios.post(
+        `https://graph.facebook.com/v22.0/${instagramAccountId}/media_publish`,
+        {
+          creation_id: mediaId,
+          access_token: userAccessToken,
         }
-  
-        const pageAccessToken = page.access_token;
-  
-        // Download the image from Cloudinary
-        const imageResponse = await axios({
-          method: "get",
-          url: cloudinaryUrl,
-          responseType: "stream",
-        });
-  
-        // Create form data for Facebook API
-        const formData = new FormData();
-        formData.append("file", imageResponse.data);
-        formData.append("message", message || caption || ""); // Use message, fallback to caption
-        formData.append("access_token", pageAccessToken);
-  
-        // Upload the image to the page
-        const imageUploadUrl = `https://graph.facebook.com/v22.0/${pageId}/photos`;
-  
-        // Post the image
-        const postResponse = await axios.post(imageUploadUrl, formData, {
-          headers: {
-            ...formData.getHeaders(),
-          },
-        });
-  
-        results.facebook = {
-          success: true,
-          postId: postResponse.data.id,
-          imageUrl: postResponse.data.post_url || cloudinaryUrl
-        };
-        
-        console.log("Successfully posted to Facebook");
-        
-      } catch (fbError) {
-        console.error(
-          "Error posting to Facebook Page:",
-          fbError.response?.data || fbError.message
-        );
-        
-        results.facebook = {
-          success: false,
-          error: fbError.response?.data || fbError.message
-        };
-        
-        hasError = true;
-      }
-    }
-  
-    // Determine appropriate response based on results
-    if (hasError) {
-      // If any platform failed, but at least one succeeded
-      if ((results.instagram && results.instagram.success) || 
-          (results.facebook && results.facebook.success)) {
-        return res.status(207).json({
-          success: true,
-          message: "Partially successful posting",
-          results
-        });
-      } else {
-        // If all attempts failed
-        return res.status(500).json({
-          success: false,
-          message: "Failed to post to any platform",
-          results
-        });
-      }
-    } else {
-      // Everything succeeded
-      return res.status(200).json({
+      );
+
+      results.instagram = {
         success: true,
-        message: "Successfully posted to all specified platforms",
-        results
+        postId: publishResponse.data.id,
+        imageUrl: cloudinaryUrl,
+      };
+
+      console.log("Successfully posted to Instagram");
+    } catch (instaError) {
+      console.error(
+        "Instagram posting error:",
+        instaError.response?.data || instaError.message
+      );
+
+      results.instagram = {
+        success: false,
+        error: instaError.response?.data || instaError.message,
+      };
+
+      hasError = true;
+    }
+  }
+
+  // Step 2: Post to Facebook (if page ID is provided)
+  if (pageId) {
+    try {
+      // Get the Page Access Token
+      const pagesResponse = await axios.get(
+        `https://graph.facebook.com/v22.0/me/accounts`,
+        {
+          params: { access_token: userAccessToken },
+        }
+      );
+
+      const page = pagesResponse.data.data.find((p) => p.id === pageId);
+
+      if (!page) {
+        throw new Error("Page not found");
+      }
+
+      const pageAccessToken = page.access_token;
+
+      // Download the image from Cloudinary
+      const imageResponse = await axios({
+        method: "get",
+        url: cloudinaryUrl,
+        responseType: "stream",
+      });
+
+      // Create form data for Facebook API
+      const formData = new FormData();
+      formData.append("file", imageResponse.data);
+      formData.append("message", message || caption || ""); // Use message, fallback to caption
+      formData.append("access_token", pageAccessToken);
+
+      // Upload the image to the page
+      const imageUploadUrl = `https://graph.facebook.com/v22.0/${pageId}/photos`;
+
+      // Post the image
+      const postResponse = await axios.post(imageUploadUrl, formData, {
+        headers: {
+          ...formData.getHeaders(),
+        },
+      });
+
+      results.facebook = {
+        success: true,
+        postId: postResponse.data.id,
+        imageUrl: postResponse.data.post_url || cloudinaryUrl,
+      };
+
+      console.log("Successfully posted to Facebook");
+    } catch (fbError) {
+      console.error(
+        "Error posting to Facebook Page:",
+        fbError.response?.data || fbError.message
+      );
+
+      results.facebook = {
+        success: false,
+        error: fbError.response?.data || fbError.message,
+      };
+
+      hasError = true;
+    }
+  }
+
+  // Determine appropriate response based on results
+  if (hasError) {
+    // If any platform failed, but at least one succeeded
+    if (
+      (results.instagram && results.instagram.success) ||
+      (results.facebook && results.facebook.success)
+    ) {
+      return res.status(207).json({
+        success: true,
+        message: "Partially successful posting",
+        results,
+      });
+    } else {
+      // If all attempts failed
+      return res.status(500).json({
+        success: false,
+        message: "Failed to post to any platform",
+        results,
       });
     }
-  };
+  } else {
+    // Everything succeeded
+    return res.status(200).json({
+      success: true,
+      message: "Successfully posted to all specified platforms",
+      results,
+    });
+  }
+};
+
+export const manipulateSocialMediaCampaign = async (req, res) => {
+  try {
+    const currentUser = await User.findById(req.user.userId);
+    currentUser.socialCampaignsCreated += 1;
+    await currentUser.save();
+    console.log("SociAL campaign count updated successfully");
+    res.status(200).json({
+      success: true,
+      message: "Social campaign count updated successfully",
+    });
+  } catch (error) {
+    errorHandler(400, "Error updating Social campaign count");
+    errorHandler(400, "Error updating Social Campaugn count");
+  }
+};

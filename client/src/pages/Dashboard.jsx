@@ -280,6 +280,7 @@ import { useSelector } from "react-redux";
 import SocialMedia from "../components/SocialMedia";
 import DashAdminSubscriptions from "../components/DashAdminSubscriptions";
 import DashboardOverview from "../components/DashboardOverview";
+import DashAdminComplaints from "../components/DashAdminComplaints";
 // import DashProfile from "../components/DashProfile";
 
 function Dashboard() {
@@ -321,6 +322,7 @@ function Dashboard() {
           {tab === "website-audit" && <WebsiteAudit />}
           {tab === "dash-admin-users" && <DashUsers />}
           {tab === "dash-admin-subscriptions" && <DashAdminSubscriptions />}
+          {tab === "dash-admin-complaints" && <DashAdminComplaints />}
           {tab === "social-media" && <SocialMedia />}
         </div>
       </div>

@@ -123,7 +123,7 @@ export default function DashSidebar() {
               </CustomSidebarItem>
               <CustomSidebarItem
                 icon={MdOutlineFeedback}
-                active={tab === "image-ad"}
+                active={tab === "dash-admin-complaints"}
               >
                 Complaint Resolution
               </CustomSidebarItem>

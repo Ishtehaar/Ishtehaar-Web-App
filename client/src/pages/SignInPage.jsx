@@ -37,7 +37,7 @@ export default function SignInPage() {
 
       if (res.ok) {
         dispatch(signInSuccess(data));
-        navigate("/dashboard?tab=image-ad");
+        navigate("/dashboard?tab=overview");
       }
     } catch (error) {
       dispatch(signInFailure(error.message));

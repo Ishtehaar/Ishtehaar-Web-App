@@ -6,6 +6,6 @@ import { manipulateAudit } from "../controllers/websiteAudit.controller.js";
 const router = express.Router();
 
 router.post("/generate-keywords", verifyToken, generateKeywords);
-router.get("/manipulate-keywords", verifyToken, manipulateKeywords);
+router.post("/manipulate-keywords", verifyToken, manipulateKeywords);
 
 export default router;

@@ -8,9 +8,6 @@ export default function DashSEOKeywords() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  
-        
-
   const handleGenerateKeywords = async () => {
     if (!domain.trim()) {
       setError("Please enter your business domain");
@@ -22,6 +19,7 @@ export default function DashSEOKeywords() {
 
     try {
       // Your tested API endpoint
+
       const response = await fetch("/api/keywords/generate-keywords", {
         method: "POST",
         headers: {
@@ -41,6 +39,15 @@ export default function DashSEOKeywords() {
       } else {
         throw new Error("Invalid response format");
       }
+      const manipulateResponse = await fetch(
+        "/api/keywords/manipulate-keywords",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
     } catch (err) {
       setError(
         err.message || "An error occurred while generating SEO recommendations"
@@ -187,9 +194,7 @@ export default function DashSEOKeywords() {
           <div className="space-y-6">
             {sections.title && (
               <div className="border border-gray-200 rounded-lg p-5">
-                <h4 className="font-bold text-lg mb-3 ">
-                  Title Suggestions
-                </h4>
+                <h4 className="font-bold text-lg mb-3 ">Title Suggestions</h4>
                 <div className="whitespace-pre-line text-gray-500">
                   {sections.title}
                 </div>
@@ -198,9 +203,7 @@ export default function DashSEOKeywords() {
 
             {sections.headings && (
               <div className="border border-gray-200 rounded-lg p-5">
-                <h4 className="font-bold text-lg mb-3 ">
-                  Heading Suggestions
-                </h4>
+                <h4 className="font-bold text-lg mb-3 ">Heading Suggestions</h4>
                 <div className="whitespace-pre-line text-gray-500">
                   {sections.headings}
                 </div>
@@ -209,9 +212,7 @@ export default function DashSEOKeywords() {
 
             {sections.meta && (
               <div className="border border-gray-200 rounded-lg p-5">
-                <h4 className="font-bold text-lg mb-3 ">
-                  Meta Description
-                </h4>
+                <h4 className="font-bold text-lg mb-3 ">Meta Description</h4>
                 <div className="whitespace-pre-line text-gray-500">
                   {sections.meta}
                 </div>
@@ -231,9 +232,7 @@ export default function DashSEOKeywords() {
 
             {sections.tips && (
               <div className="border border-gray-200 rounded-lg p-5">
-                <h4 className="font-bold text-lg mb-3 ">
-                  Additional Tips
-                </h4>
+                <h4 className="font-bold text-lg mb-3 ">Additional Tips</h4>
                 <div className="whitespace-pre-line text-gray-500">
                   {sections.tips}
                 </div>

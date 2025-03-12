@@ -26,6 +26,7 @@ import WebsiteAudit from "./components/WebsiteAudit";
 import DashUsers from "./components/DashAdminUsers";
 import SocialMedia  from "./components/SocialMedia";
 import DashAdminSubscriptions from "./components/DashAdminSubscriptions";
+import DashAdminComplaints from "./components/DashAdminComplaints";
 
 export default function App() {
   return (
@@ -48,6 +49,7 @@ export default function App() {
 
             <Route path="/dash-admin-users" element={<DashUsers />} />
             <Route path="/dash-admin-subscriptions" element={<DashAdminSubscriptions />} />
+            <Route path="/dash-admin-complaints" element={<DashAdminComplaints />} />
             <Route path="/saved-ads" element={<DashSaveAd />} />
             <Route path="/dash-sidebar" element={<DashSidebar />} />
             <Route path="/profile-comp" element={<ProfileComp />} />
