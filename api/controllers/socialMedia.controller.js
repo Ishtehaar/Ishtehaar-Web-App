@@ -199,7 +199,7 @@ export const getPageMetaData = async (req, res) => {
 };
 
 export const getPagePosts = async (req, res) => {
-  const { pageId = process.env.ISHTEHAAR_PAGE_ID, limit = 10 } = req.query; // Accept pageId and limit as query parameters
+  const { pageId } = req.query;
   const userAccessToken = req.session?.access_token;
 
   if (!pageId) {
@@ -213,7 +213,7 @@ export const getPagePosts = async (req, res) => {
   try {
     // Get Page Access Token
     const pageResponse = await axios.get(
-      `https://graph.facebook.com/v22.0/me/accounts`,
+      `https://graph.facebook.com/v17.0/me/accounts`,
       { params: { access_token: userAccessToken } }
     );
 
@@ -224,24 +224,20 @@ export const getPagePosts = async (req, res) => {
 
     const pageAccessToken = page.access_token;
 
-    // Fetch Posts with Pagination
-    let posts = [];
-    let nextPage = `https://graph.facebook.com/v22.0/${pageId}/posts?fields=id,message,created_time,likes.summary(true),comments.summary(true),shares,attachments{media_type,media,url},full_picture&limit=${limit}&access_token=${pageAccessToken}`;
-
-    while (nextPage) {
-      const postsResponse = await axios.get(nextPage);
-      posts = posts.concat(postsResponse.data.data);
-
-      // Check if there is a next page
-      nextPage = postsResponse.data.paging?.next || null;
-
-      // Optional: Stop fetching after a certain number of posts
-      if (posts.length >= limit) break;
-    }
+    // Fetch Posts without pagination
+    const postsResponse = await axios.get(
+      `https://graph.facebook.com/v17.0/${pageId}/posts`,
+      {
+        params: {
+          access_token: pageAccessToken,
+          fields: "id,message,created_time,likes.summary(true),comments.summary(true),shares,attachments{media_type,media,url},full_picture"
+        }
+      }
+    );
 
     res.json({
       success: true,
-      data: posts.slice(0, limit), // Return only the required number of posts
+      posts: postsResponse.data.data // Changed to 'posts' to match frontend expectations
     });
   } catch (error) {
     console.error(
@@ -548,12 +544,9 @@ export const postToBoth = async (req, res) => {
 
   // Check at least one platform is specified
   if (!instagramAccountId && !pageId) {
-    return res
-      .status(400)
-      .json({
-        error:
-          "At least one platform (Instagram or Facebook) must be specified",
-      });
+    return res.status(400).json({
+      error: "At least one platform (Instagram or Facebook) must be specified",
+    });
   }
 
   // Validate access token

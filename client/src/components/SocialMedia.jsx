@@ -43,6 +43,13 @@ export default function SocialMedia() {
   const [selectedPage, setSelectedPage] = useState("");
   const [selectedInsta, setSelectedInsta] = useState("");
 
+  // Post states
+  // Posts analytics states
+  const [facebookPosts, setFacebookPosts] = useState([]);
+  const [instagramPosts, setInstagramPosts] = useState([]);
+  const [postsLoading, setPostsLoading] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState("facebook");
+
   // Content states
   const [caption, setCaption] = useState("");
   const [scheduledDate, setScheduledDate] = useState(
@@ -105,6 +112,16 @@ export default function SocialMedia() {
   useEffect(() => {
     checkConnectionStatus();
   }, []);
+
+  useEffect(() => {
+    if (isConnected) {
+      if (selectedPlatform === "facebook" && selectedPage) {
+        fetchFacebookPosts();
+      } else if (selectedPlatform === "instagram" && selectedInsta) {
+        fetchInstagramPosts();
+      }
+    }
+  }, [selectedPlatform, selectedPage, selectedInsta, isConnected]);
 
   // Add notification
   const addNotification = (message, type = "info") => {
@@ -555,6 +572,75 @@ export default function SocialMedia() {
     }
   };
 
+  //Fetch facebook posts helper
+
+  const fetchFacebookPosts = async () => {
+    setPostsLoading(true);
+    try {
+      const response = await fetch(
+        `/api/facebook/get-page-posts?pageId=${selectedPage}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch Facebook posts");
+      }
+
+      const data = await response.json();
+      setFacebookPosts(data.posts || []);
+      addNotification("Facebook posts loaded successfully", "success");
+      return data.posts;
+    } catch (err) {
+      setResponse({
+        message: "Failed to fetch Facebook posts: " + err.message,
+        type: "failure",
+      });
+      addNotification("Failed to fetch Facebook posts", "error");
+      return [];
+    } finally {
+      setPostsLoading(false);
+    }
+  };
+
+  //Fetch Instagram posts helper
+  const fetchInstagramPosts = async () => {
+    setPostsLoading(true);
+    try {
+      const response = await fetch(
+        `/api/facebook/get-insta-posts?igAccountId=${selectedInsta}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch Instagram posts");
+      }
+
+      const data = await response.json();
+      setInstagramPosts(data.posts || []);
+      addNotification("Instagram posts loaded successfully", "success");
+      return data.posts;
+    } catch (err) {
+      setResponse({
+        message: "Failed to fetch Instagram posts: " + err.message,
+        type: "failure",
+      });
+      addNotification("Failed to fetch Instagram posts", "error");
+      return [];
+    } finally {
+      setPostsLoading(false);
+    }
+  };
+
   // Render the connected accounts section
   const renderAccountsSection = () => (
     <div className="rounded-lg shadow-sm border border-gray-200 p-6">
@@ -993,6 +1079,357 @@ export default function SocialMedia() {
     </div>
   );
 
+  const renderPostsAnalyticsSection = () => (
+    <div className="rounded-lg shadow-sm border border-gray-200 p-6">
+      <div className="flex justify-between items-center mb-6">
+        <h3 className="text-lg font-semibold">Posts Performance Analytics</h3>
+        <div className="flex items-center gap-4">
+          <div className="flex rounded-md shadow-sm" role="group">
+            <button
+              type="button"
+              className={`px-4 py-2 text-sm font-medium border ${
+                selectedPlatform === "facebook"
+                  ? "bg-purple-500 text-white border-purple-600"
+                  : "bg-white text-gray-700 border-gray-200 hover:bg-gray-100"
+              } rounded-l-lg`}
+              onClick={() => setSelectedPlatform("facebook")}
+            >
+              Facebook
+            </button>
+            <button
+              type="button"
+              className={`px-4 py-2 text-sm font-medium border ${
+                selectedPlatform === "instagram"
+                  ? "bg-purple-500 text-white border-purple-600"
+                  : "bg-white text-gray-700 border-gray-200 hover:bg-gray-100"
+              } rounded-r-lg`}
+              onClick={() => setSelectedPlatform("instagram")}
+            >
+              Instagram
+            </button>
+          </div>
+          <Button
+            onClick={
+              selectedPlatform === "facebook"
+                ? fetchFacebookPosts
+                : fetchInstagramPosts
+            }
+            color="light"
+            size="xs"
+            className="flex items-center gap-2 bg-gray-50 hover:bg-gray-100"
+          >
+            <HiRefresh className="h-4 w-4" />
+            Refresh
+          </Button>
+        </div>
+      </div>
+
+      {postsLoading ? (
+        <div className="flex justify-center items-center h-64">
+          <Spinner size="xl" />
+          <p className="ml-3 text-gray-500">Loading posts...</p>
+        </div>
+      ) : selectedPlatform === "facebook" ? (
+        renderFacebookPosts()
+      ) : (
+        renderInstagramPosts()
+      )}
+    </div>
+  );
+
+  // Render Facebook posts with insights
+  const renderFacebookPosts = () => {
+    if (facebookPosts.length === 0) {
+      return (
+        <div className="text-center p-8 bg-gray-50 rounded-lg">
+          <svg
+            className="mx-auto mb-4 w-12 h-12 text-gray-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+            />
+          </svg>
+          <h3 className="mb-2 text-lg font-medium">No posts found</h3>
+          <p className="text-gray-500">
+            {selectedPage
+              ? "No posts available for the selected Facebook page."
+              : "Please select a Facebook page first."}
+          </p>
+          {!selectedPage && (
+            <Button
+              onClick={() => setActiveSection("accounts")}
+              color="purple"
+              size="sm"
+              className="mt-4"
+            >
+              Go to Connected Accounts
+            </Button>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        {facebookPosts.map((post) => (
+          <Card key={post.id} className="overflow-hidden">
+            <div className="flex flex-col md:flex-row">
+              {post.full_picture && (
+                <div className="md:w-1/3 h-64 overflow-hidden">
+                  <img
+                    src={post.full_picture}
+                    alt="Post content"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div
+                className={post.full_picture ? "md:w-2/3 p-4" : "w-full p-4"}
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center mb-3">
+                    <div className="h-10 w-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center mr-3">
+                      <span className="text-white font-medium">
+                        {pages
+                          .find((page) => page.id === selectedPage)
+                          ?.name.charAt(0) || "F"}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-medium">
+                        {pages.find((page) => page.id === selectedPage)?.name}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(post.created_time).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                  <Badge color="purple" size="sm">
+                    Facebook
+                  </Badge>
+                </div>
+
+                <p className=" mb-4 line-clamp-3">
+                  {post.message}
+                </p>
+
+                <div className="grid grid-cols-3 gap-4 mt-4">
+                  <div className="text-center p-3 bg-blue-50 rounded-lg">
+                    <p className="text-xl font-bold text-blue-600">
+                      {post.likes?.summary?.total_count || 0}
+                    </p>
+                    <p className="text-xs text-gray-500">Likes</p>
+                  </div>
+                  <div className="text-center p-3 bg-green-50 rounded-lg">
+                    <p className="text-xl font-bold text-green-600">
+                      {post.comments?.summary?.total_count || 0}
+                    </p>
+                    <p className="text-xs text-gray-500">Comments</p>
+                  </div>
+                  <div className="text-center p-3 bg-purple-50 rounded-lg">
+                    <p className="text-xl font-bold text-purple-600">
+                      {post.shares?.count || 0}
+                    </p>
+                    <p className="text-xs text-gray-500">Shares</p>
+                  </div>
+                </div>
+
+                {post.insights && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-sm font-medium mb-2">Post Insights:</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      <div className="text-center p-2 bg-gray-50 rounded">
+                        <p className="text-sm font-semibold">
+                          {post.insights.reach || 0}
+                        </p>
+                        <p className="text-xs text-gray-500">Reach</p>
+                      </div>
+                      <div className="text-center p-2 bg-gray-50 rounded">
+                        <p className="text-sm font-semibold">
+                          {post.insights.impressions || 0}
+                        </p>
+                        <p className="text-xs text-gray-500">Impressions</p>
+                      </div>
+                      <div className="text-center p-2 bg-gray-50 rounded">
+                        <p className="text-sm font-semibold">
+                          {post.insights.engagement_rate
+                            ? (post.insights.engagement_rate * 100).toFixed(2) +
+                              "%"
+                            : "0%"}
+                        </p>
+                        <p className="text-xs text-gray-500">Engagement Rate</p>
+                      </div>
+                      <div className="text-center p-2 bg-gray-50 rounded">
+                        <p className="text-sm font-semibold">
+                          {post.insights.clicks || 0}
+                        </p>
+                        <p className="text-xs text-gray-500">Clicks</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
+  // Render Instagram posts with insights
+  const renderInstagramPosts = () => {
+    if (instagramPosts.length === 0) {
+      return (
+        <div className="text-center p-8 bg-gray-50 rounded-lg">
+          <svg
+            className="mx-auto mb-4 w-12 h-12 text-gray-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+            />
+          </svg>
+          <h3 className="mb-2 text-lg font-medium">No posts found</h3>
+          <p className="text-gray-500">
+            {selectedInsta
+              ? "No posts available for the selected Instagram account."
+              : "Please select an Instagram account first."}
+          </p>
+          {!selectedInsta && (
+            <Button
+              onClick={() => setActiveSection("accounts")}
+              color="purple"
+              size="sm"
+              className="mt-4"
+            >
+              Go to Connected Accounts
+            </Button>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <div className="space-y-6">
+        {instagramPosts.map((post) => (
+          <Card key={post.id} className="overflow-hidden">
+            <div className="flex flex-col md:flex-row">
+              {post.media_url && (
+                <div className="md:w-1/3 h-64 overflow-hidden">
+                  <img
+                    src={post.media_url}
+                    alt="Instagram post"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              )}
+              <div className={post.media_url ? "md:w-2/3 p-4" : "w-full p-4"}>
+                <div className="flex justify-between items-start">
+                  <div className="flex items-center mb-3">
+                    <div className="h-10 w-10 bg-gradient-to-br from-purple-400 to-pink-500 rounded-full flex items-center justify-center mr-3">
+                      <span className="text-white font-medium">
+                        {instagramAccounts
+                          .find(
+                            (acc) => acc.instagram_account_id === selectedInsta
+                          )
+                          ?.username.charAt(0) || "I"}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-medium">
+                        @
+                        {instagramAccounts.find(
+                          (acc) => acc.instagram_account_id === selectedInsta
+                        )?.username || "Instagram"}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(post.timestamp).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                  <Badge color="pink" size="sm">
+                    Instagram
+                  </Badge>
+                </div>
+
+                <p className=" mb-4 line-clamp-3">{post.caption}</p>
+
+                <div className="grid grid-cols-3 gap-4 mt-4">
+                  <div className="text-center p-3 bg-pink-50 rounded-lg">
+                    <p className="text-xl font-bold text-pink-600">
+                      {post.like_count || 0}
+                    </p>
+                    <p className="text-xs text-gray-500">Likes</p>
+                  </div>
+                  <div className="text-center p-3 bg-purple-50 rounded-lg">
+                    <p className="text-xl font-bold text-purple-600">
+                      {post.comments_count || 0}
+                    </p>
+                    <p className="text-xs text-gray-500">Comments</p>
+                  </div>
+                  <div className="text-center p-3 bg-blue-50 rounded-lg">
+                    <p className="text-xl font-bold text-blue-600">
+                      {post.saved || 0}
+                    </p>
+                    <p className="text-xs text-gray-500">Saved</p>
+                  </div>
+                </div>
+
+                {post.insights && (
+                  <div className="mt-4 pt-4 border-t border-gray-200">
+                    <p className="text-sm font-medium mb-2">Post Insights:</p>
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+                      <div className="text-center p-2 bg-gray-50 rounded">
+                        <p className="text-sm font-semibold">
+                          {post.insights.reach || 0}
+                        </p>
+                        <p className="text-xs text-gray-500">Reach</p>
+                      </div>
+                      <div className="text-center p-2 bg-gray-50 rounded">
+                        <p className="text-sm font-semibold">
+                          {post.insights.impressions || 0}
+                        </p>
+                        <p className="text-xs text-gray-500">Impressions</p>
+                      </div>
+                      <div className="text-center p-2 bg-gray-50 rounded">
+                        <p className="text-sm font-semibold">
+                          {post.insights.engagement_rate
+                            ? (post.insights.engagement_rate * 100).toFixed(2) +
+                              "%"
+                            : "0%"}
+                        </p>
+                        <p className="text-xs text-gray-500">Engagement Rate</p>
+                      </div>
+                      <div className="text-center p-2 bg-gray-50 rounded">
+                        <p className="text-sm font-semibold">
+                          {post.insights.profile_visits || 0}
+                        </p>
+                        <p className="text-xs text-gray-500">Profile Visits</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </Card>
+        ))}
+      </div>
+    );
+  };
+
   // Render the welcome/intro section
   const renderWelcomeScreen = () => (
     <div className="max-w-4xl mx-auto">
@@ -1155,11 +1592,22 @@ export default function SocialMedia() {
             >
               Create New Post
             </button>
+            <button
+              onClick={() => setActiveSection("postsAnalytics")}
+              className={`px-4 py-2 font-medium text-sm rounded-t-lg ${
+                activeSection === "postsAnalytics"
+                  ? " text-purple-700 border-b-2 border-purple-500"
+                  : "text-gray-500 hover:text-purple-600"
+              }`}
+            >
+              Posts Analytics
+            </button>
           </div>
 
           {activeSection === "accounts" && renderAccountsSection()}
           {activeSection === "savedAds" && renderSavedAdsSection()}
           {activeSection === "createPost" && renderCreatePostSection()}
+          {activeSection === "postsAnalytics" && renderPostsAnalyticsSection()}
         </>
       )}
 
