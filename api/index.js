@@ -11,6 +11,7 @@ import websiteAuditRoutes from "./routes/websiteAudit.route.js";
 import stripeRoutes from "./routes/stripe.route.js";
 import facebookRoutes from "./routes/socialMedia.route.js";
 import subscriptionRoutes from "./routes/subscription.route.js";
+import complaintRoutes from "./routes/complaint.route.js";
 
 
 
@@ -106,6 +107,7 @@ app.use("/api/audit", websiteAuditRoutes);
 app.use("/api/stripe", stripeRoutes);
 app.use("/api/facebook", facebookRoutes);
 app.use("/api/subscription", subscriptionRoutes);
+app.use("/api/complaint", complaintRoutes);
 
 
 

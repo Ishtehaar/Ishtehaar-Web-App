@@ -5,28 +5,39 @@ const { Schema } = mongoose;
 const ComplaintSchema = new Schema(
   {
     userId: {
-      type: Schema.Types.ObjectId,
-      ref: "User",
+      type: String,
       required: true,
     },
     subject: {
       type: String,
       required: true,
+      trim: true,
     },
     description: {
       type: String,
       required: true,
+      trim: true,
     },
     status: {
       type: String,
-      enum: ["open", "in_progress", "resolved"],
-      default: "open",
+      enum: ["pending", "in-progress", "resolved", "rejected"],
+      default: "pending",
+    },
+    adminComment: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+    adminId: {
+      type: String,
+      default: null,
     },
     resolvedAt: {
       type: Date,
+      default: null,
     },
   },
-  { timestamps: true } 
+  { timestamps: true }
 );
 
 const Complaint = mongoose.model("Complaint", ComplaintSchema);

@@ -41,7 +41,9 @@ export default function SocialMedia() {
   const [pages, setPages] = useState([]);
   const [instagramAccounts, setInstagramAccounts] = useState([]);
   const [selectedPage, setSelectedPage] = useState("");
+  console.log(selectedPage)
   const [selectedInsta, setSelectedInsta] = useState("");
+  const [pageMetaData, setPageMetaData] = useState([]);
 
   // Post states
   // Posts analytics states
@@ -112,6 +114,10 @@ export default function SocialMedia() {
   useEffect(() => {
     checkConnectionStatus();
   }, []);
+
+  // useEffect(() => {
+  //   fetchPageMetaData(selectedPage);
+  // }, []);
 
   useEffect(() => {
     if (isConnected) {
@@ -641,6 +647,45 @@ export default function SocialMedia() {
     }
   };
 
+  //getPage meta data helper
+
+  const fetchPageMetaData = async (pageId) => {
+    if (!pageId) {
+      throw new Error("Page ID is required");
+    }
+
+    try {
+      // Call the backend API endpoint
+      const response = await fetch(
+        `/api/facebook/get-page-metadata?pageId=${selectedPage}`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      // Parse the response
+      const result = await response.json();
+
+      // Check if the request was successful
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to fetch page metadata");
+      }
+
+      if (!result.success) {
+        throw new Error(result.error || "Request was unsuccessful");
+      }
+
+      // Return the page metadata
+      setPageMetaData(result);
+    } catch (error) {
+      console.error("Error in fetchPageMetaData:", error);
+      throw error;
+    }
+  };
+
   // Render the connected accounts section
   const renderAccountsSection = () => (
     <div className="rounded-lg shadow-sm border border-gray-200 p-6">
@@ -714,7 +759,12 @@ export default function SocialMedia() {
                       </span>
                     </div>
                     <div>
-                      <div className="font-medium ">@{account.username}</div>
+                      <div className="font-medium ">
+                        {" "}
+                        @{account.username} (
+                        {account.followers_count.toLocaleString()} followers
+                        {account.media_count.toLocaleString()} posts)
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -931,7 +981,8 @@ export default function SocialMedia() {
                   value={account.instagram_account_id}
                 >
                   @{account.username} (
-                  {account.followers_count.toLocaleString()} followers)
+                  {account.followers_count.toLocaleString()} followers
+                  {account.media_count.toLocaleString()} posts)
                 </option>
               ))}
             </Select>
@@ -1216,9 +1267,7 @@ export default function SocialMedia() {
                   </Badge>
                 </div>
 
-                <p className=" mb-4 line-clamp-3">
-                  {post.message}
-                </p>
+                <p className=" mb-4 line-clamp-3">{post.message}</p>
 
                 <div className="grid grid-cols-3 gap-4 mt-4">
                   <div className="text-center p-3 bg-blue-50 rounded-lg">

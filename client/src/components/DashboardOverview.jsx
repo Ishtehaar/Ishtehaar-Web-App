@@ -97,40 +97,23 @@ const DashboardOverview = ({ currentUser }) => {
     fetchStats();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchSEO = async () => {
-  //     try {
-  //       setLoading(true);
-  //       const res = await fetch("/api/user/getUser");
-  //       const data = await res.json();
-  //       console.log(data);
-  //       setSEOCount(data.SEOKeywordsCreated);
-  //     } catch (error) {
-  //       console.error("Error fetching ads:", error);
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-  //   fetchSEO();
-  // }, []);
+  useEffect(() => {
+    const fetchComplaints = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("/api/complaint/get-complaint-stats");
+        const data = await res.json();
+        console.log(data);
+        setComplaintCount(data.total);
+      } catch (error) {
+        console.error("Error fetching ads:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchComplaints();
+  }, []);
 
-//   useEffect(() => {    // when complaintys will be
-//     const fetchUsers = async () => {
-//       try {
-//         setLoading(true);
-//         const res = await fetch("/api/subscription/get-Subscriptions");
-//         const data = await res.json();
-//         console.log(data);
-//         setSubscriptionCount(data.subscriptionCount);
-//       } catch (error) {
-//         console.error("Error fetching ads:", error);
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-//     fetchUsers();
-//   }, []);
-  
   const stats = [
     {
       title: "Total Ads Created",
@@ -146,7 +129,7 @@ const DashboardOverview = ({ currentUser }) => {
     },
     {
       title: "Website Audits",
-      value:  auditCount || 0,
+      value: auditCount || 0,
       icon: <FiCode className="text-purple-500" />,
       link: "?tab=website-audit",
     },
@@ -166,7 +149,7 @@ const DashboardOverview = ({ currentUser }) => {
     },
     {
       title: "Subscription Plans",
-      value: subscriptionCount|| 0,
+      value: subscriptionCount || 0,
       icon: <FiCreditCard className="text-green-500" />,
       link: "?tab=seo-keywords",
     },
@@ -176,7 +159,6 @@ const DashboardOverview = ({ currentUser }) => {
       icon: <FiAlertCircle className="text-purple-500" />,
       link: "?tab=website-audit",
     },
-    
   ];
 
   // Core features of the platform

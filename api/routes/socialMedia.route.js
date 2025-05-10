@@ -14,6 +14,7 @@ import {
   instaPostNow,
   manipulateSocialMediaCampaign,
   postToBoth,
+  getInstagramEngagementRate
 } from "../controllers/socialMedia.controller.js";
 
 
@@ -23,10 +24,11 @@ router.get("/faceBookAuth", faceBookAuth);
 router.get("/callback", faceBookCallback);
 router.get("/get-pages", getPages);
 router.get("/get-instagram-accounts", getInstagramAccounts);
-router.get("/get-page-metadata/:pageId", getPageMetaData);
+router.get("/get-page-metadata", getPageMetaData);
 router.get("/get-page-posts", getPagePosts);
 router.get("/get-insta-posts", getInstaPosts);
 router.get("/check-connection-status", checkConnectionStatus);
+router.get("instagram-engagement-rate", getInstagramEngagementRate);
 router.post("/fb-post-now", fbPostNow);
 router.post("/fb-schedule-post", fbSchedulePost);
 router.post("/insta-post-now", instaPostNow);

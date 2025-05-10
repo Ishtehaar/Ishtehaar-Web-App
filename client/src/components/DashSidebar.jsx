@@ -124,6 +124,7 @@ export default function DashSidebar() {
               <CustomSidebarItem
                 icon={MdOutlineFeedback}
                 active={tab === "dash-admin-complaints"}
+                to="/dashboard?tab=dash-admin-complaints"
               >
                 Complaint Resolution
               </CustomSidebarItem>

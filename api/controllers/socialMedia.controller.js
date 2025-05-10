@@ -165,7 +165,7 @@ export const getInstagramAccounts = async (req, res) => {
 };
 
 export const getPageMetaData = async (req, res) => {
-  const { pageId } = req.params;
+  const { pageId } = req.query;
   const userAccessToken = req.session.access_token;
 
   if (!userAccessToken) {
@@ -281,6 +281,10 @@ export const getInstaPosts = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch Instagram posts." });
   }
 };
+
+export const getInstagramEngagementRate = async (req, res) => {
+  
+}
 
 export const checkConnectionStatus = async (req, res) => {
   try {
