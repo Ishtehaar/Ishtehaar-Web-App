@@ -367,7 +367,7 @@ export default function IshtehaarMadagarChatbot() {
       {!isOpen && (
         <button
           onClick={toggleChat}
-          className="fixed bottom-6 right-6 bg-indigo-600 text-white rounded-full p-4 shadow-lg hover:bg-indigo-700 transition-all duration-200 flex items-center justify-center z-50"
+          className="fixed bottom-6 right-6 bg-purple-600 text-white rounded-full p-4 shadow-lg hover:bg-indigo-700 transition-all duration-200 flex items-center justify-center z-50"
           aria-label="Open chat"
         >
           <MessageSquare size={24} />
@@ -388,7 +388,7 @@ export default function IshtehaarMadagarChatbot() {
         >
           {/* Chat header */}
           <div
-            className="bg-indigo-600 text-white p-4 flex justify-between items-center cursor-pointer"
+            className="bg-purple-600 text-white p-4 flex justify-between items-center cursor-pointer"
             onClick={toggleMinimize}
           >
             <div className="flex items-center space-x-2">
@@ -396,7 +396,7 @@ export default function IshtehaarMadagarChatbot() {
               {activeTab === "file" && <FileText size={20} />}
               {activeTab === "view" && <List size={20} />}
               <h3 className="font-medium">
-                {activeTab === "chat" && "Ishtehaar Madagar"}
+                {activeTab === "chat" && "Ishtehaar Madadgar"}
                 {activeTab === "file" && "File a Complaint"}
                 {activeTab === "view" && "My Complaints"}
               </h3>
@@ -443,8 +443,8 @@ export default function IshtehaarMadagarChatbot() {
                     onClick={() => setActiveTab("chat")}
                     className={`flex-1 py-3 text-sm font-medium flex justify-center items-center ${
                       activeTab === "chat"
-                        ? "text-indigo-600 border-b-2 border-indigo-600"
-                        : "text-gray-500 hover:text-indigo-600"
+                        ? "text-purple-600 border-b-2 border-purple-600"
+                        : "text-gray-500 hover:text-purple-600"
                     }`}
                   >
                     <MessageSquare size={16} className="mr-1" />
@@ -454,8 +454,8 @@ export default function IshtehaarMadagarChatbot() {
                     onClick={openComplaintForm}
                     className={`flex-1 py-3 text-sm font-medium flex justify-center items-center ${
                       activeTab === "file"
-                        ? "text-indigo-600 border-b-2 border-indigo-600"
-                        : "text-gray-500 hover:text-indigo-600"
+                        ? "text-purple-600 border-b-2 border-purple-600"
+                        : "text-gray-500 hover:text-purple-600"
                     }`}
                   >
                     <FileText size={16} className="mr-1" />
@@ -465,8 +465,8 @@ export default function IshtehaarMadagarChatbot() {
                     onClick={openComplaintsList}
                     className={`flex-1 py-3 text-sm font-medium flex justify-center items-center ${
                       activeTab === "view"
-                        ? "text-indigo-600 border-b-2 border-indigo-600"
-                        : "text-gray-500 hover:text-indigo-600"
+                        ? "text-purple-600 border-b-2 border-purple-600"
+                        : "text-gray-500 hover:text-purple-600"
                     }`}
                   >
                     <List size={16} className="mr-1" />
@@ -492,7 +492,7 @@ export default function IshtehaarMadagarChatbot() {
                         <div
                           className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
                             message.sender === "user"
-                              ? "bg-indigo-600 text-white rounded-br-none"
+                              ? "bg-purple-600 text-white rounded-br-none"
                               : "bg-gray-200 text-gray-800 rounded-bl-none"
                           }`}
                         >
@@ -529,7 +529,7 @@ export default function IshtehaarMadagarChatbot() {
 
                   {/* Chat input */}
                   <div className="border-t border-gray-200 p-3 bg-white">
-                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-indigo-600">
+                    <div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-purple-600">
                       <input
                         ref={inputRef}
                         type="text"
@@ -541,7 +541,7 @@ export default function IshtehaarMadagarChatbot() {
                       />
                       <button
                         onClick={handleSendMessage}
-                        className="p-2 bg-indigo-600 text-white rounded-r-md hover:bg-indigo-700 transition-colors disabled:bg-indigo-400 flex items-center justify-center"
+                        className="p-2 bg-purple-600 text-white rounded-r-md hover:bg-indigo-700 transition-colors disabled:bg-indigo-400 flex items-center justify-center"
                         disabled={inputMessage.trim() === ""}
                       >
                         <Send size={18} />
@@ -635,7 +635,7 @@ export default function IshtehaarMadagarChatbot() {
                               ? "bg-indigo-400"
                               : submissionStatus === "success"
                               ? "bg-green-500"
-                              : "bg-indigo-600 hover:bg-indigo-700"
+                              : "bg-purple-600 hover:bg-indigo-700"
                           }`}
                         disabled={
                           submissionStatus === "submitting" ||
@@ -662,7 +662,7 @@ export default function IshtehaarMadagarChatbot() {
                       <div className="mb-4">
                         <button
                           onClick={() => setSelectedComplaint(null)}
-                          className="text-indigo-600 hover:text-indigo-800 flex items-center mb-4"
+                          className="text-purple-600 hover:text-indigo-800 flex items-center mb-4"
                         >
                           <ChevronLeft size={16} />
                           <span>Back to complaints</span>
@@ -735,7 +735,7 @@ export default function IshtehaarMadagarChatbot() {
                                   <div className="flex items-start gap-2">
                                     <User
                                       size={18}
-                                      className="text-indigo-600 mt-1"
+                                      className="text-purple-600 mt-1"
                                     />
                                     <div className="flex-1">
                                       <p className="text-gray-800 whitespace-pre-wrap">

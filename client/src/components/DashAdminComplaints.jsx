@@ -291,41 +291,41 @@ export default function DashAdminComplaints() {
   }
 
   return (
-    <div className="p-6 min-h-screen">
+    <div className="p-6 min-h-screen ">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-center mt-4">
+        <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center ">
           Complaint Management
         </h2>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           <div className="p-4 rounded-lg shadow-sm border border-gray-700 ">
             <h3 className="text-2xl font-bold ">{stats.total}</h3>
             <p className="text-gray-500">Total Complaints</p>
           </div>
 
-          <div className=" border-yellow-700 border p-4 rounded-lg shadow-sm">
+          <div className="p-4 rounded-lg shadow-sm border border-yellow-700 ">
             <h3 className="text-2xl font-bold text-yellow-500">
               {stats.pending}
             </h3>
             <p className="text-yellow-400">Pending</p>
           </div>
 
-          <div className=" border-blue-700 border p-4 rounded-lg shadow-sm">
+          <div className="p-4 rounded-lg shadow-sm border border-blue-700 ">
             <h3 className="text-2xl font-bold text-blue-500">
               {stats.inProgress}
             </h3>
             <p className="text-blue-400">In Progress</p>
           </div>
 
-          <div className=" border-green-700 border p-4 rounded-lg shadow-sm">
+          <div className="p-4 rounded-lg shadow-sm border border-green-700 ">
             <h3 className="text-2xl font-bold text-green-500">
               {stats.resolved}
             </h3>
             <p className="text-green-400">Resolved</p>
           </div>
 
-          <div className=" border-red-700 border p-4 rounded-lg shadow-sm">
+          <div className="p-4 rounded-lg shadow-sm border border-red-700 ">
             <h3 className="text-2xl font-bold text-red-500">
               {stats.rejected}
             </h3>
@@ -333,135 +333,116 @@ export default function DashAdminComplaints() {
           </div>
         </div>
 
-        {/* Search & Filters */}
-        <div className="mb-4">
-          <div className="relative max-w-md">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <svg
-                className="w-4 h-4 text-gray-400"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
-                />
-              </svg>
+        {/* Search & Filter Container */}
+        <div className=" rounded-lg border border-gray-700 p-4 mb-4">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            {/* Search Input */}
+            <div className="relative w-full md:w-64">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                <svg
+                  className="w-4 h-4 text-gray-400"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                  />
+                </svg>
+              </div>
+              <input
+                type="text"
+                className=" border border-gray-600 text-gray-100 text-sm rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
+                placeholder="Search complaints..."
+                value={searchTerm}
+                onChange={handleSearch}
+              />
             </div>
-            <input
-              type="text"
-              className=" border border-gray-700 text-gray-100 text-sm rounded-lg block w-full pl-10 p-2.5 focus:ring-blue-500 focus:border-blue-500"
-              placeholder="Search complaints..."
-              value={searchTerm}
-              onChange={handleSearch}
-            />
-          </div>
-        </div>
 
-        {/* Tabs for filtering */}
-        <div className="mb-0 border-b border-gray-700 w-full">
-          <div className="w-full overflow-x-auto">
-            <ul className="flex flex-nowrap -mb-px text-sm font-medium text-center min-w-max">
-              <li className="mr-2">
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTabChange("all");
-                  }}
-                  className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                    activeTab === "all"
-                      ? "text-blue-500 border-blue-500 active"
-                      : "border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600"
-                  }`}
-                >
-                  All Complaints
-                </a>
-              </li>
-              <li className="mr-2">
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTabChange("pending");
-                  }}
-                  className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                    activeTab === "pending"
-                      ? "text-blue-500 border-blue-500 active"
-                      : "border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600"
-                  }`}
-                >
-                  Pending
-                </a>
-              </li>
-              <li className="mr-2">
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTabChange("in-progress");
-                  }}
-                  className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                    activeTab === "in-progress"
-                      ? "text-blue-500 border-blue-500 active"
-                      : "border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600"
-                  }`}
-                >
-                  In Progress
-                </a>
-              </li>
-              <li className="mr-2">
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTabChange("resolved");
-                  }}
-                  className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                    activeTab === "resolved"
-                      ? "text-blue-500 border-blue-500 active"
-                      : "border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600"
-                  }`}
-                >
-                  Resolved
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleTabChange("rejected");
-                  }}
-                  className={`inline-block p-4 border-b-2 rounded-t-lg ${
-                    activeTab === "rejected"
-                      ? "text-blue-500 border-blue-500 active"
-                      : "border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600"
-                  }`}
-                >
-                  Rejected
-                </a>
-              </li>
-            </ul>
+            {/* Tabs for filtering */}
+            <div className="w-full md:w-auto overflow-x-auto">
+              <ul className="flex flex-nowrap">
+                <li className="mr-1">
+                  <button
+                    onClick={() => handleTabChange("all")}
+                    className={`px-4 py-2 rounded-t-lg text-sm font-medium ${
+                      activeTab === "all"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600"
+                    }`}
+                  >
+                    All
+                  </button>
+                </li>
+                <li className="mr-1">
+                  <button
+                    onClick={() => handleTabChange("pending")}
+                    className={`px-4 py-2 rounded-t-lg text-sm font-medium ${
+                      activeTab === "pending"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600"
+                    }`}
+                  >
+                    Pending
+                  </button>
+                </li>
+                <li className="mr-1">
+                  <button
+                    onClick={() => handleTabChange("in-progress")}
+                    className={`px-4 py-2 rounded-t-lg text-sm font-medium ${
+                      activeTab === "in-progress"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600"
+                    }`}
+                  >
+                    In Progress
+                  </button>
+                </li>
+                <li className="mr-1">
+                  <button
+                    onClick={() => handleTabChange("resolved")}
+                    className={`px-4 py-2 rounded-t-lg text-sm font-medium ${
+                      activeTab === "resolved"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600"
+                    }`}
+                  >
+                    Resolved
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleTabChange("rejected")}
+                    className={`px-4 py-2 rounded-t-lg text-sm font-medium ${
+                      activeTab === "rejected"
+                        ? "bg-blue-600 text-white"
+                        : "text-gray-400 hover:text-gray-200 bg-gray-700 hover:bg-gray-600"
+                    }`}
+                  >
+                    Rejected
+                  </button>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
 
         {/* Error Message */}
         {error && complaints.length === 0 && (
           <div
-            className="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded relative my-4 w-full text-center"
+            className="bg-red-900 border border-red-700 text-red-100 px-4 py-3 rounded-lg relative my-4 text-center"
             role="alert"
           >
             <strong className="font-bold">Error!</strong>
             <span className="block sm:inline"> {error}</span>
             <div className="flex justify-center mt-2">
               <button
-                className="bg-red-700 hover:bg-red-800 text-gray-100 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                className="bg-red-700 hover:bg-red-800 text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 onClick={fetchComplaints}
               >
                 Try Again
@@ -470,135 +451,109 @@ export default function DashAdminComplaints() {
           </div>
         )}
 
-        {/* Complaints Table Container - Fixed Width */}
-        <div className="w-full bg-gray-800 overflow-hidden shadow-sm rounded-lg border border-gray-700 min-h-80 relative">
-          {/* Tab Loading State */}
+        {/* Complaints Table Container */}
+        <div className=" rounded-lg border border-gray-700 shadow-sm">
+          {/* Table Header */}
+          <div className="grid grid-cols-12   text-xs font-medium uppercase tracking-wider border-b border-gray-700">
+            <div className="col-span-1 px-6 py-3 text-left">#</div>
+            <div className="col-span-4 px-6 py-3 text-left">Subject</div>
+            <div className="col-span-2 px-6 py-3 text-left">Status</div>
+            <div className="col-span-2 px-6 py-3 text-left">Created</div>
+            <div className="col-span-3 px-6 py-3 text-left">Actions</div>
+          </div>
+
+          {/* Loading State */}
           {tabLoading ? (
-            <TableLoader />
-          ) : (
-            /* Table Content */
-            <div className="overflow-x-auto w-full">
-              <table className="w-full min-w-full table-fixed divide-y divide-gray-700">
-                <thead className="bg-gray-900">
-                  <tr>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-16"
-                    >
-                      #
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
-                    >
-                      Subject
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-32"
-                    >
-                      Status
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-32"
-                    >
-                      Created
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider w-48"
-                    >
-                      Actions
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-gray-800 divide-y divide-gray-700">
-                  {filteredComplaints.length > 0 ? (
-                    filteredComplaints.map((complaint, index) => (
-                      <tr key={complaint._id} className="hover:bg-gray-700">
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-100">
-                          {index + 1}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                          {complaint.subject}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span
-                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(
-                              complaint.status
-                            )}`}
-                          >
-                            {complaint.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                          {formatDate(complaint.createdAt)}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => handleViewComplaint(complaint._id)}
-                              className="bg-gray-700 text-blue-400 hover:bg-gray-600 px-3 py-1 rounded-md text-sm"
-                            >
-                              View
-                            </button>
-
-                            <button
-                              onClick={() =>
-                                handleUpdateComplaint(complaint._id)
-                              }
-                              disabled={
-                                complaint.status === "resolved" ||
-                                complaint.status === "rejected"
-                              }
-                              className={`${
-                                complaint.status === "resolved" ||
-                                complaint.status === "rejected"
-                                  ? "bg-gray-700 text-gray-500 cursor-not-allowed"
-                                  : "bg-gray-700 text-indigo-400 hover:bg-gray-600"
-                              } px-3 py-1 rounded-md text-sm`}
-                            >
-                              Update
-                            </button>
-
-                            {complaint.status !== "resolved" && (
-                              <button
-                                onClick={() =>
-                                  handleResolveComplaint(complaint._id)
-                                }
-                                className="bg-gray-700 text-green-400 hover:bg-gray-600 px-3 py-1 rounded-md text-sm"
-                              >
-                                Resolve
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td
-                        colSpan="5"
-                        className="px-6 py-12 text-center text-gray-400"
-                      >
-                        No complaints found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
+            <div className="w-full h-64 flex items-center justify-center">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mx-auto"></div>
+                <p className="mt-3 ">Loading...</p>
+              </div>
             </div>
+          ) : (
+            <>
+              {/* Table Body */}
+              {filteredComplaints.length > 0 ? (
+                filteredComplaints.map((complaint, index) => (
+                  <div
+                    key={complaint._id}
+                    className="grid grid-cols-12 border-b border-gray-700  transition-colors text-sm"
+                  >
+                    <div className="col-span-1 px-6 py-4 font-medium ">
+                      {index + 1}
+                    </div>
+                    <div className="col-span-4 px-6 py-4  truncate">
+                      {complaint.subject}
+                    </div>
+                    <div className="col-span-2 px-6 py-4">
+                      <span
+                        className={`px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(
+                          complaint.status
+                        )}`}
+                      >
+                        {complaint.status}
+                      </span>
+                    </div>
+                    <div className="col-span-2 px-6 py-4 ">
+                      {formatDate(complaint.createdAt)}
+                    </div>
+                    <div className="col-span-3 px-6 py-4">
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleViewComplaint(complaint._id)}
+                          className="bg-gray-700 text-blue-400 hover:bg-gray-600 px-3 py-1 rounded-md text-sm transition-colors"
+                        >
+                          View
+                        </button>
+
+                        <button
+                          onClick={() => handleUpdateComplaint(complaint._id)}
+                          disabled={
+                            complaint.status === "resolved" ||
+                            complaint.status === "rejected"
+                          }
+                          className={`px-3 py-1 rounded-md text-sm transition-colors ${
+                            complaint.status === "resolved" ||
+                            complaint.status === "rejected"
+                              ? "bg-gray-700 text-gray-500 cursor-not-allowed"
+                              : "bg-gray-700 text-indigo-400 hover:bg-gray-600"
+                          }`}
+                        >
+                          Update
+                        </button>
+
+                        {complaint.status !== "resolved" && (
+                          <button
+                            onClick={() =>
+                              handleResolveComplaint(complaint._id)
+                            }
+                            className="bg-gray-700 text-green-400 hover:bg-gray-600 px-3 py-1 rounded-md text-sm transition-colors"
+                          >
+                            Resolve
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div className="grid grid-cols-12 h-64">
+                  <div className="col-span-12 flex items-center justify-center text-gray-400">
+                    No complaints found
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
 
         {/* View Complaint Modal */}
-        {showViewModal && (
+        {showViewModal && currentComplaint && (
           <div className="fixed inset-0 bg-black bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center z-50">
             <div className="relative bg-gray-800 rounded-lg shadow-xl mx-auto w-full max-w-2xl border border-gray-700">
               {/* Header */}
               <div className="flex items-center justify-between p-5 border-b border-gray-700 rounded-t">
-                <h3 className="text-xl font-semibold text-gray-100">
+                <h3 className="text-xl font-semibold text-white">
                   Complaint Details
                 </h3>
                 <button
@@ -622,78 +577,76 @@ export default function DashAdminComplaints() {
               </div>
 
               {/* Body */}
-              {currentComplaint && (
-                <div className="p-6">
-                  <div className="mb-5">
-                    <h5 className="text-lg font-medium text-gray-200 mb-2">
-                      Subject
-                    </h5>
-                    <p className="text-gray-300 bg-gray-700 p-3 rounded-lg">
-                      {currentComplaint.subject}
-                    </p>
-                  </div>
-
-                  <div className="mb-5">
-                    <h5 className="text-lg font-medium text-gray-200 mb-2">
-                      Description
-                    </h5>
-                    <p className="text-gray-300 bg-gray-700 p-3 rounded-lg">
-                      {currentComplaint.description}
-                    </p>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
-                    <div>
-                      <h5 className="text-lg font-medium text-gray-200 mb-2">
-                        Status
-                      </h5>
-                      <span
-                        className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${getStatusBadge(
-                          currentComplaint.status
-                        )}`}
-                      >
-                        {currentComplaint.status}
-                      </span>
-                    </div>
-                    <div>
-                      <h5 className="text-lg font-medium text-gray-200 mb-2">
-                        Created On
-                      </h5>
-                      <p className="text-gray-300">
-                        {formatDate(currentComplaint.createdAt)}
-                      </p>
-                    </div>
-                  </div>
-
-                  {currentComplaint.adminComment && (
-                    <div className="mb-5">
-                      <h5 className="text-lg font-medium text-gray-200 mb-2">
-                        Admin Comment
-                      </h5>
-                      <p className="text-gray-300 bg-gray-700 p-3 rounded-lg">
-                        {currentComplaint.adminComment}
-                      </p>
-                    </div>
-                  )}
-
-                  {currentComplaint.resolvedAt && (
-                    <div className="mb-5">
-                      <h5 className="text-lg font-medium text-gray-200 mb-2">
-                        Resolved On
-                      </h5>
-                      <p className="text-gray-300">
-                        {formatDate(currentComplaint.resolvedAt)}
-                      </p>
-                    </div>
-                  )}
+              <div className="p-6">
+                <div className="mb-5">
+                  <h5 className="text-lg font-medium text-white mb-2">
+                    Subject
+                  </h5>
+                  <p className="text-gray-300 bg-gray-700 p-3 rounded-lg">
+                    {currentComplaint.subject}
+                  </p>
                 </div>
-              )}
+
+                <div className="mb-5">
+                  <h5 className="text-lg font-medium text-white mb-2">
+                    Description
+                  </h5>
+                  <p className="text-gray-300 bg-gray-700 p-3 rounded-lg">
+                    {currentComplaint.description}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-5">
+                  <div>
+                    <h5 className="text-lg font-medium text-white mb-2">
+                      Status
+                    </h5>
+                    <span
+                      className={`px-3 py-1 inline-flex text-sm leading-5 font-semibold rounded-full ${getStatusBadge(
+                        currentComplaint.status
+                      )}`}
+                    >
+                      {currentComplaint.status}
+                    </span>
+                  </div>
+                  <div>
+                    <h5 className="text-lg font-medium text-white mb-2">
+                      Created On
+                    </h5>
+                    <p className="text-gray-300">
+                      {formatDate(currentComplaint.createdAt)}
+                    </p>
+                  </div>
+                </div>
+
+                {currentComplaint.adminComment && (
+                  <div className="mb-5">
+                    <h5 className="text-lg font-medium text-white mb-2">
+                      Admin Comment
+                    </h5>
+                    <p className="text-gray-300 bg-gray-700 p-3 rounded-lg">
+                      {currentComplaint.adminComment}
+                    </p>
+                  </div>
+                )}
+
+                {currentComplaint.resolvedAt && (
+                  <div className="mb-5">
+                    <h5 className="text-lg font-medium text-white mb-2">
+                      Resolved On
+                    </h5>
+                    <p className="text-gray-300">
+                      {formatDate(currentComplaint.resolvedAt)}
+                    </p>
+                  </div>
+                )}
+              </div>
 
               {/* Footer */}
               <div className="flex items-center justify-center p-5 border-t border-gray-700 rounded-b">
                 <button
                   type="button"
-                  className="bg-gray-700 text-gray-200 hover:bg-gray-600 font-medium rounded-lg text-sm px-5 py-2.5"
+                  className="bg-gray-700 text-white hover:bg-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors"
                   onClick={() => setShowViewModal(false)}
                 >
                   Close
@@ -709,7 +662,7 @@ export default function DashAdminComplaints() {
             <div className="relative bg-gray-800 rounded-lg shadow-xl mx-auto w-full max-w-lg border border-gray-700">
               {/* Header */}
               <div className="flex items-center justify-between p-5 border-b border-gray-700 rounded-t">
-                <h3 className="text-xl font-semibold text-gray-100">
+                <h3 className="text-xl font-semibold text-white">
                   Update Complaint Status
                 </h3>
                 <button
@@ -782,7 +735,7 @@ export default function DashAdminComplaints() {
                 <div className="flex items-center justify-center gap-3 p-5 border-t border-gray-700 rounded-b">
                   <button
                     type="button"
-                    className="bg-gray-700 text-gray-200 hover:bg-gray-600 font-medium rounded-lg text-sm px-5 py-2.5"
+                    className="bg-gray-700 text-white hover:bg-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors"
                     onClick={() => setShowUpdateModal(false)}
                     disabled={submitting}
                   >
@@ -790,7 +743,7 @@ export default function DashAdminComplaints() {
                   </button>
                   <button
                     type="submit"
-                    className="text-gray-100 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-900 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none transition-colors"
                     disabled={submitting}
                   >
                     {submitting ? (
@@ -810,16 +763,16 @@ export default function DashAdminComplaints() {
 
         {/* Resolve Complaint Modal */}
         {showResolveModal && (
-          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
-            <div className="relative bg-white rounded-lg shadow-xl mx-auto w-full max-w-lg">
+          <div className="fixed inset-0 bg-black bg-opacity-75 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+            <div className="relative bg-gray-800 rounded-lg shadow-xl mx-auto w-full max-w-lg border border-gray-700">
               {/* Header */}
-              <div className="flex items-center justify-between p-5 border-b rounded-t">
-                <h3 className="text-xl font-semibold text-gray-900">
+              <div className="flex items-center justify-between p-5 border-b border-gray-700 rounded-t">
+                <h3 className="text-xl font-semibold text-white">
                   Resolve Complaint
                 </h3>
                 <button
                   type="button"
-                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
+                  className="text-gray-400 bg-transparent hover:bg-gray-700 hover:text-gray-200 rounded-lg text-sm p-1.5 ml-auto inline-flex items-center"
                   onClick={() => setShowResolveModal(false)}
                   disabled={submitting}
                 >
@@ -841,21 +794,21 @@ export default function DashAdminComplaints() {
               {/* Body */}
               <form onSubmit={resolveComplaint}>
                 <div className="p-6 space-y-6">
-                  <p className="text-gray-700 text-center mb-2">
+                  <p className="text-gray-300 text-center mb-2">
                     Are you sure you want to mark this complaint as resolved?
                   </p>
 
                   <div>
                     <label
                       htmlFor="resolutionComment"
-                      className="block mb-2 text-sm font-medium text-gray-900"
+                      className="block mb-2 text-sm font-medium text-gray-200"
                     >
                       Resolution Comment
                     </label>
                     <textarea
                       id="resolutionComment"
                       rows="4"
-                      className="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+                      className="block p-2.5 w-full text-sm text-gray-100 bg-gray-700 rounded-lg border border-gray-600 focus:ring-blue-500 focus:border-blue-500"
                       placeholder="Add resolution details or comments here"
                       value={adminComment}
                       onChange={(e) => setAdminComment(e.target.value)}
@@ -865,10 +818,10 @@ export default function DashAdminComplaints() {
                 </div>
 
                 {/* Footer */}
-                <div className="flex items-center justify-center gap-3 p-5 border-t border-gray-200 rounded-b">
+                <div className="flex items-center justify-center gap-3 p-5 border-t border-gray-700 rounded-b">
                   <button
                     type="button"
-                    className="bg-gray-100 text-gray-700 hover:bg-gray-200 font-medium rounded-lg text-sm px-5 py-2.5"
+                    className="bg-gray-700 text-white hover:bg-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 transition-colors"
                     onClick={() => setShowResolveModal(false)}
                     disabled={submitting}
                   >
@@ -876,7 +829,7 @@ export default function DashAdminComplaints() {
                   </button>
                   <button
                     type="submit"
-                    className="text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none"
+                    className="bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg text-sm px-5 py-2.5 focus:outline-none transition-colors"
                     disabled={submitting}
                   >
                     {submitting ? (
