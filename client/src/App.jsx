@@ -218,6 +218,7 @@ import DashAdminSubscriptions from "./components/DashAdminSubscriptions";
 import ChatbotWidget from "./components/ChabotWidget"; // Fixed import (was misspelled ChabotWidget)
 import Hell from "./components/hell"; 
 import DashAdminComplaints from "./components/DashAdminComplaints";
+import AppUsageTutor from "./pages/AppUsageTutor";
 
 // ChatbotWrapper component to conditionally render the chatbot
 const ChatbotWrapper = () => {
@@ -257,6 +258,8 @@ export default function App() {
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/about" element={<About />} /> {/* Re-added the About route */}
           <Route path="/hell" element={<Hell />} /> {/* Re-added the About route */}
+          <Route path="/app-usage" element={<AppUsageTutor />} /> {/* Re-added the About route */}
+
 
           
           <Route element={<PrivateRoute />}>

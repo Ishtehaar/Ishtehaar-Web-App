@@ -41,12 +41,18 @@ export default function IshtehaarMadagarChatbot() {
   const [complaintsLoading, setComplaintsLoading] = useState(false);
   const [complaintsError, setComplaintsError] = useState("");
   const [selectedComplaint, setSelectedComplaint] = useState(null);
+  const [rasaSessionId, setRasaSessionId] = useState("");
 
   const messageEndRef = useRef(null);
   const inputRef = useRef(null);
   const subjectInputRef = useRef(null);
 
-  // FAQ responses for quick matching
+  // Initialize RASA session ID when component mounts
+  useEffect(() => {
+    // Generate a unique session ID for RASA
+    const sessionId = `session_${Math.random().toString(36).substring(2, 15)}`;
+    setRasaSessionId(sessionId);
+  }, []);
 
   // Fetch user complaints
   const fetchUserComplaints = async () => {
@@ -78,7 +84,7 @@ export default function IshtehaarMadagarChatbot() {
     }
   };
 
-  // Function to get response from backend
+  // Function to get response from RASA backend
   const getBotResponse = async (userMessage) => {
     setIsTyping(true);
 
@@ -130,33 +136,30 @@ export default function IshtehaarMadagarChatbot() {
         return "You can view your complaint history and check the status of your complaints. Would you like to view your past complaints?";
       }
 
-      // Check for FAQ matches
-      const lowerMessage = userMessage.toLowerCase();
-      for (const [key, response] of Object.entries(faqResponses)) {
-        if (lowerMessage.includes(key.toLowerCase())) {
-          setIsTyping(false);
-          return response;
-        }
-      }
-
-      // If no match found, call backend API
+      // Call RASA backend API with the session ID for conversation tracking
       const response = await fetch(
         "http://localhost:5005/webhooks/rest/webhook",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ sender: "user", message: userMessage }),
+          body: JSON.stringify({
+            sender: rasaSessionId,
+            message: userMessage,
+          }),
         }
       );
 
       const data = await response.json();
       setIsTyping(false);
-      return (
-        data[0]?.text ||
-        "I'm not sure how to answer that. Would you like to file a complaint, view your complaint history, or ask about our services?"
-      );
+
+      // Extract text from RASA response
+      if (data.length > 0 && data[0].text) {
+        return data[0].text;
+      } else {
+        return "I'm not sure how to answer that. Would you like to file a complaint, view your complaint history, or ask about our services?";
+      }
     } catch (error) {
-      console.error("Error connecting to backend:", error);
+      console.error("Error connecting to RASA backend:", error);
       setIsTyping(false);
       return "Sorry, I'm having trouble connecting to my knowledge base right now. Would you like to file a complaint or view your complaint history instead?";
     }
@@ -798,7 +801,7 @@ export default function IshtehaarMadagarChatbot() {
                                       )
                                     )}
                                   </div>
-                                </div>
+                                </div> 
                               )}
                           </div>
                         </div>
