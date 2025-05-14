@@ -938,7 +938,7 @@ const SocialMediaTrendsAssistant = () => {
               </ul>
             </div>
 
-            {results.rawResponse && (
+            {/* {results.rawResponse && (
               <div className="mt-6">
                 <details className="text-sm">
                   <summary className="cursor-pointer text-gray-400 hover:text-gray-300">
@@ -949,7 +949,7 @@ const SocialMediaTrendsAssistant = () => {
                   </div>
                 </details>
               </div>
-            )}
+            )} */}
           </Card>
         )}
 

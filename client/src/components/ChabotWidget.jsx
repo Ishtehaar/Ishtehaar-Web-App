@@ -801,7 +801,7 @@ export default function IshtehaarMadagarChatbot() {
                                       )
                                     )}
                                   </div>
-                                </div> 
+                                </div>
                               )}
                           </div>
                         </div>
