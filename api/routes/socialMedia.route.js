@@ -14,7 +14,8 @@ import {
   instaPostNow,
   manipulateSocialMediaCampaign,
   postToBoth,
-  getInstagramEngagementRate
+  getInstagramEngagementRate,
+  getAverageEngagementRate
 } from "../controllers/socialMedia.controller.js";
 
 
@@ -34,6 +35,7 @@ router.post("/fb-schedule-post", fbSchedulePost);
 router.post("/insta-post-now", instaPostNow);
 router.post("/post-to-both", postToBoth);
 router.post("/manipulate-social-media-campaign", verifyToken, manipulateSocialMediaCampaign);
+router.get("/get-average-engagement-rate", verifyToken, getAverageEngagementRate);
 
 
 export default router;

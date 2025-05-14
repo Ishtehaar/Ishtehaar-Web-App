@@ -151,7 +151,7 @@ const handlePreviousTab = () => {
       setOverlayText(textData.data);
 
       const imageResponse = await fetch(
-        "https://bbd7-35-196-189-61.ngrok-free.app/generate-image",
+        "https://66e3-34-173-72-12.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {

@@ -230,14 +230,15 @@ export const getPagePosts = async (req, res) => {
       {
         params: {
           access_token: pageAccessToken,
-          fields: "id,message,created_time,likes.summary(true),comments.summary(true),shares,attachments{media_type,media,url},full_picture"
-        }
+          fields:
+            "id,message,created_time,likes.summary(true),comments.summary(true),shares,attachments{media_type,media,url},full_picture",
+        },
       }
     );
 
     res.json({
       success: true,
-      posts: postsResponse.data.data // Changed to 'posts' to match frontend expectations
+      posts: postsResponse.data.data, // Changed to 'posts' to match frontend expectations
     });
   } catch (error) {
     console.error(
@@ -282,9 +283,7 @@ export const getInstaPosts = async (req, res) => {
   }
 };
 
-export const getInstagramEngagementRate = async (req, res) => {
-  
-}
+export const getInstagramEngagementRate = async (req, res) => {};
 
 export const checkConnectionStatus = async (req, res) => {
   try {
@@ -725,12 +724,10 @@ export const manipulateSocialMediaCampaign = async (req, res) => {
 export const fetchMetaTrends = async (req, res) => {
   const { hashtag } = req.body;
 
-
   const graphApiEndpoint = `https://graph.facebook.com/v18.0/ig_hashtag_search?user_id={IG_USER_ID}&q=${hashtag}&access_token={ACCESS_TOKEN}`;
 
   console.log("Calling Graph API Endpoint:", graphApiEndpoint);
 
-  
   const response = {
     success: true,
     queried_hashtag: hashtag,
@@ -763,4 +760,196 @@ export const fetchMetaTrends = async (req, res) => {
   setTimeout(() => {
     res.status(200).json(response);
   }, 1000);
+};
+
+export const getAverageEngagementRate = async (req, res) => {
+  const userAccessToken = req.session.access_token;
+
+  if (!userAccessToken) {
+    return res.status(401).json({ error: "User is not authenticated." });
+  }
+
+  try {
+    // Step 1: Fetch user's pages
+    const pagesResponse = await axios.get(
+      "https://graph.facebook.com/v17.0/me/accounts",
+      { params: { access_token: userAccessToken } }
+    );
+
+    const pages = pagesResponse.data.data;
+
+    const engagementResults = [];
+
+    // Current month start and end dates
+    const now = new Date();
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+    const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+
+    // Step 2: Calculate engagement rate for each page
+    for (const page of pages) {
+      // Get followers for the page
+      const { facebookFollowers, instagramFollowers } = await getPageFollowers(
+        page
+      );
+
+      let pageEngagementData = {
+        pageName: page.name,
+        pageId: page.id,
+        facebookFollowers,
+        instagramFollowers,
+        facebookAverageEngagementRate: null,
+        instagramAverageEngagementRate: null,
+        combinedAverageEngagementRate: null,
+        facebookPosts: [],
+        instagramPosts: [],
+      };
+
+      // Fetch Facebook posts
+      const postsResponse = await axios.get(
+        `https://graph.facebook.com/v17.0/${page.id}/posts`,
+        {
+          params: {
+            fields:
+              "id,likes.summary(true),comments.summary(true),shares,created_time,message,full_picture",
+            access_token: page.access_token,
+            since: startOfMonth.toISOString(),
+            until: endOfMonth.toISOString(),
+          },
+        }
+      );
+
+      // Calculate Facebook engagement
+      const facebookPosts = postsResponse.data.data.map((post) => {
+        const likes = post.likes?.summary?.total_count || 0;
+        const comments = post.comments?.summary?.total_count || 0;
+
+        // Use followers as a proxy for reach since we can't easily get post-specific reach
+        const reach = facebookFollowers;
+
+        const engagementRate =
+          reach > 0 ? (((likes + comments) / reach) * 100).toFixed(2) : 0;
+
+        return {
+          postId: post.id,
+          message: post.message,
+          likes,
+          comments,
+          reach,
+          engagementRate: parseFloat(engagementRate),
+        };
+      });
+
+      pageEngagementData.facebookPosts = facebookPosts;
+
+      // Calculate average Facebook engagement rate
+      const facebookEngagementRates = facebookPosts.map(
+        (post) => post.engagementRate
+      );
+      pageEngagementData.facebookAverageEngagementRate =
+        facebookEngagementRates.length > 0
+          ? (
+              facebookEngagementRates.reduce((a, b) => a + b, 0) /
+              facebookEngagementRates.length
+            ).toFixed(2)
+          : 0;
+
+      // Check for Instagram business account
+      const igResponse = await axios.get(
+        `https://graph.facebook.com/v17.0/${page.id}`,
+        {
+          params: {
+            fields: "instagram_business_account",
+            access_token: page.access_token,
+          },
+        }
+      );
+
+      const igAccountId = igResponse.data.instagram_business_account?.id;
+
+      if (igAccountId) {
+        // Fetch Instagram media
+        const igMediaResponse = await axios.get(
+          `https://graph.facebook.com/v17.0/${igAccountId}/media`,
+          {
+            params: {
+              fields: "id,caption,timestamp,like_count,comments_count",
+              access_token: page.access_token,
+              since: startOfMonth.toISOString(),
+              until: endOfMonth.toISOString(),
+            },
+          }
+        );
+
+        // Calculate Instagram engagement
+        const instagramPosts = igMediaResponse.data.data.map((media) => {
+          const likes = media.like_count || 0;
+          const comments = media.comments_count || 0;
+
+          // Use followers as a proxy for reach since we can't easily get post-specific reach
+          const reach = instagramFollowers;
+
+          const engagementRate =
+            reach > 0 ? (((likes + comments) / reach) * 100).toFixed(2) : 0;
+
+          return {
+            mediaId: media.id,
+            caption: media.caption,
+            likes,
+            comments,
+            reach,
+            engagementRate: parseFloat(engagementRate),
+          };
+        });
+
+        pageEngagementData.instagramPosts = instagramPosts;
+
+        // Calculate average Instagram engagement rate
+        const instagramEngagementRates = instagramPosts.map(
+          (post) => post.engagementRate
+        );
+        pageEngagementData.instagramAverageEngagementRate =
+          instagramEngagementRates.length > 0
+            ? (
+                instagramEngagementRates.reduce((a, b) => a + b, 0) /
+                instagramEngagementRates.length
+              ).toFixed(2)
+            : 0;
+      }
+
+      if (
+        pageEngagementData.facebookPosts.length > 0 &&
+        pageEngagementData.instagramPosts.length > 0
+      ) {
+        pageEngagementData.combinedAverageEngagementRate = (
+          (Number(pageEngagementData.instagramAverageEngagementRate) +
+            Number(pageEngagementData.facebookAverageEngagementRate)) /
+          2
+        ).toFixed(2);
+      } else if (pageEngagementData.facebookPosts.length > 0) {
+        pageEngagementData.combinedAverageEngagementRate =
+          pageEngagementData.facebookAverageEngagementRate;
+      } else if (pageEngagementData.instagramPosts.length > 0) {
+        pageEngagementData.combinedAverageEngagementRate =
+          pageEngagementData.instagramAverageEngagementRate;
+      } else {
+        pageEngagementData.combinedAverageEngagementRate = null;
+      }
+
+      engagementResults.push(pageEngagementData);
+    }
+
+    res.json({
+      success: true,
+      engagementData: engagementResults,
+    });
+  } catch (error) {
+    console.error(
+      "Error fetching engagement rates:",
+      error.response?.data || error.message
+    );
+    res.status(500).json({
+      error: "Failed to fetch engagement rates",
+      details: error.response?.data || error.message,
+    });
+  }
 };
