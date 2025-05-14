@@ -62,6 +62,27 @@ const userSchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+    businessDomain: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "BusinessDomain",
+    },
+    expertiseLevel: {
+      type: String,
+      enum: ["beginner", "intermediate", "advanced", "expert"],
+      default: "beginner",
+    },
+    marketingKnowledge: {
+      type: Number,
+      default: 0, // Score from 0-100 based on assessment
+    },
+    assessmentCompleted: {
+      type: Boolean,
+      default: false,
+    },
+    domainKnowledge: {
+      type: Number,
+      default: 0, // Score from 0-100 based on assessment
+    },
     resetPasswordToken: String,
     resetPasswordExpiresAt: Date,
     verificationToken: String,

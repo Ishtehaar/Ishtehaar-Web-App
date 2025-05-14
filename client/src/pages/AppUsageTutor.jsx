@@ -145,12 +145,12 @@ const AppUsageTutor = () => {
         return (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             {tutorials.map((tutorial) => (
-              <Card key={tutorial._id} className="bg-gray-800 text-white">
-                <h3 className="text-xl font-bold text-purple-400">{tutorial.title}</h3>
-                <p className="text-gray-300 mb-4">{tutorial.description}</p>
+              <Card key={tutorial._id} className=" ">
+                <h3 className="text-xl font-bold text-purple-600">{tutorial.title}</h3>
+                <p className="mb-4">{tutorial.description}</p>
                 <ol className="list-decimal pl-5 space-y-2">
                   {tutorial.steps.map((step, i) => (
-                    <li key={i} className="text-gray-300">{step}</li>
+                    <li key={i} className="">{step}</li>
                   ))}
                 </ol>
                 <Button gradientDuoTone="purpleToBlue" className="mt-4">
@@ -169,15 +169,15 @@ const AppUsageTutor = () => {
         return (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
             {videoTutorials.map((video) => (
-              <Card key={video._id} className="bg-gray-800 text-white">
+              <Card key={video._id} className=" ">
                 <div className="relative">
                   <img src={video.thumbnail || '/api/placeholder/600/400'} alt={video.title} className="rounded-lg" />
-                  <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded">
+                  <div className="absolute bottom-2 right-2  bg-opacity-70 px-2 py-1 rounded">
                     {video.duration}
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-purple-400 mt-3">{video.title}</h3>
-                <p className="text-gray-300">{video.description}</p>
+                <h3 className="text-xl font-bold text-purple-600 mt-3">{video.title}</h3>
+                <p className="">{video.description}</p>
                 <Button color="purple" onClick={() => openVideoModal(video)} className="mt-3">
                   Watch Video
                 </Button>
@@ -197,12 +197,12 @@ const AppUsageTutor = () => {
             {/* Display success stories in a grid for better compatibility */}
             <div className="grid grid-cols-1 gap-6">
               {successStories.map((story) => (
-                <Card key={story._id} className="bg-gray-800 text-white">
+                <Card key={story._id} className="">
                   <div className="flex flex-col md:flex-row items-center gap-8">
                     <img src={story.image || '/api/placeholder/300/200'} alt={story.client} className="rounded-lg w-full md:w-64 h-auto" />
                     <div>
-                      <h3 className="text-2xl font-bold text-purple-400">{story.client}</h3>
-                      <p className="text-gray-300">Industry: {story.industry}</p>
+                      <h3 className="text-2xl font-bold text-purple-600">{story.client}</h3>
+                      <p className="">Industry: {story.industry}</p>
                       <p className="text-green-400 font-bold text-lg mt-2">{story.result}</p>
                       <blockquote className="border-l-4 border-purple-500 pl-4 mt-4 italic">
                         "{story.quote}"
@@ -223,10 +223,10 @@ const AppUsageTutor = () => {
               <h3 className="text-2xl font-bold mb-6 text-center">More Success Stories</h3>
               <div className="flex overflow-x-auto gap-6 pb-4">
                 {successStories.map((story) => (
-                  <div key={`scroll-${story._id}`} className="flex-shrink-0 w-full max-w-md bg-gray-800 p-6 rounded-lg">
-                    <h3 className="text-xl font-bold text-purple-400">{story.client}</h3>
+                  <div key={`scroll-${story._id}`} className="flex-shrink-0 w-full max-w-md  p-6 rounded-lg">
+                    <h3 className="text-xl font-bold text-purple-600">{story.client}</h3>
                     <p className="text-green-400">{story.result}</p>
-                    <p className="text-gray-300 mt-2 italic">"{story.quote.substring(0, 120)}..."</p>
+                    <p className=" mt-2 italic">"{story.quote.substring(0, 120)}..."</p>
                     <Button color="purple" size="sm" className="mt-3">View Details</Button>
                   </div>
                 ))}
@@ -244,15 +244,15 @@ const AppUsageTutor = () => {
           <>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
               {blogPosts.map((post) => (
-                <Card key={post._id} className="bg-gray-800 text-white">
-                  <h3 className="text-xl font-bold text-purple-400">{post.title}</h3>
-                  <p className="text-gray-300 mb-4">{post.excerpt}</p>
-                  <div className="flex justify-between text-sm text-gray-400">
+                <Card key={post._id} className="">
+                  <h3 className="text-xl font-bold text-purple-600">{post.title}</h3>
+                  <p className=" mb-4">{post.excerpt}</p>
+                  <div className="flex justify-between text-sm ">
                     <span>By {post.author}</span>
                     <span>{new Date(post.date).toLocaleDateString()}</span>
                   </div>
                   {post.readMoreUrl && (
-                    <Button color="light" className="mt-4" onClick={() => window.open(post.readMoreUrl, '_blank')}>
+                    <Button  gradientDuoTone= "purpleToPink" color="light" className="mt-4" onClick={() => window.open(post.readMoreUrl, '_blank')}>
                       Read Article
                     </Button>
                   )}
@@ -261,7 +261,7 @@ const AppUsageTutor = () => {
             </div>
             <div className="mt-10 text-center">
               <h3 className="text-2xl font-bold mb-4">Join Our Community</h3>
-              <p className="text-gray-300 mb-6">
+              <p className=" mb-6">
                 Connect with other marketers and digital advertising professionals to share insights,
                 ask questions, and grow together.
               </p>
@@ -279,11 +279,11 @@ const AppUsageTutor = () => {
   };
 
   return (
-    <div className="bg-gray-900 text-white p-6 min-h-screen">
+    <div className="  p-6 min-h-screen">
       <div className="max-w-7xl mx-auto">
         <div className="mb-10 text-center">
           <h1 className="text-4xl font-bold mb-4">App Usage Tutor</h1>
-          <p className="text-lg text-gray-300">
+          <p className="text-lg ">
             Learn how to make the most of Ishtehaar's digital marketing platform
           </p>
         </div>
@@ -297,7 +297,7 @@ const AppUsageTutor = () => {
                 className={`flex items-center py-4 px-6 ${
                   activeTab === index
                     ? 'text-purple-400 border-b-2 border-purple-400 font-medium'
-                    : 'text-gray-400 hover:text-gray-300'
+                    : ' hover:text-gray-300'
                 }`}
                 onClick={() => setActiveTab(index)}
               >

@@ -10,6 +10,7 @@ import {
   FiUserPlus,
   FiCreditCard,
   FiAlertCircle,
+  FiAward,
 } from "react-icons/fi";
 import { Link } from "react-router-dom";
 
@@ -208,48 +209,68 @@ const DashboardOverview = ({ currentUser }) => {
       {/* Welcome Message */}
 
       <div className="rounded-lg shadow-lg p-6 mb-6 relative">
-        <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
-          Welcome to Ishtehaar, {currentUser?.username || "PAUL"}{" "}
-          {currentUser.isAdmin && (
-            <span className="ml-2 px-2 py-1 text-sm font-small text-white bg-purple-600 rounded-lg">
-              Admin
-            </span>
-          )}
-        </h2>
+  <h2 className="text-3xl font-bold mb-3 flex items-center gap-3">
+    Welcome to Ishtehaar, {currentUser?.username || "PAUL"}{" "}
+    {currentUser.isAdmin && (
+      <span className="ml-2 px-2 py-1 text-sm font-small text-white bg-purple-600 rounded-lg">
+        Admin
+      </span>
+    )}
+  </h2>
 
-        {currentUser.isAdmin ? (
-          <p className="mb-5 text-gray-400">
-            As an admin of Ishtehaar, you have the authority to manage users,
-            oversee subscription plans, and handle user complaints.
-          </p>
-        ) : (
-          <p className="mb-5 text-gray-400">
-            Your digital marketing journey starts here. Let's create compelling
-            ads that convert.
-          </p>
-        )}
+  {currentUser.isAdmin ? (
+    <p className="mb-5 text-gray-400">
+      As an admin of Ishtehaar, you have the authority to manage users,
+      oversee subscription plans, and handle user complaints.
+    </p>
+  ) : (
+    <p className="mb-5 text-gray-400">
+      Your digital marketing journey starts here. Let's create compelling
+      ads that convert.
+    </p>
+  )}
 
-        {!currentUser.isAdmin && (
-          <div className="flex items-center mb-4">
-            <div className="p-2 bg-white bg-opacity-20 rounded-lg mr-3">
-              <FiStar className="text-yellow-300" size={24} />
-            </div>
-            <div>
-              <p className="font-medium">
-                Current Plan: {currentUser.subscription}
-              </p>
-              <p className="text-sm text-gray-400">
-                {isFreePlan
-                  ? "Limited to 5 ad creations per month"
-                  : "Unlimited ad creations until " +
-                    new Date(
-                      currentUser.subscriptionEndDate
-                    ).toLocaleDateString()}
-              </p>
-            </div>
-          </div>
-        )}
+  {!currentUser.isAdmin && (
+    <>
+      <div className="flex items-center mb-4">
+        <div className="p-2 bg-white bg-opacity-20 rounded-lg mr-3">
+          <FiStar className="text-yellow-300" size={24} />
+        </div>
+        <div>
+          <p className="font-medium">
+            Current Plan: {currentUser.subscription}
+          </p>
+          <p className="text-sm text-gray-400">
+            {isFreePlan
+              ? "Limited to 5 ad creations per month"
+              : "Unlimited ad creations until " +
+                new Date(
+                  currentUser.subscriptionEndDate
+                ).toLocaleDateString()}
+          </p>
+        </div>
       </div>
+      
+      <div className="flex items-center mb-1">
+        <div className="p-2 bg-white bg-opacity-20 rounded-lg mr-3">
+          <FiAward className="text-blue-300" size={24} />
+        </div>
+        <div>
+          <p className="font-medium">
+            Expertise Level: {currentUser.expertiseLevel || "Beginner"}
+          </p>
+        </div>
+      </div>
+      <p className="text-sm text-gray-400 ml-12 mb-3">
+        {currentUser.expertiseLevel === "Beginner" && "Just starting out with digital marketing"}
+        {currentUser.expertiseLevel === "Intermediate" && "Comfortable with basic marketing concepts"}
+        {currentUser.expertiseLevel === "Advanced" && "Experienced marketer with proven campaigns"}
+        {currentUser.expertiseLevel === "Expert" && "Professional with deep marketing expertise"}
+        {!currentUser.expertiseLevel && "Just starting out with digital marketing"}
+      </p>
+    </>
+  )}
+</div>
 
       {/* Quick Stats */}
       {!currentUser.isAdmin ? (

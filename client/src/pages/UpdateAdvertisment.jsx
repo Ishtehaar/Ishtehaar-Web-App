@@ -225,7 +225,7 @@ const UpdateAdvertisment = () => {
       setOverlayText(textData.data);
 
       const imageResponse = await fetch(
-        "https://a036-34-139-189-108.ngrok-free.app/generate-image",
+        "https://bbd7-35-196-189-61.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {

@@ -181,12 +181,6 @@
 //   );
 // }
 
-
-
-
-
-
-
 import React from "react";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import Header from "./components/Header";
@@ -216,34 +210,37 @@ import DashUsers from "./components/DashAdminUsers";
 import SocialMedia from "./components/SocialMedia";
 import DashAdminSubscriptions from "./components/DashAdminSubscriptions";
 import ChatbotWidget from "./components/ChabotWidget"; // Fixed import (was misspelled ChabotWidget)
-import Hell from "./components/hell"; 
+import Hell from "./components/hell";
 import DashAdminComplaints from "./components/DashAdminComplaints";
 import AppUsageTutor from "./pages/AppUsageTutor";
+import BusinessDomainAssessment from "./pages/BusinessDomainAssessment";
+import SocialMediaTrendsAssistant from "./components/SocialMediaTrendsAssistant";
 
 // ChatbotWrapper component to conditionally render the chatbot
 const ChatbotWrapper = () => {
   const location = useLocation();
   const path = location.pathname;
-  
+
   // List of paths where chatbot should NOT appear
   const excludedPaths = [
-    '/',
-    '/pricing',
-    '/dash-admin-users',
-    '/dash-admin-subscriptions',
-    '/dash-admin-complaints',
-    '/sign-in',
-    '/sign-up',
-    '/verify-email',
-    '/forgot-password',
-    '/reset-password',
+    "/",
+    "/pricing",
+    "/dash-admin-users",
+    "/dash-admin-subscriptions",
+    "/dash-admin-complaints",
+    "/sign-in",
+    "/sign-up",
+    "/verify-email",
+    "/forgot-password",
+    "/reset-password",
   ];
-  
+
   // Check if current path starts with any excluded path
-  const shouldExclude = excludedPaths.some(excludedPath => 
-    path === excludedPath || path.startsWith(`${excludedPath}/`)
+  const shouldExclude = excludedPaths.some(
+    (excludedPath) =>
+      path === excludedPath || path.startsWith(`${excludedPath}/`)
   );
-  
+
   return !shouldExclude ? <ChatbotWidget /> : null;
 };
 
@@ -256,22 +253,34 @@ export default function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/pricing" element={<Pricing />} />
-          <Route path="/about" element={<About />} /> {/* Re-added the About route */}
-          <Route path="/hell" element={<Hell />} /> {/* Re-added the About route */}
-          <Route path="/app-usage" element={<AppUsageTutor />} /> {/* Re-added the About route */}
+          <Route path="/about" element={<About />} />{" "}
+          {/* Re-added the About route */}
+          <Route path="/hell" element={<Hell />} />{" "}
+          {/* Re-added the About route */}
+          <Route path="/app-usage" element={<AppUsageTutor />} />{" "}
+          {/* Re-added the About route */}
 
-
-          
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/image-ad" element={<DashImageAd />} />
             <Route path="/seo-keywords" element={<DashSEOKeywords />} />
             <Route path="/website-audit" element={<WebsiteAudit />} />
-            <Route path="/social-media" element={<SocialMedia/>} />
-
+            <Route path="/social-media" element={<SocialMedia />} />
+            <Route path="/trends-assistant" element={<SocialMediaTrendsAssistant />} />
+            <Route
+              path="/business-domain-assessment"
+              element={<BusinessDomainAssessment />}
+            />{" "}
+            {/* Re-added the About route */}
             <Route path="/dash-admin-users" element={<DashUsers />} />
-            <Route path="/dash-admin-subscriptions" element={<DashAdminSubscriptions />} />
-            <Route path="/dash-admin-complaints" element={<DashAdminComplaints />} />
+            <Route
+              path="/dash-admin-subscriptions"
+              element={<DashAdminSubscriptions />}
+            />
+            <Route
+              path="/dash-admin-complaints"
+              element={<DashAdminComplaints />}
+            />
             <Route path="/saved-ads" element={<DashSaveAd />} />
             <Route path="/dash-sidebar" element={<DashSidebar />} />
             <Route path="/profile-comp" element={<ProfileComp />} />
@@ -279,13 +288,22 @@ export default function App() {
             <Route path="/ad/:adSlug" element={<AdvertismentPage />} />
             <Route path="/update-ad/:adId" element={<UpdateAdvertisment />} />
           </Route>
-
+          
           <Route element={<PublicRoute />}>
             <Route path="/sign-in" element={<SignInPage />} />
             <Route path="/sign-up" element={<SignUpPage />} />
-            <Route path="/verify-email" element={<EmailVerificationPage />} /> {/* Removed semicolon */}
-            <Route path="/forgot-password" element={<ForgotPassword/>} /> {/* Removed semicolon */}
-            <Route path="/reset-password/:token" element={<ResetPasswordPage/>} /> {/* Removed semicolon */}
+            <Route
+              path="/verify-email"
+              element={<EmailVerificationPage />}
+            />{" "}
+            {/* Removed semicolon */}
+            <Route path="/forgot-password" element={<ForgotPassword />} />{" "}
+            {/* Removed semicolon */}
+            <Route
+              path="/reset-password/:token"
+              element={<ResetPasswordPage />}
+            />{" "}
+            {/* Removed semicolon */}
           </Route>
         </Routes>
         <Footer />

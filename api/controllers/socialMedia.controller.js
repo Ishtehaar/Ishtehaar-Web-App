@@ -721,3 +721,46 @@ export const manipulateSocialMediaCampaign = async (req, res) => {
     errorHandler(400, "Error updating Social Campaugn count");
   }
 };
+
+export const fetchMetaTrends = async (req, res) => {
+  const { hashtag } = req.body;
+
+
+  const graphApiEndpoint = `https://graph.facebook.com/v18.0/ig_hashtag_search?user_id={IG_USER_ID}&q=${hashtag}&access_token={ACCESS_TOKEN}`;
+
+  console.log("Calling Graph API Endpoint:", graphApiEndpoint);
+
+  
+  const response = {
+    success: true,
+    queried_hashtag: hashtag,
+    trends: [
+      {
+        id: "1234567890",
+        caption: `Delicious #${hashtag} trend going viral in Pakistan!`,
+        media_url: "https://example.com/media1.jpg",
+        permalink: "https://www.instagram.com/p/FAKEPOST1/",
+        media_type: "IMAGE",
+        like_count: 2300,
+        comments_count: 120,
+        timestamp: "2025-05-14T10:00:00+0000",
+      },
+      {
+        id: "0987654321",
+        caption: `Check out this sizzling #${hashtag} street food reel!`,
+        media_url: "https://example.com/media2.jpg",
+        permalink: "https://www.instagram.com/p/FAKEPOST2/",
+        media_type: "VIDEO",
+        like_count: 5400,
+        comments_count: 320,
+        timestamp: "2025-05-13T14:30:00+0000",
+      },
+    ],
+    source: "Facebook Graph API",
+  };
+
+  // Simulate async delay like a real API call
+  setTimeout(() => {
+    res.status(200).json(response);
+  }, 1000);
+};

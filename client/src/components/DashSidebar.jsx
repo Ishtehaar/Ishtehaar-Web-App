@@ -6,6 +6,8 @@ import { MdOutlineFeedback } from "react-icons/md";
 import { CiImageOn, CiSaveDown2, CiLogout } from "react-icons/ci";
 import { RxDashboard } from "react-icons/rx";
 import { SlSocialInstagram } from "react-icons/sl";
+import { MdOutlineAssessment } from "react-icons/md";
+import { FaArrowTrendUp } from "react-icons/fa6";
 // import { MdHistory } from "react-icons/md";
 import { CiSearch } from "react-icons/ci";
 import { LuEarth } from "react-icons/lu";
@@ -137,6 +139,22 @@ export default function DashSidebar() {
                 to="/dashboard?tab=overview"
               >
                 Dashboard
+              </CustomSidebarItem>
+
+              <CustomSidebarItem
+                icon={MdOutlineAssessment}
+                active={tab === "business-domain-assessment"}
+                to="/dashboard?tab=business-domain-assessment"
+              >
+                Domain Analyzer
+              </CustomSidebarItem>
+
+              <CustomSidebarItem
+                icon={FaArrowTrendUp}
+                active={tab === "trends-assistant"}
+                to="/dashboard?tab=trends-assistant"
+              >
+                Trends Assistant
               </CustomSidebarItem>
 
               <CustomSidebarItem

@@ -14,6 +14,8 @@ import SocialMedia from "../components/SocialMedia";
 import DashAdminSubscriptions from "../components/DashAdminSubscriptions";
 import DashboardOverview from "../components/DashboardOverview";
 import DashAdminComplaints from "../components/DashAdminComplaints";
+import BusinessDomainAssessment from "./BusinessDomainAssessment";
+import SocialMediaTrendsAssistant from "../components/SocialMediaTrendsAssistant";
 
 // import DashProfile from "../components/DashProfile";
 
@@ -58,6 +60,8 @@ function Dashboard() {
           {tab === "dash-admin-subscriptions" && <DashAdminSubscriptions />}
           {tab === "dash-admin-complaints" && <DashAdminComplaints />}
           {tab === "social-media" && <SocialMedia />}
+          {tab === "business-domain-assessment" && <BusinessDomainAssessment />}
+          {tab === "trends-assistant" && <SocialMediaTrendsAssistant />}
         </div>
       </div>
     </div>
