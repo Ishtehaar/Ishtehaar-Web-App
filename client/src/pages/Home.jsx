@@ -7,6 +7,7 @@ import {
   HiCurrencyDollar,
   HiSupport,
 } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -27,13 +28,15 @@ export default function Home() {
             real-time analytics.
           </p>
           <div className="flex flex-col mb-8 lg:mb-16 space-y-4 sm:flex-row sm:justify-center sm:space-y-0 sm:space-x-4">
-            <Button size="xl" gradientDuoTone="purpleToPink" className="px-8">
-              <span className="mr-2">Start Free Trial</span>
-              <HiArrowRight className="mt-1 w-5 h-5" />
-            </Button>
-            <Button size="xl" outline gradientDuoTone="purpleToPink">
+            <Link to="/sign-up">
+              <Button size="xl" gradientDuoTone="purpleToPink" className="px-8">
+                <span className="mr-2">Start Free Trial</span>
+                <HiArrowRight className="mt-1 w-5 h-5" />
+              </Button>
+            </Link>
+            {/* <Button size="xl" outline gradientDuoTone="purpleToPink">
               Schedule Demo
-            </Button>
+            </Button> */}
           </div>
           <div className="flex justify-center space-x-6 mt-8">
             {["Forbes", "TechCrunch", "Business Insider"].map((partner) => (

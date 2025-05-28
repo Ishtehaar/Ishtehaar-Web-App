@@ -225,7 +225,7 @@ const UpdateAdvertisment = () => {
       setOverlayText(textData.data);
 
       const imageResponse = await fetch(
-        "https://66e3-34-173-72-12.ngrok-free.app/generate-image",
+        "https://d02e-34-124-219-3.ngrok-free.app/generate-image",
         {
           method: "POST",
           headers: {
@@ -527,12 +527,12 @@ const UpdateAdvertisment = () => {
                   </div>
 
                   <div className="flex justify-end space-x-2">
-                    <Button
+                    {/* <Button
                       gradientDuoTone="purpleToBlue"
                       onClick={handleNextTab}
                     >
                       Next: Optional Elements
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </Tabs.Item>
@@ -679,18 +679,18 @@ const UpdateAdvertisment = () => {
                   </div>
 
                   <div className="flex justify-between space-x-2">
-                    <Button
+                    {/* <Button
                       gradientDuoTone="greenToBlue"
                       onClick={handlePreviousTab}
                     >
                       Previous: Basic Info
-                    </Button>
-                    <Button
+                    </Button> */}
+                    {/* <Button
                       gradientDuoTone="purpleToBlue"
                       onClick={handleNextTab}
                     >
                       Next: Styling
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </Tabs.Item>
@@ -785,18 +785,18 @@ const UpdateAdvertisment = () => {
                   </div>
 
                   <div className="flex justify-between space-x-2 mt-4">
-                    <Button
+                    {/* <Button
                       gradientDuoTone="greenToBlue"
                       onClick={handlePreviousTab}
                     >
                       Previous: Optional Elements
-                    </Button>
-                    <Button
+                    </Button> */}
+                    {/* <Button
                       gradientDuoTone="purpleToBlue"
                       onClick={handleNextTab}
                     >
                       Next: Review & Update
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </Tabs.Item>

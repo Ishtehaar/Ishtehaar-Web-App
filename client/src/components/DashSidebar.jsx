@@ -141,13 +141,13 @@ export default function DashSidebar() {
                 Dashboard
               </CustomSidebarItem>
 
-              <CustomSidebarItem
+              {/* <CustomSidebarItem
                 icon={MdOutlineAssessment}
                 active={tab === "business-domain-assessment"}
                 to="/dashboard?tab=business-domain-assessment"
               >
                 Domain Analyzer
-              </CustomSidebarItem>
+              </CustomSidebarItem> */}
 
               <CustomSidebarItem
                 icon={FaArrowTrendUp}

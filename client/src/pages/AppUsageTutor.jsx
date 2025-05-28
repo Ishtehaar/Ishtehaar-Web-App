@@ -153,9 +153,9 @@ const AppUsageTutor = () => {
                     <li key={i} className="">{step}</li>
                   ))}
                 </ol>
-                <Button gradientDuoTone="purpleToBlue" className="mt-4">
+                {/* <Button gradientDuoTone="purpleToBlue" className="mt-4">
                   Start Tutorial <ChevronRight size={16} className="ml-2" />
-                </Button>
+                </Button> */}
               </Card>
             ))}
           </div>
